@@ -1,7 +1,6 @@
 package com.atherys.rpg.api.skill;
 
 import com.atherys.rpg.api.Identifyable;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
 
 /**
@@ -9,13 +8,7 @@ import org.spongepowered.api.text.TextRepresentable;
  */
 public interface Castable extends Identifyable, TextRepresentable {
 
-    Text getDescription();
-
-    double getResourceCost();
-
-    long getCooldown();
-
-    MouseButtonCombo getCombo();
+    CastableProperties getProperties();
 
     CastResult cast(CastableCarrier user, String... args);
 

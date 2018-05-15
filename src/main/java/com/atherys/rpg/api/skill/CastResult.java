@@ -46,7 +46,7 @@ public class CastResult {
     }
 
     public static CastResult insufficientResources(Castable castable, Resource resource) {
-        return new CastResult(Text.of(TextColors.DARK_RED, castable.getName(), TextColors.RED, " requires ", resource.getColor(), castable.getResourceCost(), " ", resource.getName()), false);
+        return new CastResult(Text.of(TextColors.DARK_RED, castable.getName(), TextColors.RED, " requires ", resource.getColor(), castable.getProperties().getResourceCost(), " ", resource.getName()), false);
     }
 
     public static CastResult blocked(Castable castable) {

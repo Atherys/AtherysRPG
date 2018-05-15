@@ -1,9 +1,13 @@
 package com.atherys.rpg.api.skill;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Represents a 4-size combination of mouse buttons, pressed one after another in order.
  */
 public final class MouseButtonCombo {
+
+    public static final MouseButtonCombo EMPTY = new MouseButtonCombo();
 
     public enum MouseButton {
         LEFT,
@@ -22,6 +26,24 @@ public final class MouseButtonCombo {
         }
     }
 
-    private MouseButton[] combo;
+    @Expose private MouseButton[] combo = new MouseButton[0];
 
+    private MouseButtonCombo() {
+    }
+
+    public MouseButtonCombo(MouseButton button1, MouseButton button2, MouseButton button3, MouseButton button4) {
+        this.combo = new MouseButton[4];
+        combo[0] = button1;
+        combo[1] = button2;
+        combo[2] = button3;
+        combo[3] = button4;
+    }
+
+    public MouseButton[] getCombo() {
+        return combo;
+    }
+
+    public boolean isEmpty() {
+        return combo.length == 0;
+    }
 }

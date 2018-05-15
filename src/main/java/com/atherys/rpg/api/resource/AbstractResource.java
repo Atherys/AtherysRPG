@@ -1,18 +1,22 @@
 package com.atherys.rpg.api.resource;
 
 import com.atherys.rpg.utils.MathUtils;
+import com.google.gson.annotations.Expose;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
+/**
+ * An abstract implementation of {@link Resource} where the minimum amount is always 0
+ */
 public abstract class AbstractResource implements Resource {
 
-    private TextColor color;
-    private String id;
-    private String name;
-    private double max;
-    private double current;
+    @Expose private TextColor color;
+    @Expose private String id;
+    @Expose private String name;
+    @Expose private double max;
+    @Expose private double current;
 
     protected AbstractResource(TextColor color, String id, String name, double max, double current) {
         this.color = color;
