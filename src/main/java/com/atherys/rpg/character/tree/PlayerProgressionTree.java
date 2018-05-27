@@ -16,11 +16,17 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
 
         private List<Mutator> mutators;
 
+        private Node parent;
         private List<Node> children;
 
         @Override
         public Collection<Mutator> getMutators() {
             return mutators;
+        }
+
+        @Override
+        public Node getParent() {
+            return parent;
         }
 
         @Override

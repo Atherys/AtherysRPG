@@ -5,6 +5,7 @@ import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.character.tree.PlayerProgressionTree;
 import org.spongepowered.api.CatalogType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,9 +31,16 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends Catalog
         Collection<Mutator> getMutators();
 
         /**
+         * Retrieves the parent of this node
+         *
+         * @return the parent node
+         */
+        Node getParent();
+
+        /**
          * Retrieves the child-nodes
          *
-         * @return The child-nodes;
+         * @return The child-nodes
          */
         List<PlayerProgressionTree.Node> getChildren();
 
@@ -45,6 +53,15 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends Catalog
             getMutators().forEach(mutator -> mutator.mutate(character));
         }
 
+        default Collection<Node> getPath() {
+            List<Node> path = new ArrayList<>();
+            path.add(this);
+
+            if ( getParent() == null ) return path;
+            else path.addAll(getParent().getPath());
+
+            return path;
+        }
 
     }
 
