@@ -1,57 +1,78 @@
 package com.atherys.rpg.character.tree;
 
-import com.atherys.rpg.api.attribute.Attribute;
-import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.player.ProgressionTree;
-import com.atherys.rpg.api.skill.Castable;
-import org.spongepowered.api.data.DataContainer;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionTree.Node> {
 
     public static class Node implements ProgressionTree.Node {
 
+        private String id;
+        private String name;
+
+        private List<Mutator> mutators;
+
+        private List<Node> children;
+
         @Override
-        public UUID getUUID() {
-            return null;
+        public Collection<Mutator> getMutators() {
+            return mutators;
         }
 
         @Override
-        public Collection<Castable> getCastables() {
-            return null;
+        public List<Node> getChildren() {
+            return children;
         }
 
         @Override
-        public Collection<Attribute> getAttributes() {
-            return null;
+        public String getId() {
+            return id;
         }
 
         @Override
-        public DataContainer getModifiers() {
-            return null;
+        public String getName() {
+            return name;
         }
+    }
 
-        @Override
-        public Collection<ProgressionTree.Node> getChildren() {
-            return null;
-        }
+    private String id;
+    private String name;
 
-        @Override
-        public void mutate(RPGCharacter character) {
-        }
+    private Node root;
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public Node getRoot() {
-        return null;
+        return root;
     }
 
     @Override
-    public Optional<Node> getNodeById(UUID id) {
-        return Optional.empty();
+    public Optional<Node> getNodeById(String id) {
+        return getNodeById(root, id);
+    }
+
+    private Optional<Node> getNodeById(Node startingPoint, String id) {
+        if ( startingPoint.getId().equals(id) ) return Optional.of(startingPoint);
+        else {
+            for ( Node node : startingPoint.getChildren() ) {
+                Optional<Node> nodeById = getNodeById(node, id);
+                if ( nodeById.isPresent() ) return nodeById;
+            }
+            return Optional.empty();
+        }
     }
 
 }

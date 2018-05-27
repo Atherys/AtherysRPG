@@ -1,13 +1,13 @@
 package com.atherys.rpg.api.character.player;
 
-import com.atherys.rpg.api.attribute.Attribute;
+import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.RPGCharacter;
-import com.atherys.rpg.api.skill.Castable;
-import org.spongepowered.api.data.DataContainer;
+import com.atherys.rpg.character.tree.PlayerProgressionTree;
+import org.spongepowered.api.CatalogType;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * A tree representing progression paths a player can take.
@@ -15,56 +15,35 @@ import java.util.UUID;
  *
  * @param <T> The Node class
  */
-public interface ProgressionTree<T extends ProgressionTree.Node> {
+public interface ProgressionTree<T extends ProgressionTree.Node> extends CatalogType {
 
     /**
      * A node will mutate a Player RPGCharacter when they have reached it.
      */
-    interface Node {
+    interface Node extends CatalogType {
 
         /**
-         * Every node must have a unique identifier;
+         * Retrieves all mutators of this node
          *
-         * @return the UUID of this Node
+         * @return The colleciton of mutator objects
          */
-        UUID getUUID();
-
-        /**
-         * Provides the Castables that will be applied to an RPGCharacter upon mutation
-         *
-         * @return The castables
-         */
-        Collection<Castable> getCastables();
-
-        /**
-         * Provides the Attributes that will be applied to an RPGCharacter upon mutation
-         *
-         * @return The attributes
-         */
-        Collection<Attribute> getAttributes();
-
-        /**
-         * Upon mutation, every key-value in this DataContainer will
-         * be applied to the Living entity from the RPGCharacter,
-         * if applicable
-         *
-         * @return The data container
-         */
-        DataContainer getModifiers();
+        Collection<Mutator> getMutators();
 
         /**
          * Retrieves the child-nodes
          *
          * @return The child-nodes;
          */
-        Collection<Node> getChildren();
+        List<PlayerProgressionTree.Node> getChildren();
 
         /**
-         * Mutates the provided RPGCharacter with the Castables, Attributes and DataContainer stored within this node.
+         * Mutates the provided RPGCharacter with the data stored within this node.
          *
          * @param character The RPGCharacter to be mutated
          */
-        void mutate(RPGCharacter character);
+        default void mutate(RPGCharacter character) {
+            getMutators().forEach(mutator -> mutator.mutate(character));
+        }
 
 
     }
@@ -82,6 +61,6 @@ public interface ProgressionTree<T extends ProgressionTree.Node> {
      * @param id
      * @return
      */
-    Optional<T> getNodeById(UUID id);
+    Optional<T> getNodeById(String id);
 
 }

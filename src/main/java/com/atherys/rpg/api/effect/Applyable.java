@@ -1,14 +1,14 @@
 package com.atherys.rpg.api.effect;
 
-import com.atherys.rpg.api.Identifyable;
 import com.atherys.rpg.api.character.RPGCharacter;
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.text.TextRepresentable;
 
 /**
  * An object which can be applied to an {@link RPGCharacter} and cause various temporary effects upon their game experience.
  * Applyables are not persisted across server restarts.
  */
-public interface Applyable extends Identifyable, TextRepresentable {
+public interface Applyable extends CatalogType, TextRepresentable {
 
     /**
      * Checks if the given Applyable can be applied to the {@link RPGCharacter}.

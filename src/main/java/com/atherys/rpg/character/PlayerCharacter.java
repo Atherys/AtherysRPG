@@ -22,6 +22,16 @@ public class PlayerCharacter extends AbstractRPGCharacter {
     }
 
     @Override
+    public void addCastable(Castable castable) {
+
+    }
+
+    @Override
+    public void removeCastable(Castable castable) {
+
+    }
+
+    @Override
     public Optional<? extends Castable> getCastableById(String id) {
         return Optional.empty();
     }
@@ -38,7 +48,6 @@ public class PlayerCharacter extends AbstractRPGCharacter {
 
     @Override
     public void cast(Castable castable) {
-
     }
 
     @Override

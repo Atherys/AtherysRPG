@@ -1,7 +1,7 @@
 package com.atherys.rpg.api.attribute;
 
-import com.atherys.rpg.api.Identifyable;
 import com.atherys.rpg.api.effect.Applyable;
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractData;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.text.TextRepresentable;
@@ -13,7 +13,7 @@ import org.spongepowered.api.text.TextRepresentable;
  *
  * @param <T> The event this Attribute will respond to
  */
-public interface Attribute<T extends Event> extends Identifyable, TextRepresentable {
+public interface Attribute<T extends Event> extends CatalogType, TextRepresentable {
 
     /**
      * Attaches this attribute to an {@link AttributeCarrier}

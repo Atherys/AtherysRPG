@@ -1,14 +1,14 @@
 package com.atherys.rpg.api.resource;
 
-import com.atherys.rpg.api.Identifyable;
 import com.atherys.rpg.api.character.RPGCharacter;
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.format.TextColor;
 
 /**
  * A Resource is a finite source which the {@link RPGCharacter} can tap into.
  */
-public interface Resource extends Identifyable, TextRepresentable {
+public interface Resource extends CatalogType, TextRepresentable {
 
     /**
      * Get the maximum amount of this Resource
