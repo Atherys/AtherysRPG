@@ -1,7 +1,6 @@
 package com.atherys.rpg.api.effect;
 
 import com.atherys.rpg.api.LivingRepresentable;
-import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.entity.living.Living;
 
 import java.util.Collection;
@@ -10,7 +9,7 @@ import java.util.Optional;
 /**
  * Represents a {@link Living} object which can carry and be effected by {@link Applyable}s.
  */
-public interface ApplyableCarrier extends CatalogType, LivingRepresentable {
+public interface ApplyableCarrier extends LivingRepresentable {
 
     /**
      * Get the list of effects currently being applied to this carrier

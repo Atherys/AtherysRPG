@@ -1,12 +1,12 @@
 package com.atherys.rpg.character;
 
 import com.atherys.rpg.api.character.AbstractRPGCharacter;
+import com.atherys.rpg.api.character.player.ProgressionTree;
 import com.atherys.rpg.api.resource.Resource;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.MouseButtonCombo;
-import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.player.Player;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,26 +14,6 @@ public class PlayerCharacter extends AbstractRPGCharacter {
     @Override
     public UUID getUUID() {
         return null;
-    }
-
-    @Override
-    public Collection<Castable> getCastables() {
-        return null;
-    }
-
-    @Override
-    public void addCastable(Castable castable) {
-
-    }
-
-    @Override
-    public void removeCastable(Castable castable) {
-
-    }
-
-    @Override
-    public Optional<? extends Castable> getCastableById(String id) {
-        return Optional.empty();
     }
 
     @Override
@@ -51,22 +31,17 @@ public class PlayerCharacter extends AbstractRPGCharacter {
     }
 
     @Override
-    public String getId() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public Optional<? extends Living> asLiving() {
+    public Optional<Player> asLiving() {
         return Optional.empty();
     }
 
     @Override
     public <T extends Resource> T getResource() {
         return null;
+    }
+
+    @Override
+    protected void applyMutations(ProgressionTree.Node node) {
+        node.getMutators().forEach(mutator -> mutator.mutate(this));
     }
 }

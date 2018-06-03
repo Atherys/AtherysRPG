@@ -1,12 +1,11 @@
 package com.atherys.rpg.api.skill;
 
 import com.atherys.rpg.api.LivingRepresentable;
-import org.spongepowered.api.CatalogType;
 
 import java.util.Collection;
 import java.util.Optional;
 
-public interface CastableCarrier extends CatalogType, LivingRepresentable {
+public interface CastableCarrier extends LivingRepresentable {
 
     Collection<Castable> getCastables();
 

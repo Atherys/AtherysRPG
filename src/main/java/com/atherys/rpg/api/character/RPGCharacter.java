@@ -1,6 +1,7 @@
 package com.atherys.rpg.api.character;
 
 import com.atherys.rpg.api.attribute.AttributeCarrier;
+import com.atherys.rpg.api.character.player.ProgressionTree;
 import com.atherys.rpg.api.effect.ApplyableCarrier;
 import com.atherys.rpg.api.resource.ResourceUser;
 import com.atherys.rpg.api.skill.CastableCarrier;
@@ -11,4 +12,5 @@ public interface RPGCharacter extends ApplyableCarrier, AttributeCarrier, Resour
 
     UUID getUUID();
 
+    void mutate(ProgressionTree.Node node);
 }

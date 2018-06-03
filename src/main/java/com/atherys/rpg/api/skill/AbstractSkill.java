@@ -1,17 +1,30 @@
 package com.atherys.rpg.api.skill;
 
-import com.atherys.rpg.skill.SkillProperties;
 import com.google.gson.annotations.Expose;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
+import java.util.Optional;
+
 public abstract class AbstractSkill implements Castable {
 
-    @Expose SkillProperties properties;
+    @Expose private CastableProperties properties;
 
     @Override
     public CastableProperties getProperties() {
         return properties;
+    }
+
+    protected Optional<?> getProperty(String id) {
+        return Optional.ofNullable(properties.get(id));
+    }
+
+    protected <T> Optional<T> getProperty(String id, Class<T> clazz) {
+        return properties.get(id, clazz);
+    }
+
+    public <T extends CastableProperties> void setProperties(T properties) {
+        this.properties = properties;
     }
 
     @Override

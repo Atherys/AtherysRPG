@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionTree.Node> {
+public class PlayerProgressionTree implements ProgressionTree<ProgressionTree.Node> {
 
     public static class Node implements ProgressionTree.Node {
 
@@ -17,7 +17,7 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
         private List<Mutator> mutators;
 
         private Node parent;
-        private List<Node> children;
+        private List<ProgressionTree.Node> children;
 
         @Override
         public Collection<Mutator> getMutators() {
@@ -30,7 +30,7 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
         }
 
         @Override
-        public List<Node> getChildren() {
+        public List<ProgressionTree.Node> getChildren() {
             return children;
         }
 
@@ -61,20 +61,20 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
     }
 
     @Override
-    public Node getRoot() {
+    public ProgressionTree.Node getRoot() {
         return root;
     }
 
     @Override
-    public Optional<Node> getNodeById(String id) {
+    public Optional<ProgressionTree.Node> getNodeById(String id) {
         return getNodeById(root, id);
     }
 
-    private Optional<Node> getNodeById(Node startingPoint, String id) {
+    private Optional<ProgressionTree.Node> getNodeById(ProgressionTree.Node startingPoint, String id) {
         if ( startingPoint.getId().equals(id) ) return Optional.of(startingPoint);
         else {
-            for ( Node node : startingPoint.getChildren() ) {
-                Optional<Node> nodeById = getNodeById(node, id);
+            for ( ProgressionTree.Node node : startingPoint.getChildren() ) {
+                Optional<ProgressionTree.Node> nodeById = getNodeById(node, id);
                 if ( nodeById.isPresent() ) return nodeById;
             }
             return Optional.empty();
