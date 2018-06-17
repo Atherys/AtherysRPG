@@ -1,8 +1,7 @@
 package com.atherys.rpg.api.attribute;
 
 import com.atherys.rpg.api.effect.Applyable;
-import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.data.manipulator.mutable.common.AbstractData;
+import com.atherys.rpg.api.util.SimpleIdentifiable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.text.TextRepresentable;
 
@@ -13,7 +12,7 @@ import org.spongepowered.api.text.TextRepresentable;
  *
  * @param <T> The event this Attribute will respond to
  */
-public interface Attribute<T extends Event> extends CatalogType, TextRepresentable {
+public interface Attribute<T extends Event> extends SimpleIdentifiable, TextRepresentable {
 
     /**
      * Attaches this attribute to an {@link AttributeCarrier}
@@ -27,7 +26,7 @@ public interface Attribute<T extends Event> extends CatalogType, TextRepresentab
      *
      * @param event The event this attribute is to be notified of
      */
-    void notify(T event);
+    void notify(T event, AttributeCarrier carrier);
 
     /**
      * Return the event class this attribute listens for. Is used in filtering out irrelevant events.
@@ -35,11 +34,4 @@ public interface Attribute<T extends Event> extends CatalogType, TextRepresentab
      * @return The class this Attribute listens for.
      */
     Class<T> getEventClass();
-
-    /**
-     * Get the Custom Data object responsible for persisting this Attribute on the player
-     *
-     * @return an AbstractData instance
-     */
-    AbstractData asData();
 }

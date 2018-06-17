@@ -1,7 +1,6 @@
-package com.atherys.rpg.character.tree;
+package com.atherys.rpg.api.character.player;
 
 import com.atherys.rpg.api.character.Mutator;
-import com.atherys.rpg.api.character.player.ProgressionTree;
 
 import java.util.Collection;
 import java.util.List;

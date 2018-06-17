@@ -1,7 +1,5 @@
-package com.atherys.rpg.skill;
+package com.atherys.rpg.api.skill;
 
-import com.atherys.rpg.api.skill.CastableProperties;
-import com.atherys.rpg.api.skill.MouseButtonCombo;
 import com.google.gson.annotations.Expose;
 import org.spongepowered.api.text.Text;
 
@@ -65,7 +63,7 @@ public class SkillProperties implements CastableProperties {
     }
 
     @Override
-    public SkillProperties mutate(CastableProperties parent) {
+    public SkillProperties inheritFrom(CastableProperties parent) {
         SkillProperties copy = this.copy();
         if ( copy.permission.isEmpty() ) copy.permission = parent.getPermission();
         if ( copy.cost == -1 ) copy.cost = parent.getResourceCost();

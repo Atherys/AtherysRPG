@@ -1,25 +1,37 @@
 package com.atherys.rpg.api.skill;
 
 import com.atherys.rpg.api.LivingRepresentable;
-import org.spongepowered.api.CatalogType;
 
-import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
-public interface CastableCarrier extends CatalogType, LivingRepresentable {
+public interface CastableCarrier extends LivingRepresentable {
 
-    Collection<Castable> getCastables();
+    Set<Castable> getCastables();
 
-    void addCastable(Castable castable);
+    default boolean hasCastable(Castable castable) {
+        return getCastables().contains(castable);
+    }
 
-    void removeCastable(Castable castable);
+    default boolean addCastable(Castable castable) {
+        return getCastables().add(castable);
+    }
 
-    Optional<? extends Castable> getCastableById(String id);
+    default boolean removeCastable(Castable castable) {
+        return getCastables().remove(castable);
+    }
 
-    Optional<? extends Castable> getCastableByCombo(MouseButtonCombo combo);
+    default Optional<? extends Castable> getCastableById(String id) {
+        for ( Castable castable : getCastables() ) if ( castable.getId().equals(id) ) return Optional.of(castable);
+        return Optional.empty();
+    }
 
-    Optional<MouseButtonCombo> getCurrentCombo();
+    CastResult cast(Castable castable, String... args);
 
-    void cast(Castable castable);
+    default CastResult castById(String castableId, String... args) {
+        Optional<? extends Castable> castable = getCastableById(castableId);
+        if ( castable.isPresent() ) return castable.get().cast(this, args);
+        else return CastResult.noSuchSkill();
+    }
 
 }

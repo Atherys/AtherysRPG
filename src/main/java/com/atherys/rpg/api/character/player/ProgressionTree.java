@@ -2,8 +2,7 @@ package com.atherys.rpg.api.character.player;
 
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.RPGCharacter;
-import com.atherys.rpg.character.tree.PlayerProgressionTree;
-import org.spongepowered.api.CatalogType;
+import com.atherys.rpg.api.util.SimpleIdentifiable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,12 +15,12 @@ import java.util.Optional;
  *
  * @param <T> The Node class
  */
-public interface ProgressionTree<T extends ProgressionTree.Node> extends CatalogType {
+public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleIdentifiable {
 
     /**
      * A node will mutate a Player RPGCharacter when they have reached it.
      */
-    interface Node extends CatalogType {
+    interface Node extends SimpleIdentifiable {
 
         /**
          * Retrieves all mutators of this node
@@ -68,15 +67,15 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends Catalog
     /**
      * Gets the root of this ProgressionTree
      *
-     * @return
+     * @return the root node
      */
     T getRoot();
 
     /**
-     * Retrieves a Node by its UUID
+     * Retrieves a Node by its id
      *
-     * @param id
-     * @return
+     * @param id the id to search for
+     * @return optional containing the node with this id
      */
     Optional<T> getNodeById(String id);
 

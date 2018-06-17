@@ -69,6 +69,10 @@ public class CastResult {
         return new CastResult(Text.of(TextColors.RED, "This skill is not functional yet."), false);
     }
 
+    public static CastResult noSuchSkill() {
+        return new CastResult(Text.of(TextColors.RED, "No such skill"), false);
+    }
+
     void feedback(CastableCarrier user) {
         user.asLiving().ifPresent(living -> {
             if (living instanceof Player && !message.isEmpty()) {

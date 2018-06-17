@@ -1,77 +1,59 @@
 package com.atherys.rpg.api.character;
 
 import com.atherys.rpg.api.attribute.Attribute;
+import com.atherys.rpg.api.character.player.ProgressionTree;
 import com.atherys.rpg.api.effect.Applyable;
-import org.spongepowered.api.data.manipulator.DataManipulator;
+import com.atherys.rpg.api.resource.Resource;
+import com.atherys.rpg.api.skill.Castable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class AbstractRPGCharacter implements RPGCharacter {
 
-    private Map<String, Applyable> effects = new HashMap<>();
 
-    @Override
-    public List<Attribute> getAttributes() {
-        List<Attribute> attributes = new ArrayList<>();
-        asLiving().ifPresent(living -> {
-            for (DataManipulator<?, ?> value : living.getContainers()) {
-                if (value instanceof Attribute) {
-                    attributes.add((Attribute) value);
-                }
-            }
-        });
-        return attributes;
+    protected Set<Applyable> effects = new HashSet<>();
+    protected Set<Attribute> attribs = new HashSet<>();
+    protected Set<Castable> skills = new HashSet<>();
+    protected Resource resource;
+
+    protected Set<ProgressionTree> trees;
+
+    protected AbstractRPGCharacter() {
     }
 
     @Override
-    public <T extends Attribute> void addAttribute(T attribute) {
-        // TODO: Create ListData of Attributes and retrieve/store to that instead for better performance
-        //asLiving().ifPresent(living -> living.offer(attribute));
+    public Set<Attribute> getAttributes() {
+        return attribs;
     }
 
     @Override
-    public Optional<? extends Attribute> getAttributeById(String id) {
-        for (Attribute attribute : getAttributes()) {
-            if (attribute.getId().equals(id)) return Optional.of(attribute);
-        }
-        return Optional.empty();
+    public Set<Applyable> getEffects() {
+        return effects;
     }
 
     @Override
-    public Collection<Applyable> getEffects() {
-        return effects.values();
+    public Set<Castable> getCastables() {
+        return skills;
     }
 
     @Override
-    public Optional<? extends Applyable> getAppliedEffectById(String id) {
-        return Optional.ofNullable(effects.get(id));
+    public Resource getResource() {
+        return resource;
     }
 
     @Override
-    public <T extends Applyable> boolean apply(T effect, long timestamp) {
-        if (getEffects().contains(effect)) return false;
-        if (effect.canApply(timestamp, this)) {
-            effect.apply(timestamp, this);
-            return true;
-        } else return false;
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     @Override
-    public <T extends Applyable> boolean remove(T effect, long timestamp) {
-        if (!getEffects().contains(effect)) return false;
-        if (effect.canRemove(timestamp, this)) {
-            effect.remove(this);
-            return true;
-        } else return false;
+    public Set<ProgressionTree> getTrees() {
+        return trees;
     }
 
     @Override
-    public void drainResource(double amount) {
-        getResource().drain(amount);
-    }
-
-    @Override
-    public void fillResource(double amount) {
-        getResource().fill(amount);
+    public void addTree(ProgressionTree tree) {
+        if ( trees.add(tree) ) tree.getRoot().mutate(this);
     }
 }

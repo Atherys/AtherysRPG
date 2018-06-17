@@ -10,20 +10,31 @@ public interface ResourceUser {
      *
      * @return
      */
-    <T extends Resource> T getResource();
+    Resource getResource();
+
+    /**
+     * Sets the resource this user is using
+     *
+     * @param resource the resource to be set
+     */
+    void setResource(Resource resource);
 
     /**
      * Drain this ResourceUser's resource by the specified amount
      *
      * @param amount
      */
-    void drainResource(double amount);
+    default void drainResource(double amount) {
+        getResource().drain(amount);
+    }
 
     /**
      * Fill this ResourceUser's resource by the specified amount
      *
      * @param amount
      */
-    void fillResource(double amount);
+    default void fillResource(double amount) {
+        getResource().fill(amount);
+    }
 
 }

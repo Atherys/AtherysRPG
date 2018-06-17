@@ -38,7 +38,7 @@ public interface CastableProperties {
      * @param parent The parent to copy properties from
      * @return The new, mutated instance
      */
-    CastableProperties mutate(CastableProperties parent);
+    CastableProperties inheritFrom(CastableProperties parent);
 
     @Nullable
     default Object get(String key) {
