@@ -1,4 +1,4 @@
-package com.atherys.rpg.api.character.player;
+package com.atherys.rpg.api.character.tree;
 
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.RPGCharacter;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A tree representing progression paths a player can take.
+ * A tree representing progression paths a tree can take.
  * This tree implements inheritance, meaning child nodes will inherit missing properties from their parents.
  *
  * @param <T> The Node class
@@ -41,7 +41,7 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
          *
          * @return The child-nodes
          */
-        List<PlayerProgressionTree.Node> getChildren();
+        List<? extends Node> getChildren();
 
         /**
          * Mutates the provided RPGCharacter with the data stored within this node.
@@ -52,7 +52,14 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
             getMutators().forEach(mutator -> mutator.mutate(character));
         }
 
-        default Collection<Node> getPath() {
+        /**
+         * Retrieve the depth within the tree this node sits
+         *
+         * @return The depth, where the tree root node is at depth 0, its children at 1 and so forth
+         */
+        int getDepth();
+
+        default Collection<? extends Node> getPath() {
             List<Node> path = new ArrayList<>();
             path.add(this);
 
@@ -77,6 +84,6 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
      * @param id the id to search for
      * @return optional containing the node with this id
      */
-    Optional<T> getNodeById(String id);
+    Optional<? extends Node> getNodeById(String id);
 
 }

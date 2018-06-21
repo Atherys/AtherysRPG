@@ -12,6 +12,7 @@ import java.util.UUID;
 public class PlayerCharacter extends AbstractRPGCharacter {
 
     protected PlayerCharacter() {
+        super();
     }
 
     @Override

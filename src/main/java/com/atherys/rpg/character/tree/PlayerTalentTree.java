@@ -1,6 +1,7 @@
-package com.atherys.rpg.api.character.player;
+package com.atherys.rpg.character.tree;
 
 import com.atherys.rpg.api.character.Mutator;
+import com.atherys.rpg.api.character.tree.ProgressionTree;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +35,11 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
         }
 
         @Override
+        public int getDepth() {
+            return parent == null ? 0 : parent.getDepth() + 1;
+        }
+
+        @Override
         public String getId() {
             return id;
         }
@@ -60,20 +66,20 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
     }
 
     @Override
-    public Node getRoot() {
+    public PlayerProgressionTree.Node getRoot() {
         return root;
     }
 
     @Override
-    public Optional<Node> getNodeById(String id) {
+    public Optional<ProgressionTree.Node> getNodeById(String id) {
         return getNodeById(root, id);
     }
 
-    private Optional<Node> getNodeById(Node startingPoint, String id) {
+    private Optional<ProgressionTree.Node> getNodeById(ProgressionTree.Node startingPoint, String id) {
         if ( startingPoint.getId().equals(id) ) return Optional.of(startingPoint);
         else {
-            for ( Node node : startingPoint.getChildren() ) {
-                Optional<Node> nodeById = getNodeById(node, id);
+            for ( ProgressionTree.Node node : startingPoint.getChildren() ) {
+                Optional<ProgressionTree.Node> nodeById = getNodeById(node, id);
                 if ( nodeById.isPresent() ) return nodeById;
             }
             return Optional.empty();
