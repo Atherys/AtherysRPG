@@ -6,8 +6,8 @@ import org.spongepowered.api.event.Event;
 import org.spongepowered.api.text.TextRepresentable;
 
 /**
- * An Attribute can be stored on to any DataHolder and will modify the game experience for the player
- * in a certain way based on incoming events relevant to that specific player. This differs from an {@link Applyable}
+ * An Attribute can be stored on to any DataHolder and will modify the game experience for the tree
+ * in a certain way based on incoming events relevant to that specific tree. This differs from an {@link Applyable}
  * as the effects here are meant to be more permanent and persisted across server restarts.
  *
  * @param <T> The event this Attribute will respond to

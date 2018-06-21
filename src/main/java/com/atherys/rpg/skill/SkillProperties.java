@@ -1,48 +1,54 @@
-package com.atherys.rpg.api.skill;
+package com.atherys.rpg.skill;
 
+import com.atherys.rpg.api.skill.CastableProperties;
+import com.atherys.rpg.api.skill.MouseButtonCombo;
+import com.atherys.rpg.utils.StringUtils;
 import com.google.gson.annotations.Expose;
-import org.spongepowered.api.text.Text;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SkillProperties implements CastableProperties {
-
-    @Expose private String permission = "";
-
-    @Expose private double cost = -1;
-    @Expose private long cooldown = -1;
-    @Expose private Text description = Text.EMPTY;
-    @Expose private MouseButtonCombo combo = MouseButtonCombo.EMPTY;
+public final class SkillProperties implements CastableProperties {
 
     @Expose private Map<String, Object> properties = new HashMap<>();
 
     public SkillProperties() {
     }
 
+    public static SkillProperties of(com.atherys.rpg.api.skill.annotation.SkillProperties annotation) {
+        SkillProperties properties = new SkillProperties();
+        properties
+                .setPermission(annotation.permission())
+                .setCombo(new MouseButtonCombo(annotation.combo()))
+                .setCooldown((long) (annotation.cooldown() * 1000L))
+                .setCost(annotation.cost());
+
+        return properties;
+    }
+
     @Override
     public String getPermission() {
-        return permission;
+        return (String) getOrDefault(PERMISSION, "");
     }
 
     @Override
     public double getResourceCost() {
-        return cost;
+        return (double) getOrDefault(COST, -1);
     }
 
     @Override
     public long getCooldown() {
-        return cooldown;
+        return (long) getOrDefault(COOLDOWN, -1);
     }
 
     @Override
     public MouseButtonCombo getCombo() {
-        return combo;
+        return (MouseButtonCombo) getOrDefault(MOUSE_COMBO, MouseButtonCombo.EMPTY);
     }
 
     @Override
-    public Text getDescription() {
-        return description;
+    public String getDescription() {
+        return StringUtils.format((String) properties.getOrDefault(DESCRIPTION, "No description available."), properties);
     }
 
     @Override
@@ -53,11 +59,6 @@ public class SkillProperties implements CastableProperties {
     @Override
     public SkillProperties copy() {
         SkillProperties properties = new SkillProperties();
-        properties.permission = this.permission;
-        properties.description = this.description;
-        properties.combo = this.combo;
-        properties.cooldown = this.cooldown;
-        properties.cost = this.cost;
         properties.properties = new HashMap<>(this.properties);
         return properties;
     }
@@ -65,15 +66,28 @@ public class SkillProperties implements CastableProperties {
     @Override
     public SkillProperties inheritFrom(CastableProperties parent) {
         SkillProperties copy = this.copy();
-        if ( copy.permission.isEmpty() ) copy.permission = parent.getPermission();
-        if ( copy.cost == -1 ) copy.cost = parent.getResourceCost();
-        if ( copy.cooldown == -1 ) copy.cooldown = parent.getCooldown();
-        if ( copy.combo.isEmpty() ) copy.combo = parent.getCombo();
-        if ( copy.description.isEmpty() ) copy.description = parent.getDescription();
-
         parent.getMeta().forEach((k,v) -> { if ( !copy.properties.containsKey(k) ) copy.properties.put(k, v); });
         return copy;
     }
 
+    protected SkillProperties setPermission(String permission) {
+        return set(PERMISSION, permission);
+    }
 
+    protected SkillProperties setCost(double cost) {
+        return set(COST, cost);
+    }
+
+    protected SkillProperties setCooldown(long cooldown) {
+        return set(COOLDOWN, cooldown);
+    }
+
+    protected SkillProperties setCombo(MouseButtonCombo combo) {
+        return set(MOUSE_COMBO, combo);
+    }
+
+    protected SkillProperties set(String key, Object value) {
+        properties.put(key, value);
+        return this;
+    }
 }

@@ -46,7 +46,7 @@ public class CastResult {
     }
 
     public static CastResult insufficientResources(Castable castable, Resource resource) {
-        return new CastResult(Text.of(TextColors.DARK_RED, castable.getName(), TextColors.RED, " requires ", resource.getColor(), castable.getProperties().getResourceCost(), " ", resource.getName()), false);
+        return new CastResult(Text.of("You do not have enough ", resource.getColor(), resource.getName(), TextColors.RESET, " to cast ", castable.getName()), false);
     }
 
     public static CastResult blocked(Castable castable) {
@@ -71,6 +71,10 @@ public class CastResult {
 
     public static CastResult noSuchSkill() {
         return new CastResult(Text.of(TextColors.RED, "No such skill"), false);
+    }
+
+    public static CastResult internalError() {
+        return new CastResult(Text.of(TextColors.DARK_RED, "An internal error occurred while casting this skill. Please report this."), false);
     }
 
     void feedback(CastableCarrier user) {

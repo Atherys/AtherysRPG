@@ -7,7 +7,7 @@ import org.spongepowered.api.item.ItemType;
 
 /**
  * A Mutator which will grand the RPG character the ability to equip items of the given ItemType in their main hand,
- * and will set the amount of damage the player will deal with them.
+ * and will set the amount of damage the tree will deal with them.
  */
 public class WeaponMutator implements Mutator {
 

@@ -3,6 +3,7 @@ package com.atherys.rpg.mutators;
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.skill.Castable;
+import com.atherys.rpg.api.skill.CastableProperties;
 import com.google.gson.annotations.Expose;
 
 /**
@@ -12,6 +13,8 @@ public class SkillMutator implements Mutator {
 
     @Expose private Castable castable;
 
+    @Expose private CastableProperties properties;
+
     public SkillMutator(Castable castable) {
         this.castable = castable;
     }
@@ -19,5 +22,6 @@ public class SkillMutator implements Mutator {
     @Override
     public void mutate(RPGCharacter character) {
         character.addCastable(castable);
+        character.setPropertiesFor(castable, properties);
     }
 }

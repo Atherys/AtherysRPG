@@ -1,43 +1,23 @@
 package com.atherys.rpg.character.tree;
 
 import com.atherys.rpg.api.character.Mutator;
-import com.atherys.rpg.api.character.tree.ProgressionTree;
+import com.atherys.rpg.api.character.tree.TalentTree;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
-public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionTree.Node> {
+public class PlayerTalentTree implements TalentTree {
 
-    public static class Node implements ProgressionTree.Node {
+    public static class Node implements TalentTree.Node {
 
         private String id;
         private String name;
 
-        private List<Mutator> mutators;
+        private Set<Mutator> mutators = new HashSet<>();
 
         private Node parent;
-        private List<Node> children;
-
-        @Override
-        public Collection<Mutator> getMutators() {
-            return mutators;
-        }
-
-        @Override
-        public Node getParent() {
-            return parent;
-        }
-
-        @Override
-        public List<Node> getChildren() {
-            return children;
-        }
-
-        @Override
-        public int getDepth() {
-            return parent == null ? 0 : parent.getDepth() + 1;
-        }
+        private Set<Node> children = new HashSet<>();
 
         @Override
         public String getId() {
@@ -47,6 +27,26 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public Set<Mutator> getMutators() {
+            return mutators;
+        }
+
+        @Override
+        public Node getParent() {
+            return parent;
+        }
+
+        @Override
+        public Set<? extends TalentTree.Node> getChildren() {
+            return children;
+        }
+
+        @Override
+        public int getDepth() {
+            return parent == null ? 0 : parent.getDepth() + 1;
         }
     }
 
@@ -66,20 +66,20 @@ public class PlayerProgressionTree implements ProgressionTree<PlayerProgressionT
     }
 
     @Override
-    public PlayerProgressionTree.Node getRoot() {
+    public TalentTree.Node getRoot() {
         return root;
     }
 
     @Override
-    public Optional<ProgressionTree.Node> getNodeById(String id) {
+    public Optional<TalentTree.Node> getNodeById(String id) {
         return getNodeById(root, id);
     }
 
-    private Optional<ProgressionTree.Node> getNodeById(ProgressionTree.Node startingPoint, String id) {
+    private Optional<TalentTree.Node> getNodeById(TalentTree.Node startingPoint, String id) {
         if ( startingPoint.getId().equals(id) ) return Optional.of(startingPoint);
         else {
-            for ( ProgressionTree.Node node : startingPoint.getChildren() ) {
-                Optional<ProgressionTree.Node> nodeById = getNodeById(node, id);
+            for ( TalentTree.Node node : startingPoint.getChildren() ) {
+                Optional<TalentTree.Node> nodeById = getNodeById(node, id);
                 if ( nodeById.isPresent() ) return nodeById;
             }
             return Optional.empty();

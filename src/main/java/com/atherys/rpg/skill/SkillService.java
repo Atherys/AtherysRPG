@@ -1,13 +1,15 @@
-package com.atherys.rpg.skill.service;
+package com.atherys.rpg.skill;
 
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.CastableCarrier;
+import com.atherys.rpg.api.skill.CastableProperties;
 import com.atherys.rpg.api.skill.annotation.MetaProperty;
 import com.atherys.rpg.api.skill.annotation.Skill;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class SkillService {
@@ -20,12 +22,16 @@ public class SkillService {
     }
 
     public boolean register(Castable castable) {
-
+        fillProperties(castable);
         return skills.add(castable);
     }
 
     public boolean unregister(Castable castable) {
         return skills.remove(castable);
+    }
+
+    public Optional<Castable> getById(String id) {
+        return skills.stream().filter(castable -> castable.getId().equals(id)).findFirst();
     }
 
     public CastResult cast(Castable castable, CastableCarrier castableCarrier, String... args) {
@@ -34,28 +40,40 @@ public class SkillService {
     }
 
     private void fillProperties(Castable castable) {
-        Skill skill;
-        skill.defaults().combo();
+        if (castable.getClass().isAnnotationPresent(Skill.class) && castable instanceof AbstractSkill) {
+
+            AbstractSkill skill = (AbstractSkill) castable;
+            Skill skillAnnotation = castable.getClass().getAnnotation(Skill.class);
+
+            skill.setId(skillAnnotation.id());
+            skill.setName(skillAnnotation.name());
+            skill.setDefaultProperties(SkillProperties.of(skillAnnotation.defaults()));
+        }
     }
 
     private void fillMetaProperties(Castable castable, CastableCarrier castableCarrier) {
-        for ( Field field : castable.getClass().getDeclaredFields() ) {
-            if ( field.isAnnotationPresent(MetaProperty.class) ) {
+        CastableProperties properties = castable.getProperties(castableCarrier);
 
-                MetaProperty propertyAnnotation = field.getAnnotation(MetaProperty.class);
-                Object property = castableCarrier.getProperty(castable, propertyAnnotation.value());
+        for (Field field : castable.getClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(MetaProperty.class)) {
+                try {
+                    boolean accessibility = field.isAccessible();
+                    field.setAccessible(true);
 
-                if ( !field.getDeclaringClass().isAssignableFrom(property.getClass()) ) {
-                    throw new PropertyClassMismatchException(castable, propertyAnnotation);
-                } else {
-                    try {
-                        boolean accessibility = field.isAccessible();
-                        field.setAccessible(true);
-                        field.set(castable, property);
-                        field.setAccessible(accessibility);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                    MetaProperty propertyAnnotation = field.getAnnotation(MetaProperty.class);
+                    Object property = properties.getOrDefault(propertyAnnotation.value(), field.get(castable));
+
+                    if (property != null) {
+                        if (!field.getDeclaringClass().isAssignableFrom(property.getClass())) {
+                            throw new PropertyClassMismatchException(castable, propertyAnnotation);
+                        } else {
+                            field.set(castable, property);
+                        }
                     }
+
+                    field.setAccessible(accessibility);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
             }
         }

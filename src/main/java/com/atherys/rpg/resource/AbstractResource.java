@@ -1,5 +1,6 @@
-package com.atherys.rpg.api.resource;
+package com.atherys.rpg.resource;
 
+import com.atherys.rpg.api.resource.Resource;
 import com.atherys.rpg.utils.MathUtils;
 import com.google.gson.annotations.Expose;
 import org.spongepowered.api.text.Text;

@@ -1,6 +1,5 @@
 package com.atherys.rpg.resource;
 
-import com.atherys.rpg.api.resource.AbstractResource;
 import org.spongepowered.api.text.format.TextColors;
 
 public class Rage extends AbstractResource {

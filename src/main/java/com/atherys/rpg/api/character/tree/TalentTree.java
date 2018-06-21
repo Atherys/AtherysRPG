@@ -4,21 +4,16 @@ import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.util.SimpleIdentifiable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A tree representing progression paths a tree can take.
  * This tree implements inheritance, meaning child nodes will inherit missing properties from their parents.
- *
- * @param <T> The Node class
  */
-public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleIdentifiable {
+public interface TalentTree extends SimpleIdentifiable {
 
     /**
-     * A node will mutate a Player RPGCharacter when they have reached it.
+     * A node will mutate an RPGCharacter when they have reached it.
      */
     interface Node extends SimpleIdentifiable {
 
@@ -27,7 +22,7 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
          *
          * @return The colleciton of mutator objects
          */
-        Collection<Mutator> getMutators();
+        Set<Mutator> getMutators();
 
         /**
          * Retrieves the parent of this node
@@ -41,7 +36,7 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
          *
          * @return The child-nodes
          */
-        List<? extends Node> getChildren();
+        Set<? extends Node> getChildren();
 
         /**
          * Mutates the provided RPGCharacter with the data stored within this node.
@@ -59,7 +54,7 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
          */
         int getDepth();
 
-        default Collection<? extends Node> getPath() {
+        default Collection<Node> getPath() {
             List<Node> path = new ArrayList<>();
             path.add(this);
 
@@ -76,7 +71,7 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
      *
      * @return the root node
      */
-    T getRoot();
+    Node getRoot();
 
     /**
      * Retrieves a Node by its id
@@ -84,6 +79,6 @@ public interface ProgressionTree<T extends ProgressionTree.Node> extends SimpleI
      * @param id the id to search for
      * @return optional containing the node with this id
      */
-    Optional<? extends Node> getNodeById(String id);
+    Optional<Node> getNodeById(String id);
 
 }

@@ -28,7 +28,8 @@ public final class MouseButtonCombo {
 
     @Expose private MouseButton[] combo = new MouseButton[0];
 
-    private MouseButtonCombo() {
+    public MouseButtonCombo(MouseButton... combo) {
+        this.combo = combo;
     }
 
     public MouseButtonCombo(MouseButton button1, MouseButton button2, MouseButton button3, MouseButton button4) {

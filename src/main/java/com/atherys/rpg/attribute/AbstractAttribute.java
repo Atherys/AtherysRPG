@@ -1,5 +1,7 @@
-package com.atherys.rpg.api.attribute;
+package com.atherys.rpg.attribute;
 
+import com.atherys.rpg.api.attribute.Attribute;
+import com.atherys.rpg.api.attribute.AttributeCarrier;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.util.Identifiable;
 

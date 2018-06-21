@@ -7,7 +7,7 @@ import org.spongepowered.api.item.ItemType;
 
 /**
  * A Mutator which will grand the RPG character the ability to equip items of the given ItemType in their armor slots,
- * and will set the amount of defense the player will receive from wearing them.
+ * and will set the amount of defense the tree will receive from wearing them.
  */
 public class ArmorMutator implements Mutator {
 
