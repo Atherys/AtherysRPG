@@ -27,5 +27,4 @@ public interface RPGCharacter extends ApplyableCarrier, AttributeCarrier, Resour
      * @param nodes The nodes to be set
      */
     void setSelectedNodesFromTree(TalentTree tree, Set<TalentTree.Node> nodes);
-
 }

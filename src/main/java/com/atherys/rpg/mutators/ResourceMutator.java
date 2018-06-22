@@ -16,6 +16,6 @@ public class ResourceMutator implements Mutator {
 
     @Override
     public void mutate(RPGCharacter character) {
-        character.setResource(resource);
+        character.setResource(resource.copy());
     }
 }

@@ -15,13 +15,13 @@ public class SkillMutator implements Mutator {
 
     @Expose private CastableProperties properties;
 
-    public SkillMutator(Castable castable) {
+    public SkillMutator(Castable castable, CastableProperties properties) {
         this.castable = castable;
+        this.properties = properties;
     }
 
     @Override
     public void mutate(RPGCharacter character) {
-        character.addCastable(castable);
-        character.setPropertiesFor(castable, properties);
+        character.putCastable(castable, properties);
     }
 }

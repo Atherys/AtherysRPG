@@ -6,6 +6,11 @@ import com.atherys.rpg.api.skill.CastableCarrier;
 import com.atherys.rpg.api.skill.CastableProperties;
 import com.atherys.rpg.api.skill.annotation.MetaProperty;
 import com.atherys.rpg.api.skill.annotation.Skill;
+import com.atherys.rpg.event.PostCastEvent;
+import com.atherys.rpg.event.PreCastEvent;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.player.Player;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -34,9 +39,29 @@ public class SkillService {
         return skills.stream().filter(castable -> castable.getId().equals(id)).findFirst();
     }
 
-    public CastResult cast(Castable castable, CastableCarrier castableCarrier, String... args) {
+    public CastResult cast(Castable castable, CastableCarrier castableCarrier, long timestamp, String... args) {
+        String permission = castable.getDefaultProperties().getPermission();
+
+        Optional<? extends Living> living = castableCarrier.asLiving();
+
+        if ( !living.isPresent() ) return CastResult.cancelled(castable);
+        else {
+            Living user = living.get();
+            if ( user instanceof Player && !((Player) user).hasPermission(permission) ) return CastResult.noPermission(castable);
+        }
+
+        PreCastEvent preCastEvent = new PreCastEvent(castableCarrier, castable, timestamp, args);
+        Sponge.getEventManager().post(preCastEvent);
+
+        if ( preCastEvent.isCancelled() ) return CastResult.cancelled(castable);
+
         fillMetaProperties(castable, castableCarrier);
-        return castable.cast(castableCarrier, args);
+        CastResult result = castable.cast(castableCarrier, timestamp, args);
+
+        PostCastEvent postCastEvent = new PostCastEvent(castableCarrier, castable, result, timestamp, args);
+        Sponge.getEventManager().post(postCastEvent);
+
+        return result;
     }
 
     private void fillProperties(Castable castable) {

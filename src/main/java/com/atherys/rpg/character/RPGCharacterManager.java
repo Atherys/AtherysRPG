@@ -3,10 +3,7 @@ package com.atherys.rpg.character;
 import com.atherys.rpg.api.character.RPGCharacter;
 import org.spongepowered.api.entity.living.player.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class RPGCharacterManager {
 
@@ -57,6 +54,10 @@ public class RPGCharacterManager {
         playerCharacter.setCachedPlayer(player);
         characters.put(player.getUniqueId(), playerCharacter);
         return playerCharacter;
+    }
+
+    public Collection<RPGCharacter> getAll() {
+        return characters.values();
     }
 
     public static RPGCharacterManager getInstance() {

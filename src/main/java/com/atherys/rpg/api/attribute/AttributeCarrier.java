@@ -20,7 +20,7 @@ public interface AttributeCarrier extends Identifiable {
      * @param attribute The attribute to test for
      * @return Whether or not the attribute was found.
      */
-    default <T extends Attribute> boolean hasAttribute(T attribute) {
+    default boolean hasAttribute(Attribute<?> attribute) {
         return getAttributes().contains(attribute);
     }
 
@@ -30,7 +30,7 @@ public interface AttributeCarrier extends Identifiable {
      * @param attribute The attribute to be added
      * @return Whether or not the attribute was successfully added.
      */
-    default <T extends Attribute> boolean addAttribute(T attribute) {
+    default boolean addAttribute(Attribute<?> attribute) {
         return getAttributes().add(attribute);
     }
 
@@ -40,7 +40,7 @@ public interface AttributeCarrier extends Identifiable {
      * @param attribute The attribute to be removed
      * @return Whether or not the attribute was successfully removed.
      */
-    default <T extends Attribute> boolean removeAttribute(T attribute) {
+    default boolean removeAttribute(Attribute<?> attribute) {
         return getAttributes().remove(attribute);
     }
 

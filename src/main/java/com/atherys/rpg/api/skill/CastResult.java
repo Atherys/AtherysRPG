@@ -77,6 +77,10 @@ public class CastResult {
         return new CastResult(Text.of(TextColors.DARK_RED, "An internal error occurred while casting this skill. Please report this."), false);
     }
 
+    public static CastResult noPermission(Castable castable) {
+        return new CastResult(Text.of(TextColors.RED, "You lack the permission required to use the skill ", castable.getName()), false);
+    }
+
     void feedback(CastableCarrier user) {
         user.asLiving().ifPresent(living -> {
             if (living instanceof Player && !message.isEmpty()) {

@@ -21,7 +21,8 @@ public final class SkillProperties implements CastableProperties {
                 .setPermission(annotation.permission())
                 .setCombo(new MouseButtonCombo(annotation.combo()))
                 .setCooldown((long) (annotation.cooldown() * 1000L))
-                .setCost(annotation.cost());
+                .setCost(annotation.cost())
+                .setDescription(annotation.description());
 
         return properties;
     }
@@ -84,6 +85,10 @@ public final class SkillProperties implements CastableProperties {
 
     protected SkillProperties setCombo(MouseButtonCombo combo) {
         return set(MOUSE_COMBO, combo);
+    }
+
+    protected SkillProperties setDescription(String description) {
+        return set(DESCRIPTION, description);
     }
 
     protected SkillProperties set(String key, Object value) {

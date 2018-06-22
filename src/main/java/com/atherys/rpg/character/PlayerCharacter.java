@@ -1,6 +1,5 @@
 package com.atherys.rpg.character;
 
-import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.MouseButtonCombo;
 import org.spongepowered.api.Sponge;
@@ -27,7 +26,8 @@ public class PlayerCharacter extends AbstractRPGCharacter {
     @Nullable
     public Player getCachedPlayer() {
         if ( player != null && !player.isRemoved() && player.isLoaded() && player.isOnline() ) return player;
-        else return getPlayer();
+        player = getPlayer();
+        return player;
     }
 
 
@@ -37,11 +37,6 @@ public class PlayerCharacter extends AbstractRPGCharacter {
 
     private Player getPlayer() {
         return Sponge.getServer().getOnlinePlayers().stream().filter(player -> player.getUniqueId().equals(this.getUniqueId())).findAny().orElse(null);
-    }
-
-    @Override
-    public CastResult cast(Castable castable, String... args) {
-        return super.cast(castable, args);
     }
 
     Optional<? extends Castable> getCastableByCombo(MouseButtonCombo combo) {

@@ -10,15 +10,15 @@ import com.google.gson.annotations.Expose;
  */
 public class AttributeMutator implements Mutator {
 
-    @Expose private Attribute attribute;
+    @Expose private Attribute<?> attribute;
 
-    public AttributeMutator(Attribute attribute) {
+    public AttributeMutator(Attribute<?> attribute) {
         this.attribute = attribute;
     }
 
 
     @Override
     public void mutate(RPGCharacter character) {
-        character.addAttribute(attribute);
+        character.addAttribute(attribute.copy());
     }
 }

@@ -29,7 +29,7 @@ public class FireballSkill extends AbstractSkill {
     int fireTicks = 40;
 
     @Override
-    public CastResult cast(CastableCarrier user, String... args) {
+    public CastResult cast(CastableCarrier user, long timestamp, String... args) {
         return CastResult.notImplemented();
     }
 }

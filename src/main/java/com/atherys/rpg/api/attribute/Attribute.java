@@ -1,5 +1,6 @@
 package com.atherys.rpg.api.attribute;
 
+import com.atherys.rpg.api.Copyable;
 import com.atherys.rpg.api.effect.Applyable;
 import com.atherys.rpg.api.util.SimpleIdentifiable;
 import org.spongepowered.api.event.Event;
@@ -12,7 +13,7 @@ import org.spongepowered.api.text.TextRepresentable;
  *
  * @param <T> The event this Attribute will respond to
  */
-public interface Attribute<T extends Event> extends SimpleIdentifiable, TextRepresentable {
+public interface Attribute<T extends Event> extends SimpleIdentifiable, TextRepresentable, Copyable<Attribute> {
 
     /**
      * Attaches this attribute to an {@link AttributeCarrier}

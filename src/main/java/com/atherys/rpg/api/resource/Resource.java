@@ -1,5 +1,6 @@
 package com.atherys.rpg.api.resource;
 
+import com.atherys.rpg.api.Copyable;
 import com.atherys.rpg.api.character.RPGCharacter;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.text.TextRepresentable;
@@ -8,7 +9,7 @@ import org.spongepowered.api.text.format.TextColor;
 /**
  * A Resource is a finite source which the {@link RPGCharacter} can tap into.
  */
-public interface Resource extends CatalogType, TextRepresentable {
+public interface Resource extends CatalogType, TextRepresentable, Copyable<Resource> {
 
     /**
      * Get the maximum amount of this Resource

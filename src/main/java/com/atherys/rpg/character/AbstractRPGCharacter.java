@@ -5,8 +5,10 @@ import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.character.tree.TalentTree;
 import com.atherys.rpg.api.effect.Applyable;
 import com.atherys.rpg.api.resource.Resource;
+import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.CastableProperties;
+import com.atherys.rpg.skill.SkillService;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -24,8 +26,30 @@ public abstract class AbstractRPGCharacter implements RPGCharacter {
 
     protected Map<TalentTree, Set<TalentTree.Node>> selectedNodes = new HashMap<>();
 
+    protected Map<Castable,Long> lastUsed = new HashMap<>();
+
     protected AbstractRPGCharacter(UUID uuid) {
         this.entityUUID = uuid;
+    }
+
+    @Override
+    @Nonnull
+    public UUID getUniqueId() {
+        return entityUUID;
+    }
+
+    @Override
+    public CastResult cast(Castable castable, long timestamp, String... args) {
+        Long cooldown = getProperty(castable, CastableProperties.COOLDOWN, Long.class);
+        Double cost = getProperty(castable, CastableProperties.COST, Double.class);
+
+        if ( lastUsed.containsKey(castable) && timestamp - lastUsed.get(castable) <= cooldown ) {
+            return CastResult.onCooldown(timestamp, castable, lastUsed.get(castable) + cooldown);
+        }
+
+        if ( resource.getCurrent() < cost ) return CastResult.insufficientResources(castable, resource);
+
+        return SkillService.getInstance().cast(castable, this, timestamp, args);
     }
 
     @Override
@@ -62,12 +86,6 @@ public abstract class AbstractRPGCharacter implements RPGCharacter {
     public void setSelectedNodesFromTree(TalentTree tree, Set<TalentTree.Node> nodes) {
         mutateWithNodesAtDepth(nodes, 0);
         selectedNodes.put(tree, nodes);
-    }
-
-    @Override
-    @Nonnull
-    public UUID getUniqueId() {
-        return entityUUID;
     }
 
     /**

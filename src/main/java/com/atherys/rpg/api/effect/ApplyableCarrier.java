@@ -25,7 +25,7 @@ public interface ApplyableCarrier extends LivingRepresentable {
      * @return The Applyable instance. An empty optional if none is found.
      */
     default Optional<? extends Applyable> getAppliedEffectById(String id) {
-        for ( Applyable applyable : getEffects() ) if ( applyable.getId().equals(id) ) return Optional.of(applyable);
+        for (Applyable applyable : getEffects()) if (applyable.getId().equals(id)) return Optional.of(applyable);
         return Optional.empty();
     }
 
@@ -47,7 +47,14 @@ public interface ApplyableCarrier extends LivingRepresentable {
      * @return Whether or not it was applied successfully
      */
     default <T extends Applyable> boolean applyEffect(T effect, long timestamp) {
-        return !hasEffect(effect) && effect.canApply(timestamp, this) && effect.apply(timestamp, this);
+        if (hasEffect(effect)) return false;
+        else {
+            if (effect.canApply(timestamp, this)) {
+                effect.apply(timestamp, this);
+                getEffects().add(effect);
+                return true;
+            } else return false;
+        }
     }
 
     /**
@@ -58,7 +65,14 @@ public interface ApplyableCarrier extends LivingRepresentable {
      * @return Whether or not it was removed successfully
      */
     default <T extends Applyable> boolean removeEffect(T effect, long timestamp) {
-        return hasEffect(effect) && effect.canRemove(timestamp, this) && effect.remove(timestamp, this);
+        if (!hasEffect(effect)) return false;
+        else {
+            if (effect.canRemove(timestamp, this)) {
+                effect.remove(timestamp, this);
+                getEffects().remove(effect);
+                return true;
+            } else return false;
+        }
     }
 
 }

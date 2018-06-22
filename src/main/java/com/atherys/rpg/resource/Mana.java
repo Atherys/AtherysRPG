@@ -1,5 +1,6 @@
 package com.atherys.rpg.resource;
 
+import com.atherys.rpg.api.resource.Resource;
 import org.spongepowered.api.text.format.TextColors;
 
 public class Mana extends AbstractResource {
@@ -12,6 +13,11 @@ public class Mana extends AbstractResource {
                 100.0d,
                 starting
         );
+    }
+
+    @Override
+    public Resource copy() {
+        return new Mana(getCurrent());
     }
 
 }

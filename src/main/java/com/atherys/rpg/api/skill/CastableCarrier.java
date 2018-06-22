@@ -1,7 +1,6 @@
 package com.atherys.rpg.api.skill;
 
 import com.atherys.rpg.api.LivingRepresentable;
-import com.atherys.rpg.skill.SkillService;
 
 import java.util.Map;
 import java.util.Optional;
@@ -27,9 +26,7 @@ public interface CastableCarrier extends LivingRepresentable {
      * @param args     arguments
      * @return a {@link CastResult}
      */
-    default CastResult cast(Castable castable, String... args) {
-        return SkillService.getInstance().cast(castable, this, args);
-    }
+    CastResult cast(Castable castable, long timestamp, String... args);
 
     /**
      * Checks whether or not this CastableCarrier contains the given Castable
@@ -89,7 +86,7 @@ public interface CastableCarrier extends LivingRepresentable {
      */
     default CastResult castById(String castableId, String... args) {
         Optional<? extends Castable> castable = getCastableById(castableId);
-        if (castable.isPresent()) return castable.get().cast(this, args);
+        if (castable.isPresent()) return castable.get().cast(this, System.currentTimeMillis(), args);
         else return CastResult.noSuchSkill();
     }
 

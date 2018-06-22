@@ -34,6 +34,18 @@ public abstract class AbstractSkill implements Castable {
         return Text.of(character.searchProperty(this, CastableProperties.DESCRIPTION, String.class).orElse("No description available."));
     }
 
+    protected void setId(String id) {
+        this.id = id;
+    }
+
+    protected void setName(String name) {
+        this.name = name;
+    }
+
+    protected void setDefaultProperties(SkillProperties defaults) {
+        this.defaults = defaults;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -45,17 +57,5 @@ public abstract class AbstractSkill implements Castable {
     @Override
     public int hashCode() {
         return Objects.hash(this.getId(), this.getName());
-    }
-
-    protected void setId(String id) {
-        this.id = id;
-    }
-
-    protected void setName(String name) {
-        this.name = name;
-    }
-
-    protected void setDefaultProperties(SkillProperties defaults) {
-        this.defaults = defaults;
     }
 }
