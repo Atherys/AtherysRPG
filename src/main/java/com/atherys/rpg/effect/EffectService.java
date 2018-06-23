@@ -3,7 +3,6 @@ package com.atherys.rpg.effect;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.effect.Applyable;
 import com.atherys.rpg.api.effect.ApplyableCarrier;
-import com.atherys.rpg.character.RPGCharacterManager;
 import org.spongepowered.api.scheduler.Task;
 
 public class EffectService {
@@ -23,7 +22,7 @@ public class EffectService {
     private void tick() {
         long timestamp = System.currentTimeMillis();
 
-        RPGCharacterManager.getInstance().getAll().forEach(character -> {
+        AtherysRPG.getCharacterManager().getAll().forEach(character -> {
             character.getEffects().forEach(effect -> tickEffect(timestamp, effect, character));
         });
     }

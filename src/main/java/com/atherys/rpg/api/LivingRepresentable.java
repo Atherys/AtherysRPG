@@ -28,6 +28,14 @@ public interface LivingRepresentable extends Identifiable {
         return asLiving().map(living -> living.maxHealth().get()).orElse(DEFAULT_MAX_HEALTH);
     }
 
+    default boolean setMaxHealth(double maxHealth) {
+        return asLiving()
+                .map(living ->
+                    living.offer(Keys.MAX_HEALTH, maxHealth).isSuccessful() &&
+                    living.offer(Keys.HEALTH_SCALE, DEFAULT_HEALTH_SCALE).isSuccessful()
+                ).orElse(false);
+    }
+
     default double getHealth() {
         return asLiving().map(living -> living.health().get()).orElse(DEFAULT_HEALTH);
     }

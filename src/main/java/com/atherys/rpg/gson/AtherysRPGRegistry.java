@@ -1,4 +1,13 @@
 package com.atherys.rpg.gson;
 
-public class AtherysRPGRegistry {
+import com.atherys.core.gson.TypeAdapterFactoryRegistry;
+
+public class AtherysRPGRegistry extends TypeAdapterFactoryRegistry {
+
+    private static AtherysRPGRegistry instance = new AtherysRPGRegistry();
+
+    public static AtherysRPGRegistry getInstance() {
+        return instance;
+    }
+
 }

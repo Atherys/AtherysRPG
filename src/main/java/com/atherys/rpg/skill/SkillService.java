@@ -1,5 +1,7 @@
 package com.atherys.rpg.skill;
 
+import com.atherys.core.utils.RuntimeTypeAdapterFactory;
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.CastableCarrier;
@@ -8,6 +10,7 @@ import com.atherys.rpg.api.skill.annotation.MetaProperty;
 import com.atherys.rpg.api.skill.annotation.Skill;
 import com.atherys.rpg.event.PostCastEvent;
 import com.atherys.rpg.event.PreCastEvent;
+import com.atherys.rpg.event.SkillRegistrationEvent;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
@@ -24,6 +27,14 @@ public class SkillService {
     private Set<Castable> skills = new HashSet<>();
 
     private SkillService() {
+    }
+
+    public void init() {
+        SkillRegistrationEvent event = new SkillRegistrationEvent(this);
+        Sponge.getEventManager().post(event);
+
+        AtherysRPG.getRegistry().add(Castable.class, RuntimeTypeAdapterFactory.of(Castable.class));
+        skills.forEach(castable -> AtherysRPG.getRegistry().registerSubtype(Castable.class, castable.getClass()));
     }
 
     public boolean register(Castable castable) {
@@ -60,6 +71,8 @@ public class SkillService {
 
         PostCastEvent postCastEvent = new PostCastEvent(castableCarrier, castable, result, timestamp, args);
         Sponge.getEventManager().post(postCastEvent);
+
+        AtherysRPG.getCooldownService().setOnGlobalCooldown(castableCarrier.getUniqueId(), timestamp);
 
         return result;
     }

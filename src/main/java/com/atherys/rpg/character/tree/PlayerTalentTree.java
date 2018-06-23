@@ -2,6 +2,7 @@ package com.atherys.rpg.character.tree;
 
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.tree.TalentTree;
+import com.google.gson.annotations.Expose;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -11,12 +12,19 @@ public class PlayerTalentTree implements TalentTree {
 
     public static class Node implements TalentTree.Node {
 
+        @Expose
         private String id;
+
+        @Expose
         private String name;
 
+        @Expose
         private Set<Mutator> mutators = new HashSet<>();
 
+        @Expose
         private Node parent;
+
+        @Expose
         private Set<Node> children = new HashSet<>();
 
         @Override
@@ -50,9 +58,13 @@ public class PlayerTalentTree implements TalentTree {
         }
     }
 
+    @Expose
     private String id;
+
+    @Expose
     private String name;
 
+    @Expose
     private Node root;
 
     @Override

@@ -19,7 +19,7 @@ public final class CooldownService {
      */
     private Map<UUID,Long> lastTimeUsedSkill = new HashMap<>();
 
-    private long globalCooldown = 500; // TODO: Get from config
+    private long globalCooldown = AtherysRPG.getConfig().GLOBAL_COOLDOWN;
 
     private CooldownService() {
         task = Task.builder()
@@ -47,6 +47,10 @@ public final class CooldownService {
 
     public boolean isOnGlobalCooldown(UUID uuid) {
         return lastTimeUsedSkill.containsKey(uuid);
+    }
+
+    public void setOnGlobalCooldown(UUID uuid, long timestamp) {
+        lastTimeUsedSkill.put(uuid, timestamp);
     }
 
     public static CooldownService getInstance() {

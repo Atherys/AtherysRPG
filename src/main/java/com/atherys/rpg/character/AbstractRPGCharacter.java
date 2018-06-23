@@ -1,5 +1,6 @@
 package com.atherys.rpg.character;
 
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.attribute.Attribute;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.character.tree.TalentTree;
@@ -8,7 +9,6 @@ import com.atherys.rpg.api.resource.Resource;
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.CastableProperties;
-import com.atherys.rpg.skill.SkillService;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -49,7 +49,7 @@ public abstract class AbstractRPGCharacter implements RPGCharacter {
 
         if ( resource.getCurrent() < cost ) return CastResult.insufficientResources(castable, resource);
 
-        return SkillService.getInstance().cast(castable, this, timestamp, args);
+        return AtherysRPG.getSkillService().cast(castable, this, timestamp, args);
     }
 
     @Override

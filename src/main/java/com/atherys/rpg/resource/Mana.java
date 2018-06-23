@@ -11,7 +11,8 @@ public class Mana extends AbstractResource {
                 "atherys:mana",
                 "Mana",
                 100.0d,
-                starting
+                starting,
+                5.0d
         );
     }
 

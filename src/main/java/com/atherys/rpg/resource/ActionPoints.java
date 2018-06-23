@@ -11,7 +11,8 @@ public class ActionPoints extends AbstractResource {
                 "atherys:action_points",
                 "Action Points",
                 100.0d,
-                starting
+                starting,
+                5.0d
         );
     }
 

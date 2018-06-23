@@ -1,5 +1,6 @@
 package com.atherys.rpg.api.character.tree;
 
+import com.atherys.core.views.Viewable;
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.util.SimpleIdentifiable;
@@ -10,7 +11,7 @@ import java.util.*;
  * A tree representing progression paths a tree can take.
  * This tree implements inheritance, meaning child nodes will inherit missing properties from their parents.
  */
-public interface TalentTree extends SimpleIdentifiable {
+public interface TalentTree extends SimpleIdentifiable, Viewable {
 
     /**
      * A node will mutate an RPGCharacter when they have reached it.

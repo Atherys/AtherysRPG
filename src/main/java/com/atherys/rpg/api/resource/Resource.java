@@ -2,14 +2,14 @@ package com.atherys.rpg.api.resource;
 
 import com.atherys.rpg.api.Copyable;
 import com.atherys.rpg.api.character.RPGCharacter;
-import org.spongepowered.api.CatalogType;
+import com.atherys.rpg.api.util.SimpleIdentifiable;
 import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.format.TextColor;
 
 /**
  * A Resource is a finite source which the {@link RPGCharacter} can tap into.
  */
-public interface Resource extends CatalogType, TextRepresentable, Copyable<Resource> {
+public interface Resource extends SimpleIdentifiable, TextRepresentable, Copyable<Resource> {
 
     /**
      * Get the maximum amount of this Resource
@@ -24,6 +24,13 @@ public interface Resource extends CatalogType, TextRepresentable, Copyable<Resou
      * @return
      */
     double getCurrent();
+
+    /**
+     * Retrieves the amount of regen per tick for this resource
+     *
+     * @return
+     */
+    double getRegen();
 
     /**
      * Decrease the current amount of this Resource by the specified quantity

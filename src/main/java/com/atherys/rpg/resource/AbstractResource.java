@@ -13,18 +13,22 @@ import org.spongepowered.api.text.format.TextColors;
  */
 public abstract class AbstractResource implements Resource {
 
-    @Expose private TextColor color;
     @Expose private String id;
     @Expose private String name;
+
+    @Expose private TextColor color;
     @Expose private double max;
     @Expose private double current;
+    @Expose private double regen;
 
-    protected AbstractResource(TextColor color, String id, String name, double max, double current) {
+
+    protected AbstractResource(TextColor color, String id, String name, double max, double current, double regen) {
         this.color = color;
         this.id = id;
         this.name = name;
         this.max = max;
         this.current = MathUtils.clamp(current, 0.0d, max);
+        this.regen = regen;
     }
 
     @Override
@@ -64,6 +68,11 @@ public abstract class AbstractResource implements Resource {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public double getRegen() {
+        return regen;
     }
 
     @Override

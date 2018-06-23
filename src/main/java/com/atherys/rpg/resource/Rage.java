@@ -11,7 +11,8 @@ public class Rage extends AbstractResource {
                 "atherys:rage",
                 "Rage",
                 100.0d,
-                starting
+                starting,
+                5.0d
         );
     }
 

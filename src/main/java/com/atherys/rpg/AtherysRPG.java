@@ -1,11 +1,195 @@
 package com.atherys.rpg;
 
+import com.atherys.core.utils.RuntimeTypeAdapterFactory;
+import com.atherys.rpg.api.character.Mutator;
+import com.atherys.rpg.api.resource.Resource;
+import com.atherys.rpg.character.RPGCharacterManager;
+import com.atherys.rpg.gson.AtherysRPGRegistry;
+import com.atherys.rpg.mutators.*;
+import com.atherys.rpg.resource.ActionPoints;
+import com.atherys.rpg.resource.Mana;
+import com.atherys.rpg.resource.Rage;
+import com.atherys.rpg.resource.ResourceService;
+import com.atherys.rpg.skill.CooldownService;
+import com.atherys.rpg.skill.SkillService;
+import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.plugin.Dependency;
+import org.spongepowered.api.plugin.Plugin;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static com.atherys.rpg.AtherysRPG.*;
+
+@Plugin(
+        id = ID,
+        name = NAME,
+        description = DESCRIPTION,
+        version = VERSION,
+        dependencies = {
+                @Dependency(id = "atheryscore")
+        }
+)
 public class AtherysRPG {
 
+    public static final String ID = "atherysrpg";
+    public static final String NAME = "AtherysRPG";
+    public static final String DESCRIPTION = "An RPG Plugin designed for the A'therys Horizons server.";
+    public static final String VERSION = "1.0.0a";
+
     private static AtherysRPG instance;
+    private static boolean init;
+
+    private RPGConfig config;
+
+    private AtherysRPGRegistry registry;
+
+    private SkillService skillService;
+    private CooldownService cooldownService;
+    private ResourceService resourceService;
+
+    private RPGCharacterManager characterManager;
+
+    @Inject
+    Logger logger;
+
+    private void init() {
+        instance = this;
+
+        try {
+            config = new RPGConfig();
+            config.init();
+        } catch (IOException e) {
+            e.printStackTrace();
+            init = false;
+            return;
+        }
+
+        if (config.IS_DEFAULT) {
+            logger.error("AtherysRPG config set to default. Plugin will halt. Please modify is-default in config.conf to 'false' once non-default values have been inserted.");
+            init = false;
+            return;
+        }
+
+        init = true;
+    }
+
+    private void start() {
+        registry = AtherysRPGRegistry.getInstance();
+
+        skillService = SkillService.getInstance();
+        skillService.init();
+
+        cooldownService = CooldownService.getInstance();
+
+        resourceService = ResourceService.getInstance();
+
+        characterManager = RPGCharacterManager.getInstance();
+
+        AtherysRPG.getRegistry().add(Mutator.class, RuntimeTypeAdapterFactory.of(Mutator.class));
+        AtherysRPG.getRegistry().registerSubtypes(Mutator.class, Arrays.asList(
+                ArmorMutator.class,
+                AttributeMutator.class,
+                DataMutator.class,
+                MaxHealthMutator.class,
+                ResourceMutator.class,
+                SkillMutator.class,
+                WeaponMutator.class
+        ));
+
+        AtherysRPG.getRegistry().add(Resource.class, RuntimeTypeAdapterFactory.of(Resource.class));
+        AtherysRPG.getRegistry().registerSubtypes(Resource.class, Arrays.asList(
+                ActionPoints.class,
+                Mana.class,
+                Rage.class
+        ));
+    }
+
+    private void stop() {
+
+    }
+
+    @Listener
+    private void onInit(GameInitializationEvent event) {
+        this.init();
+    }
+
+    @Listener
+    private void onStart(GameStartingServerEvent event) {
+        if (init) this.start();
+    }
+
+    @Listener
+    private void onStop(GameStoppingServerEvent event) {
+        if (init) this.stop();
+    }
+
+    public AtherysRPGRegistry registry() {
+        return registry;
+    }
+
+    public SkillService skillService() {
+        return skillService;
+    }
+
+    public CooldownService cooldownService() {
+        return cooldownService;
+    }
+
+    public ResourceService resourceService() {
+        return resourceService;
+    }
+
+    public RPGCharacterManager characterManager() {
+        return characterManager;
+    }
+
+    public Logger logger() {
+        return logger;
+    }
+
+    private RPGConfig config() {
+        return config;
+    }
+
+    String getWorkingDirectory() {
+        return "config/" + ID;
+    }
+
+    public static AtherysRPGRegistry getRegistry() {
+        return getInstance().registry();
+    }
+
+    public static SkillService getSkillService() {
+        return getInstance().skillService();
+    }
+
+    public static CooldownService getCooldownService() {
+        return getInstance().cooldownService();
+    }
+
+    public static ResourceService getResourceService() {
+        return getInstance().resourceService();
+    }
+
+    public static RPGCharacterManager getCharacterManager() {
+        return getInstance().characterManager();
+    }
+
+    public static Logger getLogger() {
+        return getInstance().logger();
+    }
+
+    public static RPGConfig getConfig() {
+        return getInstance().config();
+    }
 
     public static AtherysRPG getInstance() {
         return instance;
     }
-
 }
