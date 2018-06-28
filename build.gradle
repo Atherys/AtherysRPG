@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
     shadow 'org.spongepowered:spongeapi:7.0.0'
-    shadow 'com.github.Atherys-Horizons:AtherysCore:master-SNAPSHOT'
+    shadow 'com.github.Atherys-Horizons:AtherysCore:party-refactor-SNAPSHOT'
 }
 
 shadowJar {

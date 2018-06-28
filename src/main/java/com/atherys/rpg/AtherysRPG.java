@@ -3,6 +3,7 @@ package com.atherys.rpg;
 import com.atherys.core.utils.RuntimeTypeAdapterFactory;
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.resource.Resource;
+import com.atherys.rpg.attribute.AttributeService;
 import com.atherys.rpg.character.RPGCharacterManager;
 import com.atherys.rpg.gson.AtherysRPGRegistry;
 import com.atherys.rpg.mutators.*;
@@ -50,6 +51,7 @@ public class AtherysRPG {
     private AtherysRPGRegistry registry;
 
     private SkillService skillService;
+    private AttributeService attributeService;
     private CooldownService cooldownService;
     private ResourceService resourceService;
 
@@ -84,6 +86,8 @@ public class AtherysRPG {
 
         skillService = SkillService.getInstance();
         skillService.init();
+
+        attributeService = AttributeService.getInstance();
 
         cooldownService = CooldownService.getInstance();
 
@@ -137,6 +141,8 @@ public class AtherysRPG {
         return skillService;
     }
 
+    public AttributeService attributeService() { return attributeService; }
+
     public CooldownService cooldownService() {
         return cooldownService;
     }
@@ -168,6 +174,8 @@ public class AtherysRPG {
     public static SkillService getSkillService() {
         return getInstance().skillService();
     }
+
+    public static AttributeService getAttributeService() { return getInstance().attributeService(); }
 
     public static CooldownService getCooldownService() {
         return getInstance().cooldownService();

@@ -1,11 +1,12 @@
 package com.atherys.rpg.api.attribute;
 
+import com.atherys.rpg.api.LivingRepresentable;
 import org.spongepowered.api.util.Identifiable;
 
 import java.util.Optional;
 import java.util.Set;
 
-public interface AttributeCarrier extends Identifiable {
+public interface AttributeCarrier extends Identifiable, LivingRepresentable {
 
     /**
      * Retrieves all attributes carried by this AttributeCarrier.

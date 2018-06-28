@@ -30,6 +30,7 @@ public abstract class AbstractRPGCharacter implements RPGCharacter {
 
     protected AbstractRPGCharacter(UUID uuid) {
         this.entityUUID = uuid;
+        AtherysRPG.getAttributeService().populateDefaults(this);
     }
 
     @Override
