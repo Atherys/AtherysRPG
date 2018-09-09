@@ -22,7 +22,7 @@ public final class RPGResourceService implements ResourceService {
     }
 
     private void tick() {
-        AtherysRPG.getCharacterManager().getAll().forEach(character -> {
+        AtherysRPG.getPlayerCharacterManager().getOnline().forEach(character -> {
             ResourcePreRegenEvent preRegenEvent = new ResourcePreRegenEvent(character, character.getResource().getRegen());
             Sponge.getEventManager().post(preRegenEvent);
 

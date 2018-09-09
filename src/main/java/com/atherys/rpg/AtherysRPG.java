@@ -5,7 +5,8 @@ import com.atherys.rpg.api.*;
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.resource.Resource;
 import com.atherys.rpg.attribute.RPGAttributeService;
-import com.atherys.rpg.character.RPGCharacterManager;
+import com.atherys.rpg.character.PlayerCharacter;
+import com.atherys.rpg.character.RPGPlayerCharacterManager;
 import com.atherys.rpg.gson.AtherysRPGRegistry;
 import com.atherys.rpg.mutators.*;
 import com.atherys.rpg.resource.ActionPoints;
@@ -16,6 +17,7 @@ import com.atherys.rpg.skill.RPGCooldownService;
 import com.atherys.rpg.skill.RPGSkillService;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
@@ -56,7 +58,7 @@ public class AtherysRPG {
     private CooldownService cooldownService;
     private ResourceService resourceService;
 
-    private CharacterManager characterManager;
+    private CharacterManager<Player, PlayerCharacter> characterManager;
 
     @Inject
     Logger logger;
@@ -93,7 +95,7 @@ public class AtherysRPG {
 
         resourceService = RPGResourceService.getInstance();
 
-        characterManager = RPGCharacterManager.getInstance();
+        characterManager = RPGPlayerCharacterManager.getInstance();
 
         AtherysRPG.getRegistry().add(Mutator.class, RuntimeTypeAdapterFactory.of(Mutator.class));
         AtherysRPG.getRegistry().registerSubtypes(Mutator.class, Arrays.asList(
@@ -151,7 +153,7 @@ public class AtherysRPG {
         return resourceService;
     }
 
-    public CharacterManager characterManager() {
+    public CharacterManager<Player, PlayerCharacter> characterManager() {
         return characterManager;
     }
 
@@ -185,7 +187,7 @@ public class AtherysRPG {
         return getInstance().resourceService();
     }
 
-    public static CharacterManager getCharacterManager() {
+    public static CharacterManager<Player, PlayerCharacter> getPlayerCharacterManager() {
         return getInstance().characterManager();
     }
 
