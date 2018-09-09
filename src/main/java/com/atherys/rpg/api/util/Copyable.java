@@ -1,4 +1,4 @@
-package com.atherys.rpg.api;
+package com.atherys.rpg.api.util;
 
 public interface Copyable<T> {
 

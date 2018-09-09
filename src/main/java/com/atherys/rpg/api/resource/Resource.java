@@ -1,6 +1,6 @@
 package com.atherys.rpg.api.resource;
 
-import com.atherys.rpg.api.Copyable;
+import com.atherys.rpg.api.util.Copyable;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.util.SimpleIdentifiable;
 import org.spongepowered.api.text.TextRepresentable;

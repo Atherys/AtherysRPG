@@ -1,6 +1,7 @@
 package com.atherys.rpg.skill;
 
 import com.atherys.rpg.AtherysRPG;
+import com.atherys.rpg.api.CooldownService;
 import com.atherys.rpg.api.character.RPGCharacter;
 import org.spongepowered.api.scheduler.Task;
 
@@ -8,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class CooldownService {
+public final class RPGCooldownService implements CooldownService {
 
-    private static final CooldownService instance = new CooldownService();
+    private static final RPGCooldownService instance = new RPGCooldownService();
 
     private Task task;
 
@@ -21,7 +22,7 @@ public final class CooldownService {
 
     private long globalCooldown = AtherysRPG.getConfig().GLOBAL_COOLDOWN;
 
-    private CooldownService() {
+    private RPGCooldownService() {
         task = Task.builder()
                 .name("cooldown-service-task")
                 .delayTicks(1)
@@ -53,7 +54,7 @@ public final class CooldownService {
         lastTimeUsedSkill.put(uuid, timestamp);
     }
 
-    public static CooldownService getInstance() {
+    public static RPGCooldownService getInstance() {
         return instance;
     }
 

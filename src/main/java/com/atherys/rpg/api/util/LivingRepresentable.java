@@ -1,4 +1,4 @@
-package com.atherys.rpg.api;
+package com.atherys.rpg.api.util;
 
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.Living;

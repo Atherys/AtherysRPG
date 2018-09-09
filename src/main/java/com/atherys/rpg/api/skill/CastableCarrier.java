@@ -1,6 +1,6 @@
 package com.atherys.rpg.api.skill;
 
-import com.atherys.rpg.api.LivingRepresentable;
+import com.atherys.rpg.api.util.LivingRepresentable;
 
 import java.util.Map;
 import java.util.Optional;

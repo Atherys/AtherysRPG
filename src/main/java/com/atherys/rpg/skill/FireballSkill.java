@@ -3,6 +3,7 @@ package com.atherys.rpg.skill;
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.CastableCarrier;
 import com.atherys.rpg.api.skill.annotation.MetaProperty;
+import com.atherys.rpg.api.skill.annotation.MetaSetter;
 import com.atherys.rpg.api.skill.annotation.Skill;
 import com.atherys.rpg.api.skill.annotation.SkillProperties;
 
@@ -31,5 +32,15 @@ public class FireballSkill extends AbstractSkill {
     @Override
     public CastResult cast(CastableCarrier user, long timestamp, String... args) {
         return CastResult.notImplemented();
+    }
+
+    @MetaSetter("damage")
+    public void setDamage(double damage) {
+        this.damage = damage;
+    }
+
+    @MetaSetter("fireTicks")
+    public void setFireTicks(int fireTicks) {
+        this.fireTicks = fireTicks;
     }
 }

@@ -16,20 +16,18 @@ import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class SkillService {
+public class RPGSkillService implements com.atherys.rpg.api.SkillService {
 
-    private static SkillService instance = new SkillService();
+    private static RPGSkillService instance = new RPGSkillService();
 
     private Set<Castable> skills = new HashSet<>();
 
-    private SkillService() {
-    }
-
-    public void init() {
+    private RPGSkillService() {
         SkillRegistrationEvent event = new SkillRegistrationEvent(this);
         Sponge.getEventManager().post(event);
 
@@ -37,17 +35,24 @@ public class SkillService {
         skills.forEach(castable -> AtherysRPG.getRegistry().registerSubtype(Castable.class, castable.getClass()));
     }
 
-    public boolean register(Castable castable) {
-        fillProperties(castable);
-        return skills.add(castable);
-    }
-
-    public boolean unregister(Castable castable) {
-        return skills.remove(castable);
+    @Override
+    public Collection<Castable> getPrototypes() {
+        return null;
     }
 
     public Optional<Castable> getById(String id) {
         return skills.stream().filter(castable -> castable.getId().equals(id)).findFirst();
+    }
+
+    @Override
+    public boolean addPrototype(Castable castable) {
+        fillProperties(castable);
+        return skills.add(castable);
+    }
+
+    @Override
+    public boolean removePrototype(Castable castable) {
+        return skills.remove(castable);
     }
 
     public CastResult cast(Castable castable, CastableCarrier castableCarrier, long timestamp, String... args) {
@@ -117,7 +122,7 @@ public class SkillService {
         }
     }
 
-    public static SkillService getInstance() {
+    public static RPGSkillService getInstance() {
         return instance;
     }
 

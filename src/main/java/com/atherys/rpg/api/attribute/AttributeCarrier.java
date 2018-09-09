@@ -1,6 +1,6 @@
 package com.atherys.rpg.api.attribute;
 
-import com.atherys.rpg.api.LivingRepresentable;
+import com.atherys.rpg.api.util.LivingRepresentable;
 import org.spongepowered.api.util.Identifiable;
 
 import java.util.Optional;

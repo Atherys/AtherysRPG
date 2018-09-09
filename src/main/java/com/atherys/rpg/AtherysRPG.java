@@ -1,18 +1,19 @@
 package com.atherys.rpg;
 
 import com.atherys.core.utils.RuntimeTypeAdapterFactory;
+import com.atherys.rpg.api.*;
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.resource.Resource;
-import com.atherys.rpg.attribute.AttributeService;
+import com.atherys.rpg.attribute.RPGAttributeService;
 import com.atherys.rpg.character.RPGCharacterManager;
 import com.atherys.rpg.gson.AtherysRPGRegistry;
 import com.atherys.rpg.mutators.*;
 import com.atherys.rpg.resource.ActionPoints;
 import com.atherys.rpg.resource.Mana;
+import com.atherys.rpg.resource.RPGResourceService;
 import com.atherys.rpg.resource.Rage;
-import com.atherys.rpg.resource.ResourceService;
-import com.atherys.rpg.skill.CooldownService;
-import com.atherys.rpg.skill.SkillService;
+import com.atherys.rpg.skill.RPGCooldownService;
+import com.atherys.rpg.skill.RPGSkillService;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.spongepowered.api.event.Listener;
@@ -55,7 +56,7 @@ public class AtherysRPG {
     private CooldownService cooldownService;
     private ResourceService resourceService;
 
-    private RPGCharacterManager characterManager;
+    private CharacterManager characterManager;
 
     @Inject
     Logger logger;
@@ -84,14 +85,13 @@ public class AtherysRPG {
     private void start() {
         registry = AtherysRPGRegistry.getInstance();
 
-        skillService = SkillService.getInstance();
-        skillService.init();
+        skillService = RPGSkillService.getInstance();
 
-        attributeService = AttributeService.getInstance();
+        attributeService = RPGAttributeService.getInstance();
 
-        cooldownService = CooldownService.getInstance();
+        cooldownService = RPGCooldownService.getInstance();
 
-        resourceService = ResourceService.getInstance();
+        resourceService = RPGResourceService.getInstance();
 
         characterManager = RPGCharacterManager.getInstance();
 
@@ -151,7 +151,7 @@ public class AtherysRPG {
         return resourceService;
     }
 
-    public RPGCharacterManager characterManager() {
+    public CharacterManager characterManager() {
         return characterManager;
     }
 
@@ -185,7 +185,7 @@ public class AtherysRPG {
         return getInstance().resourceService();
     }
 
-    public static RPGCharacterManager getCharacterManager() {
+    public static CharacterManager getCharacterManager() {
         return getInstance().characterManager();
     }
 

@@ -1,6 +1,6 @@
 package com.atherys.rpg.api.effect;
 
-import com.atherys.rpg.api.LivingRepresentable;
+import com.atherys.rpg.api.util.LivingRepresentable;
 import org.spongepowered.api.entity.living.Living;
 
 import java.util.Optional;

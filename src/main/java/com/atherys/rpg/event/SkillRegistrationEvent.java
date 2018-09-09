@@ -1,6 +1,6 @@
 package com.atherys.rpg.event;
 
-import com.atherys.rpg.skill.SkillService;
+import com.atherys.rpg.api.SkillService;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
@@ -20,7 +20,7 @@ public final class SkillRegistrationEvent implements Event {
 
     @Override
     public Cause getCause() {
-        return null;
+        return cause;
     }
 
     public SkillService getSkillService() {

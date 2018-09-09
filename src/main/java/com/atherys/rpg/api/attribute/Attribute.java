@@ -1,6 +1,6 @@
 package com.atherys.rpg.api.attribute;
 
-import com.atherys.rpg.api.Copyable;
+import com.atherys.rpg.api.util.Copyable;
 import com.atherys.rpg.api.effect.Applyable;
 import com.atherys.rpg.api.util.SimpleIdentifiable;
 import org.spongepowered.api.event.Event;

@@ -1,18 +1,19 @@
 package com.atherys.rpg.resource;
 
 import com.atherys.rpg.AtherysRPG;
+import com.atherys.rpg.api.ResourceService;
 import com.atherys.rpg.event.ResourcePostRegenEvent;
 import com.atherys.rpg.event.ResourcePreRegenEvent;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.Task;
 
-public final class ResourceService {
+public final class RPGResourceService implements ResourceService {
 
-    private static ResourceService instance = new ResourceService();
+    private static RPGResourceService instance = new RPGResourceService();
 
     private Task task;
 
-    private ResourceService() {
+    private RPGResourceService() {
         task = Task.builder()
                 .name("resource-service-task")
                 .intervalTicks(AtherysRPG.getConfig().RESOURCE_REGEN_TICKS)
@@ -32,7 +33,7 @@ public final class ResourceService {
         });
     }
 
-    public static ResourceService getInstance() {
+    public static RPGResourceService getInstance() {
         return instance;
     }
 

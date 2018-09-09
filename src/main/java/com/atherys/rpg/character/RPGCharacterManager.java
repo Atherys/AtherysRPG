@@ -1,11 +1,12 @@
 package com.atherys.rpg.character;
 
+import com.atherys.rpg.api.CharacterManager;
 import com.atherys.rpg.api.character.RPGCharacter;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.*;
 
-public class RPGCharacterManager {
+public class RPGCharacterManager implements CharacterManager {
 
     private static RPGCharacterManager instance = new RPGCharacterManager();
 
