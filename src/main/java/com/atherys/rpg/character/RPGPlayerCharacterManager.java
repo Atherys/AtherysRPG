@@ -15,6 +15,13 @@ public class RPGPlayerCharacterManager implements CharacterManager<Player, Playe
 
     private RPGPlayerCharacterManager() {}
 
+    @Override
+    public Collection<PlayerCharacter> getOnline() {
+        List<PlayerCharacter> onlinePlayerCharacters = new ArrayList<>();
+        Sponge.getServer().getOnlinePlayers().forEach(player -> get(player).ifPresent(onlinePlayerCharacters::add));
+        return onlinePlayerCharacters;
+    }
+
     public RPGCharacter getOrCreatePlayer(UUID uuid) {
         return getPlayer(uuid).orElse(createPlayer(uuid));
     }
@@ -58,22 +65,6 @@ public class RPGPlayerCharacterManager implements CharacterManager<Player, Playe
         return playerCharacter;
     }
 
-    public static RPGPlayerCharacterManager getInstance() {
-        return instance;
-    }
-
-    @Override
-    public Collection<PlayerCharacter> getOnline() {
-        List<PlayerCharacter> onlinePlayerCharacters = new ArrayList<>();
-        Sponge.getServer().getOnlinePlayers().forEach(player -> get(player).ifPresent(onlinePlayerCharacters::add));
-        return onlinePlayerCharacters;
-    }
-
-    @Override
-    public PlayerCharacter getOrCreate(UUID uuid) {
-        return null;
-    }
-
     @Override
     public Optional<PlayerCharacter> get(UUID uuid) {
         return Optional.ofNullable(characters.get(uuid));
@@ -92,5 +83,9 @@ public class RPGPlayerCharacterManager implements CharacterManager<Player, Playe
         PlayerCharacter playerCharacter = new PlayerCharacter(uuid);
         characters.put(uuid, playerCharacter);
         return playerCharacter;
+    }
+
+    public static RPGPlayerCharacterManager getInstance() {
+        return instance;
     }
 }

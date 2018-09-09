@@ -16,7 +16,9 @@ public interface CharacterManager<T extends Living, V extends RPGCharacter> {
 
     Collection<V> getOnline();
 
-    V getOrCreate(UUID uuid);
+    default V getOrCreate(UUID uuid) {
+        return get(uuid).orElse(create(uuid));
+    }
 
     Optional<V> get(UUID uuid);
 
