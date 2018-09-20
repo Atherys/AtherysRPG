@@ -7,6 +7,7 @@ import com.atherys.rpg.api.resource.Resource;
 import com.atherys.rpg.attribute.RPGAttributeService;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.character.RPGPlayerCharacterManager;
+import com.atherys.rpg.db.RPGDatabase;
 import com.atherys.rpg.gson.AtherysRPGRegistry;
 import com.atherys.rpg.mutators.*;
 import com.atherys.rpg.resource.ActionPoints;
@@ -114,10 +115,13 @@ public class AtherysRPG {
                 Mana.class,
                 Rage.class
         ));
+
+        getPlayerCharacterManager().loadAll();
+
     }
 
     private void stop() {
-
+        getPlayerCharacterManager().saveAll();
     }
 
     @Listener
@@ -197,6 +201,10 @@ public class AtherysRPG {
 
     public static RPGConfig getConfig() {
         return getInstance().config();
+    }
+
+    public static RPGDatabase getDatabase() {
+        return RPGDatabase.getInstance();
     }
 
     public static AtherysRPG getInstance() {

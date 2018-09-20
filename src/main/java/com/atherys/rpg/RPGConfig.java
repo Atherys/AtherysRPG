@@ -1,11 +1,15 @@
 package com.atherys.rpg;
 
+import com.atherys.core.database.mongo.MongoDatabaseConfig;
 import com.atherys.core.utils.PluginConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 
 import java.io.IOException;
 
 public class RPGConfig extends PluginConfig {
+
+    @Setting("database")
+    public MongoDatabaseConfig DATABASE_CONFIG = new MongoDatabaseConfig();
 
     @Setting("is-default")
     public boolean IS_DEFAULT = true;

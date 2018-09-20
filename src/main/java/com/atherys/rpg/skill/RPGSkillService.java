@@ -71,7 +71,7 @@ public class RPGSkillService implements com.atherys.rpg.api.SkillService {
 
         if ( preCastEvent.isCancelled() ) return CastResult.cancelled(castable);
 
-        fillMetaProperties(castable, castableCarrier);
+        //fillMetaProperties(castable, castableCarrier); TODO
         CastResult result = castable.cast(castableCarrier, timestamp, args);
 
         PostCastEvent postCastEvent = new PostCastEvent(castableCarrier, castable, result, timestamp, args);
