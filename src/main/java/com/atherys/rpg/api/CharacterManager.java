@@ -1,5 +1,6 @@
 package com.atherys.rpg.api;
 
+import com.atherys.core.database.api.DatabaseManager;
 import com.atherys.rpg.api.character.RPGCharacter;
 import org.spongepowered.api.entity.living.Living;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
  * An example might be PlayerCharacterManager whose job would be to manage all RPGCharacter objects belonging to players.
  * @param <T>
  */
-public interface CharacterManager<T extends Living, V extends RPGCharacter> {
+public interface CharacterManager<T extends Living, V extends RPGCharacter> extends DatabaseManager<V> {
 
     Collection<V> getOnline();
 
@@ -35,5 +36,7 @@ public interface CharacterManager<T extends Living, V extends RPGCharacter> {
     default V create(T living) {
         return create(living.getUniqueId());
     }
+
+    void saveAll();
 
 }

@@ -114,10 +114,13 @@ public class AtherysRPG {
                 Mana.class,
                 Rage.class
         ));
+
+        getPlayerCharacterManager().loadAll();
+
     }
 
     private void stop() {
-
+        getPlayerCharacterManager().saveAll();
     }
 
     @Listener
@@ -197,6 +200,10 @@ public class AtherysRPG {
 
     public static RPGConfig getConfig() {
         return getInstance().config();
+    }
+
+    public static RPGDatabase getDatabase() {
+        return RPGDatabase.getInstance();
     }
 
     public static AtherysRPG getInstance() {

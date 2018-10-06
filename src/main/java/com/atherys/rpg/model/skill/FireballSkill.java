@@ -23,6 +23,9 @@ public class FireballSkill extends AbstractSkill {
 
     @Override
     public CastResult cast(CastableCarrier user, long timestamp, String... args) {
+        final Double damage = user.getProperty(this, "damage", Double.class);
+        final Integer fireTicks = user.getProperty(this, "fireTicks", Integer.class);
+
         return CastResult.notImplemented();
     }
 }
