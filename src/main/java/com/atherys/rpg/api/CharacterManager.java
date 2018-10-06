@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * A CharacterManager is responsible for handling all RPGCharacter objects relating to a type of Living
- * An example might be CharacterManager<Player> whose job would be to manage all RPGCharacter objects belonging to players.
+ * A CharacterManager is responsible for handling all RPGCharacter objects relating to a type of Living.
+ * An example might be PlayerCharacterManager whose job would be to manage all RPGCharacter objects belonging to players.
  * @param <T>
  */
 public interface CharacterManager<T extends Living, V extends RPGCharacter> {

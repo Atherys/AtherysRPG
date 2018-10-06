@@ -1,5 +1,6 @@
 package com.atherys.rpg.api.character;
 
+import com.atherys.core.database.api.DBObject;
 import com.atherys.rpg.api.attribute.AttributeCarrier;
 import com.atherys.rpg.api.character.tree.TalentTree;
 import com.atherys.rpg.api.effect.ApplyableCarrier;
@@ -8,7 +9,7 @@ import com.atherys.rpg.api.skill.CastableCarrier;
 
 import java.util.Set;
 
-public interface RPGCharacter extends ApplyableCarrier, AttributeCarrier, ResourceUser, CastableCarrier {
+public interface RPGCharacter extends ApplyableCarrier, AttributeCarrier, ResourceUser, CastableCarrier, DBObject {
 
     /**
      * Retrieves all nodes this RPGCharacter has selected from the given tree

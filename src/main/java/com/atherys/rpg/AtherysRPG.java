@@ -4,17 +4,17 @@ import com.atherys.core.utils.RuntimeTypeAdapterFactory;
 import com.atherys.rpg.api.*;
 import com.atherys.rpg.api.character.Mutator;
 import com.atherys.rpg.api.resource.Resource;
-import com.atherys.rpg.attribute.RPGAttributeService;
-import com.atherys.rpg.character.PlayerCharacter;
-import com.atherys.rpg.character.RPGPlayerCharacterManager;
+import com.atherys.rpg.service.RPGAttributeService;
+import com.atherys.rpg.model.character.PlayerCharacter;
+import com.atherys.rpg.persistence.RPGPlayerCharacterManager;
 import com.atherys.rpg.gson.AtherysRPGRegistry;
-import com.atherys.rpg.mutators.*;
-import com.atherys.rpg.resource.ActionPoints;
-import com.atherys.rpg.resource.Mana;
-import com.atherys.rpg.resource.RPGResourceService;
-import com.atherys.rpg.resource.Rage;
-import com.atherys.rpg.skill.RPGCooldownService;
-import com.atherys.rpg.skill.RPGSkillService;
+import com.atherys.rpg.model.mutators.*;
+import com.atherys.rpg.model.resource.ActionPoints;
+import com.atherys.rpg.model.resource.Mana;
+import com.atherys.rpg.service.RPGResourceService;
+import com.atherys.rpg.model.resource.Rage;
+import com.atherys.rpg.service.RPGCooldownService;
+import com.atherys.rpg.service.RPGSkillService;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.spongepowered.api.entity.living.player.Player;
@@ -121,17 +121,17 @@ public class AtherysRPG {
     }
 
     @Listener
-    private void onInit(GameInitializationEvent event) {
+    public void onInit(GameInitializationEvent event) {
         this.init();
     }
 
     @Listener
-    private void onStart(GameStartingServerEvent event) {
+    public void onStart(GameStartingServerEvent event) {
         if (init) this.start();
     }
 
     @Listener
-    private void onStop(GameStoppingServerEvent event) {
+    public void onStop(GameStoppingServerEvent event) {
         if (init) this.stop();
     }
 
