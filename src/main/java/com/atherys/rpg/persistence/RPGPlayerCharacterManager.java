@@ -13,8 +13,6 @@ public class RPGPlayerCharacterManager extends AbstractMongoDatabaseManager<Play
 
     private static RPGPlayerCharacterManager instance = new RPGPlayerCharacterManager();
 
-    private Map<UUID,PlayerCharacter> characters = new HashMap<>();
-
     protected RPGPlayerCharacterManager() {
         super(AtherysRPG.getLogger(), AtherysRPG.getDatabase(), PlayerCharacter.class);
     }
