@@ -21,7 +21,7 @@ public interface TalentTree extends SimpleIdentifiable, Viewable {
         /**
          * Retrieves all mutators of this node
          *
-         * @return The colleciton of mutator objects
+         * @return The collection of mutator objects
          */
         Set<Mutator> getMutators();
 

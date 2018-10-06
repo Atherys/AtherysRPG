@@ -2,7 +2,7 @@ package com.atherys.rpg.listener;
 
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.model.character.PlayerCharacter;
-import com.atherys.rpg.model.skill.FireballSkill;
+import com.atherys.rpg.model.skill.DummySkill;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.Root;
@@ -12,11 +12,11 @@ public class PlayerListener {
 
     @Listener
     public void onPlayerJoin(ClientConnectionEvent.Join event, @Root Player player) {
-
-        AtherysRPG.getSkillService().addPrototype(new FireballSkill());
+        DummySkill dummySkill = new DummySkill();
+        AtherysRPG.getSkillService().addPrototype(dummySkill);
 
         PlayerCharacter playerCharacter = AtherysRPG.getPlayerCharacterManager().getOrCreate(player);
-        playerCharacter.addCastable(new FireballSkill());
+        playerCharacter.addCastable(dummySkill);
     }
 
 }
