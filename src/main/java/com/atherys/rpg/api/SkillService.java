@@ -1,5 +1,6 @@
 package com.atherys.rpg.api;
 
+import com.atherys.rpg.api.exception.CastException;
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.CastableCarrier;
@@ -17,6 +18,6 @@ public interface SkillService {
 
     boolean removePrototype(Castable castable);
 
-    CastResult cast(Castable castable, CastableCarrier castableCarrier, long timestamp, String... args);
+    CastResult cast(Castable castable, CastableCarrier castableCarrier, long timestamp, String... args) throws CastException;
 
 }

@@ -1,5 +1,6 @@
 package com.atherys.rpg.api.skill;
 
+import com.atherys.rpg.api.exception.CastException;
 import com.atherys.rpg.api.util.LivingRepresentable;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ public interface CastableCarrier extends LivingRepresentable {
      * @param args     arguments
      * @return a {@link CastResult}
      */
-    CastResult cast(Castable castable, long timestamp, String... args);
+    CastResult cast(Castable castable, long timestamp, String... args) throws CastException;
 
     /**
      * Checks whether or not this CastableCarrier contains the given Castable
@@ -82,12 +83,17 @@ public interface CastableCarrier extends LivingRepresentable {
      *
      * @param castableId the id of the castable to be searched for and cast, if found
      * @param args       the args to be passed on
-     * @return {@link CastResult#noSuchSkill()} if no castable with that id was found
+     * @return A {@link CastResult}
+     * @throws CastException {@link CastErrors#noSuchSkill()} if no castable with that id was found
      */
-    default CastResult castById(String castableId, String... args) {
+    default CastResult castById(String castableId, String... args) throws CastException {
         Optional<? extends Castable> castable = getCastableById(castableId);
-        if (castable.isPresent()) return castable.get().cast(this, System.currentTimeMillis(), args);
-        else return CastResult.noSuchSkill();
+
+        if (castable.isPresent()) {
+            return castable.get().cast(this, System.currentTimeMillis(), args);
+        } else {
+            throw CastErrors.noSuchSkill();
+        }
     }
 
     /**

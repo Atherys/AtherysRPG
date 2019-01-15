@@ -1,5 +1,7 @@
 package com.atherys.rpg.model.skill;
 
+import com.atherys.rpg.api.exception.CastException;
+import com.atherys.rpg.api.skill.CastErrors;
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.CastableCarrier;
 import com.atherys.rpg.api.skill.annotation.Skill;
@@ -22,10 +24,10 @@ import static com.atherys.rpg.api.skill.MouseButtonCombo.MouseButton.RIGHT;
 public class FireballSkill extends AbstractSkill {
 
     @Override
-    public CastResult cast(CastableCarrier user, long timestamp, String... args) {
+    public CastResult cast(CastableCarrier user, long timestamp, String... args) throws CastException {
         final Double damage = user.getProperty(this, "damage", Double.class);
         final Integer fireTicks = user.getProperty(this, "fireTicks", Integer.class);
 
-        return CastResult.notImplemented();
+        throw CastErrors.notImplemented();
     }
 }

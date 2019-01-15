@@ -5,7 +5,9 @@ import com.atherys.rpg.api.attribute.Attribute;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.character.tree.TalentTree;
 import com.atherys.rpg.api.effect.Applyable;
+import com.atherys.rpg.api.exception.CastException;
 import com.atherys.rpg.api.resource.Resource;
+import com.atherys.rpg.api.skill.CastErrors;
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.CastableProperties;
@@ -40,15 +42,17 @@ public abstract class AbstractRPGCharacter implements RPGCharacter {
     }
 
     @Override
-    public CastResult cast(Castable castable, long timestamp, String... args) {
+    public CastResult cast(Castable castable, long timestamp, String... args) throws CastException {
         Long cooldown = getProperty(castable, CastableProperties.COOLDOWN, Long.class);
         Double cost = getProperty(castable, CastableProperties.COST, Double.class);
 
         if ( lastUsed.containsKey(castable) && timestamp - lastUsed.get(castable) <= cooldown ) {
-            return CastResult.onCooldown(timestamp, castable, lastUsed.get(castable) + cooldown);
+            throw CastErrors.onCooldown(timestamp, castable, lastUsed.get(castable) + cooldown);
         }
 
-        if ( resource.getCurrent() < cost ) return CastResult.insufficientResources(castable, resource);
+        if ( resource.getCurrent() < cost ) {
+            throw CastErrors.insufficientResources(castable, resource);
+        }
 
         return AtherysRPG.getSkillService().cast(castable, this, timestamp, args);
     }

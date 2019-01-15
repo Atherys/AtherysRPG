@@ -2,6 +2,8 @@ package com.atherys.rpg.service;
 
 import com.atherys.core.utils.RuntimeTypeAdapterFactory;
 import com.atherys.rpg.AtherysRPG;
+import com.atherys.rpg.api.exception.CastException;
+import com.atherys.rpg.api.skill.CastErrors;
 import com.atherys.rpg.api.skill.CastResult;
 import com.atherys.rpg.api.skill.Castable;
 import com.atherys.rpg.api.skill.CastableCarrier;
@@ -53,21 +55,28 @@ public class RPGSkillService implements com.atherys.rpg.api.SkillService {
         return skills.remove(castable);
     }
 
-    public CastResult cast(Castable castable, CastableCarrier castableCarrier, long timestamp, String... args) {
+    @Override
+    public CastResult cast(Castable castable, CastableCarrier castableCarrier, long timestamp, String... args) throws CastException {
         String permission = castable.getDefaultProperties().getPermission();
 
         Optional<? extends Living> living = castableCarrier.asLiving();
 
-        if ( !living.isPresent() ) return CastResult.cancelled(castable);
+        if ( !living.isPresent() ) {
+            throw CastErrors.cancelled(castable);
+        }
         else {
             Living user = living.get();
-            if ( user instanceof Player && !((Player) user).hasPermission(permission) ) return CastResult.noPermission(castable);
+            if ( user instanceof Player && !((Player) user).hasPermission(permission) ) {
+                throw CastErrors.noPermission(castable);
+            }
         }
 
         CastEvent.Pre preCastEvent = new CastEvent.Pre(castableCarrier, castable, timestamp, args);
         Sponge.getEventManager().post(preCastEvent);
 
-        if ( preCastEvent.isCancelled() ) return CastResult.cancelled(castable);
+        if ( preCastEvent.isCancelled() ) {
+            throw CastErrors.cancelled(castable);
+        }
 
         //fillMetaProperties(castable, castableCarrier);
         CastResult result = castable.cast(castableCarrier, timestamp, args);

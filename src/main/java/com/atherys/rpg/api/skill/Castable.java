@@ -1,6 +1,7 @@
 package com.atherys.rpg.api.skill;
 
 import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.exception.CastException;
 import com.atherys.rpg.api.util.SimpleIdentifiable;
 import org.spongepowered.api.text.Text;
 
@@ -17,7 +18,7 @@ public interface Castable extends SimpleIdentifiable {
      * @param args The arguments
      * @return A {@link CastResult}
      */
-    CastResult cast(CastableCarrier user, long timestamp, String... args);
+    CastResult cast(CastableCarrier user, long timestamp, String... args) throws CastException;
 
     /**
      * Retrieves the default properties of this skill
