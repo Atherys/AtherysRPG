@@ -1,10 +1,13 @@
 package com.atherys.rpg;
 
+import com.atherys.core.AtherysCore;
+import com.atherys.core.command.CommandService;
 import com.atherys.core.event.AtherysHibernateConfigurationEvent;
 import com.atherys.core.event.AtherysHibernateInitializedEvent;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.character.PlayerCharacter;
+import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.listener.DamageListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
@@ -54,6 +57,14 @@ public class AtherysRPG {
 
         Injector rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
         rpgInjector.injectMembers(components);
+
+        getConfig().init();
+
+        try {
+            AtherysCore.getCommandService().register(new AttributesCommand(), this);
+        } catch (CommandService.AnnotatedCommandException e) {
+            e.printStackTrace();
+        }
     }
 
     private void start() {

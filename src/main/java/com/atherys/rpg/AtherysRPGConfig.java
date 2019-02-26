@@ -102,6 +102,6 @@ public class AtherysRPGConfig extends PluginConfig {
     }
 
     protected AtherysRPGConfig() throws IOException {
-        super("/config/atherysrpg", "config.conf");
+        super("config/atherysrpg", "config.conf");
     }
 }

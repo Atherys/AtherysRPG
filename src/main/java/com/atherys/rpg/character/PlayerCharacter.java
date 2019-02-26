@@ -2,11 +2,15 @@ package com.atherys.rpg.character;
 
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
+import com.atherys.rpg.repository.converter.AttributeTypeConverter;
 import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Entity
 public class PlayerCharacter implements RPGCharacter<Player> {
@@ -17,6 +21,7 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @Transient
     private Player entity;
 
+    @Convert(attributeName = "key.", converter = AttributeTypeConverter.class)
     @ElementCollection
     @MapKeyColumn(name = "attribute_type")
     @Column(name = "value")
