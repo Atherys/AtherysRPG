@@ -1,7 +1,7 @@
 package com.atherys.rpg.character;
 
 import com.atherys.rpg.api.character.RPGCharacter;
-import com.atherys.rpg.api.stat.Attribute;
+import com.atherys.rpg.api.stat.AttributeType;
 import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
@@ -9,10 +9,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class PlayerCharacter implements RPGCharacter<Player> {
@@ -24,9 +21,9 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     private Player entity;
 
     @ElementCollection // TODO
-    private Set<Attribute> attributes = new HashSet<>();
+    private Map<AttributeType, Double> attributes = new HashMap<>();
 
-    public PlayerCharacter(Player entity, Set<Attribute> attributes) {
+    public PlayerCharacter(Player entity, Map<AttributeType, Double> attributes) {
         this.id = entity.getUniqueId();
         this.entity = entity;
         this.attributes = attributes;
@@ -48,11 +45,11 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     }
 
     @Override
-    public Set<Attribute> getAttributes() {
+    public Map<AttributeType, Double> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Set<Attribute> attributes) {
+    public void setAttributes(Map<AttributeType, Double> attributes) {
         this.attributes = attributes;
     }
 

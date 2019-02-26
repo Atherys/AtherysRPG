@@ -3,70 +3,70 @@ package com.atherys.rpg;
 import com.atherys.core.utils.PluginConfig;
 import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypes;
-import com.atherys.rpg.api.stat.Attribute;
+import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypes;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
+import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Singleton
 public class AtherysRPGConfig extends PluginConfig {
 
-    @Setting
-    public Map<ItemType, AtherysDamageType> MELEE_ITEM_DAMAGE_TYPES = new HashMap<>();
+    @Setting("item-damage-types")
+    public Map<ItemType, AtherysDamageType> ITEM_DAMAGE_TYPES = new HashMap<>();
     {
         // Wood
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_HOE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SHOVEL, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_PICKAXE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_AXE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SWORD, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_HOE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SHOVEL, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_PICKAXE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_AXE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SWORD, AtherysDamageTypes.BLUNT);
 
         // Stone
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_HOE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SHOVEL, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_PICKAXE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_AXE, AtherysDamageTypes.SLASH);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SWORD, AtherysDamageTypes.SLASH);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_HOE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SHOVEL, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_PICKAXE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_AXE, AtherysDamageTypes.SLASH);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SWORD, AtherysDamageTypes.SLASH);
 
         // Iron
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_HOE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SHOVEL, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_PICKAXE, AtherysDamageTypes.STAB);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_AXE, AtherysDamageTypes.SLASH);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SWORD, AtherysDamageTypes.STAB);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_HOE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SHOVEL, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_PICKAXE, AtherysDamageTypes.STAB);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_AXE, AtherysDamageTypes.SLASH);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SWORD, AtherysDamageTypes.STAB);
 
         // Gold
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_HOE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SHOVEL, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_PICKAXE, AtherysDamageTypes.STAB);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_AXE, AtherysDamageTypes.SLASH);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SWORD, AtherysDamageTypes.STAB);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_HOE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SHOVEL, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_PICKAXE, AtherysDamageTypes.STAB);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_AXE, AtherysDamageTypes.SLASH);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SWORD, AtherysDamageTypes.STAB);
 
         // Diamond
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_HOE, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SHOVEL, AtherysDamageTypes.BLUNT);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_PICKAXE, AtherysDamageTypes.STAB);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_AXE, AtherysDamageTypes.SLASH);
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SWORD, AtherysDamageTypes.STAB);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_HOE, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SHOVEL, AtherysDamageTypes.BLUNT);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_PICKAXE, AtherysDamageTypes.STAB);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_AXE, AtherysDamageTypes.SLASH);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SWORD, AtherysDamageTypes.STAB);
 
         // Hand
-        MELEE_ITEM_DAMAGE_TYPES.put(ItemTypes.NONE, AtherysDamageTypes.UNARMED);
+        ITEM_DAMAGE_TYPES.put(ItemTypes.NONE, AtherysDamageTypes.UNARMED);
     }
 
-    @Setting
-    public Map<ItemType, AtherysDamageType> RANGED_ITEM_DAMAGE_TYPES = new HashMap<>();
+    @Setting("projectile-damage-types")
+    public Map<EntityType, AtherysDamageType> PROJECTILE_DAMAGE_TYPES = new HashMap<>();
     {
         // Bow
-        RANGED_ITEM_DAMAGE_TYPES.put(ItemTypes.BOW, AtherysDamageTypes.PIERCE);
+        PROJECTILE_DAMAGE_TYPES.put(EntityTypes.TIPPED_ARROW, AtherysDamageTypes.PIERCE);
     }
 
     @Setting("damage-calculations")
@@ -87,18 +87,18 @@ public class AtherysRPGConfig extends PluginConfig {
     public String RESOURCE_REGEN_CALCULATION = "1.33 * ${target.wisdom}";
 
     @Setting("default-attributes")
-    public Set<Attribute> DEFAULT_ATTRIBUTES = new HashSet<>();
+    public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
     {
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.STRENGTH, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.CONSTITUTION, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.DEFENSE, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.AGILITY, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.INTELLIGENCE, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.CHARISMA, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.WISDOM, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.WILLPOWER, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.PERCEPTION, 1.0d));
-        DEFAULT_ATTRIBUTES.add(new Attribute(AttributeTypes.LUCK, 1.0d));
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.STRENGTH, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.CONSTITUTION, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.DEFENSE, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.AGILITY, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.INTELLIGENCE, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.CHARISMA, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.WISDOM, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.WILLPOWER, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.PERCEPTION, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.LUCK, 1.0d);
     }
 
     protected AtherysRPGConfig() throws IOException {

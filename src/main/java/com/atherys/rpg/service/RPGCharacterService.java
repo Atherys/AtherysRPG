@@ -2,6 +2,7 @@ package com.atherys.rpg.service;
 
 import com.atherys.rpg.AtherysRPGConfig;
 import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.character.SimpleCharacter;
@@ -9,6 +10,8 @@ import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.entity.ArmorEquipable;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -37,6 +40,10 @@ public class RPGCharacterService {
     }
 
     public RPGCharacter<? extends Living> getOrCreateCharacter(Living living) {
+        if (living instanceof Player) {
+            return getOrCreateCharacter((Player) living);
+        }
+
         RPGCharacter<? extends Living> npc = nonPlayerCharacters.get(living.getUniqueId());
 
         if (npc == null) {
@@ -52,4 +59,26 @@ public class RPGCharacterService {
         return npc;
     }
 
+    public <T extends Entity> RPGCharacter<?> getOrCreateCharacter(T entity) {
+        if (entity instanceof Living) {
+            return getOrCreateCharacter((Living) entity);
+        } else {
+            throw new IllegalArgumentException("Entity must be some sort of Living.");
+        }
+    }
+
+    public void updateAttributes(RPGCharacter<?> character, Entity source) {
+        if (source instanceof Equipable) {
+            // Get the attributes of the held items
+            Map<AttributeType, Double> result = attributeService.getHeldItemAttributes((Equipable) source);
+
+            if (source instanceof ArmorEquipable) {
+                // Merge the held item and armor attributes
+                result = attributeService.mergeAttributes(result, attributeService.getArmorAttributes((ArmorEquipable) source));
+            }
+
+            // Merge all into the character's attributes
+            attributeService.mergeAttributes(character.getAttributes(), result);
+        }
+    }
 }

@@ -2,14 +2,12 @@ package com.atherys.rpg.character;
 
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.Attribute;
+import com.atherys.rpg.api.stat.AttributeType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class SimpleCharacter<T extends Living & Equipable> implements RPGCharacter<T> {
 
@@ -17,9 +15,9 @@ public class SimpleCharacter<T extends Living & Equipable> implements RPGCharact
 
     private T entity;
 
-    private Set<Attribute> attributes = new HashSet<>();
+    private Map<AttributeType, Double> attributes = new HashMap<>();
 
-    public SimpleCharacter(T entity, Set<Attribute> attributes) {
+    public SimpleCharacter(T entity, Map<AttributeType, Double> attributes) {
         this.id = entity.getUniqueId();
         this.entity = entity;
         this.attributes = attributes;
@@ -41,11 +39,11 @@ public class SimpleCharacter<T extends Living & Equipable> implements RPGCharact
     }
 
     @Override
-    public Set<Attribute> getAttributes() {
+    public Map<AttributeType, Double> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Set<Attribute> attributes) {
+    public void setAttributes(Map<AttributeType, Double> attributes) {
         this.attributes = attributes;
     }
 }

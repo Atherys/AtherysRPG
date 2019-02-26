@@ -8,11 +8,13 @@ import com.atherys.rpg.sources.AtherysDamageSources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.item.ItemType;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,30 +24,29 @@ public class DamageService {
     @Inject
     private AtherysRPGConfig config;
 
+    @Inject
+    private AttributeService attributeService;
+
     private Map<String, Expression> cachedExpressions = new HashMap<>();
 
     public DamageService() {
     }
 
-    public void damageMelee(RPGCharacter<?> attacker, RPGCharacter<?> target) {
-        target.getEntity().ifPresent((t) -> {
-            double damage = 0.0;
-            AtherysDamageType damageType = AtherysDamageTypes.UNARMED;
-            Equipable attackingEntity = attacker.getEntity().orElse(null);
+    public void damageMelee(RPGCharacter<?> attacker, RPGCharacter<?> target, ItemType weaponType) {
+        Living targetEntity = getAsLiving(target);
+        Equipable attackingEntity = getAsEquipable(attacker);
 
-            if (attackingEntity == null) {
-                throw new IllegalStateException("Attacking entity cannot be null");
-            }
+        AtherysDamageType damageType = getMeleeDamageType(weaponType);
 
-            // TODO
+        // Calculate the damage
+        double damage = calcDamage(attacker, target, damageType);
 
-            t.damage(damage, AtherysDamageSources.melee(damageType, (Living) attackingEntity).build());
-        });
-        // TODO
+        // Deal the damage
+        targetEntity.damage(damage, AtherysDamageSources.melee(damageType, (Living) attackingEntity).build());
     }
 
-    public void damageRanged(RPGCharacter<?> attacker, RPGCharacter<?> target, ItemType itemType) {
-        // TODO
+    public void damageRanged(RPGCharacter<?> attacker, RPGCharacter<?> target, EntityType projectileType) {
+
     }
 
     public void damageMagic(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType damageType) {
@@ -55,25 +56,26 @@ public class DamageService {
     public double calcDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, DamageType type) {
         Expression expression = getExpression(config.DAMAGE_CALCULATIONS.get(type));
 
-        // TODO
+        populateAttributes(expression, attacker, "source");
+        populateAttributes(expression, target, "target");
 
-        return 0.0d;
+        return expression.eval().doubleValue();
     }
 
-    public double calcHealthRegen() {
+    public double calcHealthRegen(RPGCharacter<?> source) {
         Expression expression = getExpression(config.HEALTH_REGEN_CALCULATION);
 
-        // TODO
+        populateAttributes(expression, source, "source");
 
-        return 0.0d;
+        return expression.eval().doubleValue();
     }
 
-    public double calcResourceRegen() {
+    public double calcResourceRegen(RPGCharacter<?> source) {
         Expression expression = getExpression(config.RESOURCE_REGEN_CALCULATION);
 
-        // TODO
+        populateAttributes(expression, source, "source");
 
-        return 0.0d;
+        return expression.eval().doubleValue();
     }
 
     private Expression getExpression(String expression) {
@@ -88,6 +90,34 @@ public class DamageService {
     }
 
     private AtherysDamageType getMeleeDamageType(ItemType itemType) {
-        return config.MELEE_ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED);
+        return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED);
+    }
+
+    private Living getAsLiving(RPGCharacter<? extends Living> character) {
+        Living entity = character.getEntity().orElse(null);
+
+        if (entity == null) {
+            throw new IllegalStateException("Entity cannot be null.");
+        }
+
+        return entity;
+    }
+
+    private Equipable getAsEquipable(RPGCharacter<? extends Equipable> character) {
+        Equipable entity = character.getEntity().orElse(null);
+
+        if (entity == null) {
+            throw new IllegalStateException("Entity cannot be null.");
+        }
+
+        return entity;
+    }
+
+    private void populateAttributes(Expression expression, RPGCharacter<?> character, String name) {
+        String pattern = "${" + name + ".%s}";
+        attributeService.getDefaultAttributes().forEach((type, defaultValue) -> expression.setVariable(
+                String.format(pattern, type.getId()),
+                BigDecimal.valueOf(character.getAttributes().getOrDefault(type, defaultValue))
+        ));
     }
 }
