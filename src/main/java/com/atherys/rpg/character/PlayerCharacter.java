@@ -5,10 +5,7 @@ import com.atherys.rpg.api.stat.AttributeType;
 import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.*;
 
 @Entity
@@ -20,7 +17,10 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @Transient
     private Player entity;
 
-    @ElementCollection // TODO
+    @ElementCollection
+    @MapKeyColumn(name = "attribute_type")
+    @Column(name = "value")
+    @CollectionTable(name = "playercharacter_attributes")
     private Map<AttributeType, Double> attributes = new HashMap<>();
 
     public PlayerCharacter(Player entity, Map<AttributeType, Double> attributes) {

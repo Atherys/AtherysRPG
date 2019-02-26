@@ -1,6 +1,7 @@
 package com.atherys.rpg.api.stat;
 
 import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.text.format.TextColor;
 
 import java.util.Objects;
 
@@ -10,9 +11,12 @@ public class AttributeType implements CatalogType {
 
     private String name;
 
-    AttributeType(String id, String name) {
+    private TextColor color;
+
+    AttributeType(String id, String name, TextColor color) {
         this.id = id;
         this.name = name;
+        this.color = color;
     }
 
     @Override
@@ -23,6 +27,10 @@ public class AttributeType implements CatalogType {
     @Override
     public String getName() {
         return name;
+    }
+
+    public TextColor getColor() {
+        return color;
     }
 
     @Override
