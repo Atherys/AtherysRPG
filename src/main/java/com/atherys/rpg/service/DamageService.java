@@ -12,6 +12,7 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.item.ItemType;
 
 import java.math.BigDecimal;
@@ -46,11 +47,27 @@ public class DamageService {
     }
 
     public void damageRanged(RPGCharacter<?> attacker, RPGCharacter<?> target, EntityType projectileType) {
+        Living targetEntity = getAsLiving(target);
+        Equipable attackingEntity = getAsEquipable(attacker);
 
+        AtherysDamageType damageType = getRangedDamageType(projectileType);
+
+        // Calculate the damage
+        double damage = calcDamage(attacker, target, damageType);
+
+        // Deal the damage
+        targetEntity.damage(damage, AtherysDamageSources.ranged(damageType, (Living) attackingEntity).build());
     }
 
     public void damageMagic(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType damageType) {
-        // TODO
+        Living targetEntity = getAsLiving(target);
+        Equipable attackingEntity = getAsEquipable(attacker);
+
+        // Calculate the damage
+        double damage = calcDamage(attacker, target, damageType);
+
+        // Deal the damage
+        targetEntity.damage(damage, AtherysDamageSources.ranged(damageType, (Living) attackingEntity).build());
     }
 
     public double calcDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, DamageType type) {
@@ -91,6 +108,10 @@ public class DamageService {
 
     private AtherysDamageType getMeleeDamageType(ItemType itemType) {
         return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED);
+    }
+
+    private AtherysDamageType getRangedDamageType(EntityType projectileType) {
+        return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, AtherysDamageTypes.PIERCE);
     }
 
     private Living getAsLiving(RPGCharacter<? extends Living> character) {
