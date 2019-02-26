@@ -100,6 +100,9 @@ public class AtherysRPGConfig extends PluginConfig {
         DEFAULT_ATTRIBUTES.put(AttributeTypes.LUCK, 1.0d);
     }
 
+    @Setting("attribute-upgrade-cost")
+    public double ATTRIBUTE_UPGRADE_COST = 100.0;
+
     protected AtherysRPGConfig() throws IOException {
         super("config/atherysrpg", "config.conf");
     }

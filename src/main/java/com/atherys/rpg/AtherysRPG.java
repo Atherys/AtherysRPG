@@ -13,6 +13,7 @@ import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.facade.RPGCharacterFacade;
+import com.atherys.rpg.facade.RPGMessagingFacade;
 import com.atherys.rpg.listener.DamageListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.AttributeService;
@@ -73,6 +74,8 @@ public class AtherysRPG {
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }
+
+        init = true;
     }
 
     private void start() {
@@ -124,6 +127,9 @@ public class AtherysRPG {
         RPGCharacterService characterService;
 
         @Inject
+        RPGMessagingFacade rpgMessagingFacade;
+
+        @Inject
         RPGCharacterFacade rpgCharacterFacade;
 
         @Inject
@@ -152,6 +158,10 @@ public class AtherysRPG {
 
     public RPGCharacterService getCharacterService() {
         return components.characterService;
+    }
+
+    public RPGMessagingFacade getRPGMessagingFacade() {
+        return components.rpgMessagingFacade;
     }
 
     public RPGCharacterFacade getRPGCharacterFacade() {

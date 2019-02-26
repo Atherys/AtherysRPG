@@ -4,6 +4,7 @@ import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.repository.converter.AttributeTypeConverter;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.entity.HealEntityEvent;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
@@ -22,7 +23,7 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     private Player entity;
 
     @Convert(attributeName = "key.", converter = AttributeTypeConverter.class)
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "attribute_type")
     @Column(name = "value")
     @CollectionTable(name = "playercharacter_attributes")

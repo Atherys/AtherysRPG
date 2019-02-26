@@ -1,6 +1,8 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.AtherysRPGConfig;
 import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.RPGCharacterService;
@@ -18,16 +20,23 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 @Singleton
 public class RPGCharacterFacade {
 
     @Inject
+    private AtherysRPGConfig config;
+
+    @Inject
     private DamageService damageService;
 
     @Inject
     private RPGCharacterService characterService;
+
+    @Inject
+    private RPGMessagingFacade rpgMsg;
 
     public void showPlayerAttributes(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
@@ -37,7 +46,13 @@ public class RPGCharacterFacade {
         pc.getAttributes().forEach((type, value) -> {
             Text attribute = Text.builder()
                     .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET))
-                    .append(Text.of(value, Text.NEW_LINE))
+                    .append(
+                            Text.of(
+                                    value, " ",
+                                    getAddAttributeButton(type),
+                                    Text.NEW_LINE
+                            )
+                    )
                     .build();
 
             attributeText.append(attribute);
@@ -49,27 +64,30 @@ public class RPGCharacterFacade {
     public void showPlayerExperience(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        player.sendMessage(Text.of(TextColors.DARK_GREEN, "Your current experience: ", TextColors.GOLD, pc.getExperience()));
+        rpgMsg.info(player, Text.of(TextColors.DARK_GREEN, "Your current experience: ", TextColors.GOLD, pc.getExperience()));
     }
 
     public void addPlayerExperience(Player player, double amount) {
-
-        if (player == null) {
-            return; // TODO: Throw exception
-        }
-
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
         characterService.addExperience(pc, amount);
     }
 
     public void removePlayerExperience(Player player, double amount) {
-
-        if (player == null) {
-            return; // TODO: Throw exception
-        }
-
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
         characterService.removeExperience(pc, amount);
+    }
+
+    public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        characterService.addAttribute(pc, attributeType, amount);
+
+        rpgMsg.info(player,
+                "You have added ", amount, " ",
+                attributeType.getColor(), attributeType.getName(), TextColors.RESET,
+                " for ", TextColors.GOLD, amount * config.ATTRIBUTE_UPGRADE_COST, TextColors.RESET,
+                " experience."
+        );
     }
 
     public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
@@ -122,4 +140,15 @@ public class RPGCharacterFacade {
         event.setBaseDamage(damageService.getRangedDamage(attackerCharacter, targetCharacter, projectileType));
     }
 
+    private Text getAddAttributeButton(AttributeType type) {
+        return Text.builder()
+                .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
+                .onHover(TextActions.showText(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.")))
+                .onClick(TextActions.executeCallback(source -> {
+                    if (source instanceof Player) {
+                        addPlayerAttribute((Player) source, type, 1.0);
+                    }
+                }))
+                .build();
+    }
 }
