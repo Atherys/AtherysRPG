@@ -28,6 +28,8 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @CollectionTable(name = "playercharacter_attributes")
     private Map<AttributeType, Double> attributes = new HashMap<>();
 
+    private double experience;
+
     public PlayerCharacter() {}
 
     public PlayerCharacter(Player entity, Map<AttributeType, Double> attributes) {
@@ -60,4 +62,11 @@ public class PlayerCharacter implements RPGCharacter<Player> {
         this.attributes = attributes;
     }
 
+    public double getExperience() {
+        return experience;
+    }
+
+    public void setExperience(double experience) {
+        this.experience = experience;
+    }
 }

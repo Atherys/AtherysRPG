@@ -81,4 +81,14 @@ public class RPGCharacterService {
             attributeService.mergeAttributes(character.getAttributes(), result);
         }
     }
+
+    public void addExperience(PlayerCharacter pc, double amount) {
+        pc.setExperience(pc.getExperience() + amount);
+        repository.saveOne(pc);
+    }
+
+    public void removeExperience(PlayerCharacter pc, double amount) {
+        pc.setExperience(pc.getExperience() - amount);
+        repository.saveOne(pc);
+    }
 }

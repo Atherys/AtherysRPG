@@ -11,6 +11,7 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
+import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.listener.DamageListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
@@ -68,6 +69,7 @@ public class AtherysRPG {
 
         try {
             AtherysCore.getCommandService().register(new AttributesCommand(), this);
+            AtherysCore.getCommandService().register(new ExperienceCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }

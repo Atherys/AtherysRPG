@@ -10,9 +10,6 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.entity.damage.DamageModifier;
-import org.spongepowered.api.event.cause.entity.damage.DamageModifierTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -47,6 +44,32 @@ public class RPGCharacterFacade {
         });
 
         player.sendMessage(attributeText.build());
+    }
+
+    public void showPlayerExperience(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        player.sendMessage(Text.of(TextColors.DARK_GREEN, "Your current experience: ", TextColors.GOLD, pc.getExperience()));
+    }
+
+    public void addPlayerExperience(Player player, double amount) {
+
+        if (player == null) {
+            return; // TODO: Throw exception
+        }
+
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        characterService.addExperience(pc, amount);
+    }
+
+    public void removePlayerExperience(Player player, double amount) {
+
+        if (player == null) {
+            return; // TODO: Throw exception
+        }
+
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        characterService.removeExperience(pc, amount);
     }
 
     public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
