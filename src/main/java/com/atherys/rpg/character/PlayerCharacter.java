@@ -28,6 +28,8 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @CollectionTable(name = "playercharacter_attributes")
     private Map<AttributeType, Double> attributes = new HashMap<>();
 
+    public PlayerCharacter() {}
+
     public PlayerCharacter(Player entity, Map<AttributeType, Double> attributes) {
         this.id = entity.getUniqueId();
         this.entity = entity;

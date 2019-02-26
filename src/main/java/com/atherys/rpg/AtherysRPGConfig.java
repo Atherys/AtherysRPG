@@ -9,7 +9,6 @@ import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 
@@ -70,21 +69,21 @@ public class AtherysRPGConfig extends PluginConfig {
     }
 
     @Setting("damage-calculations")
-    public Map<DamageType, String> DAMAGE_CALCULATIONS = new HashMap<>();
+    public Map<AtherysDamageType, String> DAMAGE_CALCULATIONS = new HashMap<>();
     {
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BLUNT, "1.0 * ${source.strength}");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.STAB, "1.0 * ${source.constitution}");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.SLASH, "1.0 * ${source.strength}");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.UNARMED, "1.0 * ${source.willpower}");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.PIERCE, "1.0 * ${source.agility}");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BALLISTIC, "1.0 * ${source.agility}");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BLUNT, "1.0 * SOURCE_STRENGTH");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.STAB, "1.0 * SOURCE_CONSTITUTION");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.SLASH, "1.0 * SOURCE_STRENGTH");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.UNARMED, "1.0 * SOURCE_WILLPOWER");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.PIERCE, "1.0 * SOURCE_AGILITY");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BALLISTIC, "1.0 * SOURCE_AGILITY");
     }
 
     @Setting("health-regen-calculation")
-    public String HEALTH_REGEN_CALCULATION = "1.33 * ${target.constitution}";
+    public String HEALTH_REGEN_CALCULATION = "1.33 * TARGET_CONSTITUTION";
 
     @Setting("resource-regen-calculation")
-    public String RESOURCE_REGEN_CALCULATION = "1.33 * ${target.wisdom}";
+    public String RESOURCE_REGEN_CALCULATION = "1.33 * TARGET_WISDOM";
 
     @Setting("default-attributes")
     public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();

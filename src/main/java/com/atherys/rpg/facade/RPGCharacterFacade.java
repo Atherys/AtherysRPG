@@ -4,12 +4,15 @@ import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.RPGCharacterService;
-import com.atherys.rpg.sources.AtherysEntityDamageSource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifier;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifierTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -47,13 +50,8 @@ public class RPGCharacterFacade {
     }
 
     public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
-        // If the event cause contains an AtherysEntityDamageSource object,
-        // this means the event comes from a damage tick caused by this plugin.
-        // In that case, stop, to prevent recursive event triggers
-        if (event.getCause().containsType(AtherysEntityDamageSource.class)) {
-            return;
-        }
-
+        // The average time taken for these, once the JVM has had time to do some runtime optimizations
+        // is 0.1 - 0.2 milliseconds
         if (rootSource instanceof IndirectEntityDamageSource) {
             onIndirectDamage(event, (IndirectEntityDamageSource) rootSource);
         } else {
@@ -77,9 +75,7 @@ public class RPGCharacterFacade {
             characterService.updateAttributes(attackerCharacter, source);
             characterService.updateAttributes(targetCharacter, target);
 
-            event.setCancelled(true);
-
-            damageService.damageMelee(attackerCharacter, targetCharacter, weaponType);
+            event.setBaseDamage(damageService.getMeleeDamage(attackerCharacter, targetCharacter, weaponType));
         }
     }
 
@@ -98,9 +94,9 @@ public class RPGCharacterFacade {
         characterService.updateAttributes(attackerCharacter, source);
         characterService.updateAttributes(targetCharacter, target);
 
-        event.setCancelled(true);
+        EntityType projectileType = rootSource.getSource().getType();
 
-        damageService.damageRanged(attackerCharacter, targetCharacter, rootSource.getSource().getType());
+        event.setBaseDamage(damageService.getRangedDamage(attackerCharacter, targetCharacter, projectileType));
     }
 
 }

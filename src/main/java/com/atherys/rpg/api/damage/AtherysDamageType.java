@@ -18,7 +18,6 @@ public class AtherysDamageType implements DamageType {
         this.id = id;
         this.name = name;
         this.primitive = primitive;
-        AtherysDamageTypeRegistry.getInstance().flags.put(id, this);
     }
 
     @Override

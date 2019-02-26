@@ -11,8 +11,6 @@ import com.udojava.evalex.Expression;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
-import org.spongepowered.api.event.cause.entity.damage.DamageType;
-import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.item.ItemType;
 
 import java.math.BigDecimal;
@@ -33,30 +31,18 @@ public class DamageService {
     public DamageService() {
     }
 
-    public void damageMelee(RPGCharacter<?> attacker, RPGCharacter<?> target, ItemType weaponType) {
-        Living targetEntity = getAsLiving(target);
-        Equipable attackingEntity = getAsEquipable(attacker);
-
+    public double getMeleeDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, ItemType weaponType) {
         AtherysDamageType damageType = getMeleeDamageType(weaponType);
 
-        // Calculate the damage
-        double damage = calcDamage(attacker, target, damageType);
-
-        // Deal the damage
-        targetEntity.damage(damage, AtherysDamageSources.melee(damageType, (Living) attackingEntity).build());
+        // Calculate and return the damage
+        return calcDamage(attacker, target, damageType);
     }
 
-    public void damageRanged(RPGCharacter<?> attacker, RPGCharacter<?> target, EntityType projectileType) {
-        Living targetEntity = getAsLiving(target);
-        Equipable attackingEntity = getAsEquipable(attacker);
-
+    public double getRangedDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, EntityType projectileType) {
         AtherysDamageType damageType = getRangedDamageType(projectileType);
 
-        // Calculate the damage
-        double damage = calcDamage(attacker, target, damageType);
-
-        // Deal the damage
-        targetEntity.damage(damage, AtherysDamageSources.ranged(damageType, (Living) attackingEntity).build());
+        // Calculate and return the damage
+        return calcDamage(attacker, target, damageType);
     }
 
     public void damageMagic(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType damageType) {
@@ -70,7 +56,7 @@ public class DamageService {
         targetEntity.damage(damage, AtherysDamageSources.ranged(damageType, (Living) attackingEntity).build());
     }
 
-    public double calcDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, DamageType type) {
+    public double calcDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType type) {
         Expression expression = getExpression(config.DAMAGE_CALCULATIONS.get(type));
 
         populateAttributes(expression, attacker, "source");
@@ -135,9 +121,9 @@ public class DamageService {
     }
 
     private void populateAttributes(Expression expression, RPGCharacter<?> character, String name) {
-        String pattern = "${" + name + ".%s}";
+        String pattern = name.toUpperCase() + "_%s";
         attributeService.getDefaultAttributes().forEach((type, defaultValue) -> expression.setVariable(
-                String.format(pattern, type.getId()),
+                String.format(pattern, type.getId().toUpperCase()),
                 BigDecimal.valueOf(character.getAttributes().getOrDefault(type, defaultValue))
         ));
     }
