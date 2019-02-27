@@ -1,7 +1,6 @@
 package com.atherys.rpg.character;
 
 import com.atherys.rpg.api.character.RPGCharacter;
-import com.atherys.rpg.api.stat.Attribute;
 import com.atherys.rpg.api.stat.AttributeType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
