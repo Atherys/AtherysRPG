@@ -115,6 +115,9 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("attribute-min")
     public double ATTRIBUTE_MIN = 0.0;
 
+    @Setting("default-experience-spending-limit")
+    public double DEFAULT_EXPERIENCE_SPENDING_LIMIT = 100_000.0;
+
     protected AtherysRPGConfig() throws IOException {
         super("config/atherysrpg", "config.conf");
     }

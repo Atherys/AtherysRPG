@@ -33,8 +33,12 @@ public class RPGCharacterService {
 
     public PlayerCharacter getOrCreateCharacter(Player player) {
         return repository.findById(player.getUniqueId()).orElseGet(() -> {
-            PlayerCharacter pc = new PlayerCharacter(player, attributeService.getDefaultAttributes());
+            PlayerCharacter pc = new PlayerCharacter();
+            pc.setEntity(player);
+            pc.setAttributes(attributeService.getDefaultAttributes());
+            pc.setExperienceSpendingLimit(config.DEFAULT_EXPERIENCE_SPENDING_LIMIT);
             repository.saveOne(pc);
+
             return pc;
         });
     }
