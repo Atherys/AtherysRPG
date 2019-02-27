@@ -70,41 +70,57 @@ public class RPGCharacterFacade {
     public void addPlayerExperience(Player player, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (pc.getExperience() + amount < config.EXPERIENCE_MAX) {
-            throw new RPGCommandException("A player cannot have experience bigger than ", config.EXPERIENCE_MAX);
+        if (validateExperience(pc.getExperience() + amount)) {
+            characterService.addExperience(pc, amount);
         }
-
-        characterService.addExperience(pc, amount);
     }
 
     public void removePlayerExperience(Player player, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (pc.getExperience() - amount < config.EXPERIENCE_MIN) {
+        if (validateExperience(pc.getExperience() - amount)) {
+            characterService.removeExperience(pc, amount);
+        }
+    }
+
+    private boolean validateExperience(double experience) throws RPGCommandException {
+        if (experience < config.EXPERIENCE_MIN) {
             throw new RPGCommandException("A player cannot have experience less than ", config.EXPERIENCE_MIN);
         }
 
-        characterService.removeExperience(pc, amount);
+        if (experience > config.EXPERIENCE_MAX) {
+            throw new RPGCommandException("A player cannot have experience bigger than ", config.EXPERIENCE_MAX);
+        }
+
+        return true;
     }
 
     public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount > config.ATTRIBUTE_MAX) {
-            throw new RPGCommandException("A player cannot have attributes bigger than ", config.ATTRIBUTE_MAX);
+        if (validateAttribute(pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount)) {
+            characterService.addAttribute(pc, attributeType, amount);
         }
-
-        characterService.addAttribute(pc, attributeType, amount);
     }
 
     public void removePlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount < config.ATTRIBUTE_MIN) {
+        if (validateAttribute(pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount)) {
+            characterService.removeAttribute(pc, attributeType, amount);
+        }
+    }
+
+    private boolean validateAttribute(double amount) throws RPGCommandException {
+        if (amount < config.ATTRIBUTE_MIN) {
             throw new RPGCommandException("A player cannot have attributes less than ", config.ATTRIBUTE_MIN);
         }
 
-        characterService.removeAttribute(pc, attributeType, amount);
+        if (amount > config.ATTRIBUTE_MAX) {
+            throw new RPGCommandException("A player cannot have attributes bigger than ", config.ATTRIBUTE_MAX);
+        }
+
+        return true;
     }
 
     public void setPlayerExperienceSpendingLimit(Player player, Double amount) {
@@ -147,30 +163,28 @@ public class RPGCharacterFacade {
         Entity source = rootSource.getSource();
         Entity target = event.getTargetEntity();
 
-        // source must be an instance of Equipable
-        if (source instanceof Equipable) {
-            ItemType weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
+        ItemType weaponType;
+
+        if ( source instanceof Equipable ) {
+            weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
                     .map(ItemStack::getType)
                     .orElse(ItemTypes.NONE);
-
-            RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);
-            RPGCharacter<?> targetCharacter = characterService.getOrCreateCharacter(target);
-
-            characterService.updateAttributes(attackerCharacter, source);
-            characterService.updateAttributes(targetCharacter, target);
-
-            event.setBaseDamage(damageService.getMeleeDamage(attackerCharacter, targetCharacter, weaponType));
+        } else {
+            weaponType = ItemTypes.NONE;
         }
+
+        RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);
+        RPGCharacter<?> targetCharacter = characterService.getOrCreateCharacter(target);
+
+        characterService.updateAttributes(attackerCharacter, source);
+        characterService.updateAttributes(targetCharacter, target);
+
+        event.setBaseDamage(damageService.getMeleeDamage(attackerCharacter, targetCharacter, weaponType));
     }
 
     private void onIndirectDamage(DamageEntityEvent event, IndirectEntityDamageSource rootSource) {
         Entity source = rootSource.getIndirectSource();
         Entity target = event.getTargetEntity();
-
-        // source must be an instance of Equipable
-        if (!(source instanceof Equipable)) {
-            return;
-        }
 
         RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);
         RPGCharacter<?> targetCharacter = characterService.getOrCreateCharacter(target);
