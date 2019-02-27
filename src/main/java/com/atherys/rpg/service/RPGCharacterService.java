@@ -101,4 +101,9 @@ public class RPGCharacterService {
         pc.getAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
         repository.saveOne(pc);
     }
+
+    public void setCharacterExperienceSpendingLimit(PlayerCharacter pc, Double amount) {
+        pc.setExperienceSpendingLimit(amount);
+        repository.saveOne(pc);
+    }
 }

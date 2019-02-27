@@ -14,7 +14,8 @@ import javax.annotation.Nonnull;
 @Aliases({"experience", "xp"})
 @Children({
         AddExperienceCommand.class,
-        RemoveExperienceCommand.class
+        RemoveExperienceCommand.class,
+        SetExperienceSpendingLimitCommand.class
 })
 public class ExperienceCommand implements PlayerCommand {
     @Nonnull

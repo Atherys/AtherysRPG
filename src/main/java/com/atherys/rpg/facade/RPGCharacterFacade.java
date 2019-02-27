@@ -107,6 +107,32 @@ public class RPGCharacterFacade {
         characterService.removeAttribute(pc, attributeType, amount);
     }
 
+    public void setPlayerExperienceSpendingLimit(Player player, Double amount) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        characterService.setCharacterExperienceSpendingLimit(pc, amount);
+    }
+
+    public void purchaseAttribute(Player player, AttributeType type, double amount) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        double expAmount = amount * (pc.getExperience() + config.ATTRIBUTE_UPGRADE_COST);
+
+        // If the player has already reached their experience spending limit, cancel
+        if (pc.getExperienceSpendingLimit() < expAmount) {
+            rpgMsg.error(player, "You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
+        } else {
+            characterService.addAttribute(pc, type, amount);
+            characterService.removeExperience(pc, expAmount);
+
+            rpgMsg.info(player,
+                    "You have added ", 1.0, " ",
+                    type.getColor(), type.getName(), TextColors.RESET,
+                    " for ", TextColors.GOLD, config.ATTRIBUTE_UPGRADE_COST, TextColors.RESET,
+                    " experience."
+            );
+        }
+    }
+
     public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
         // The average time taken for these, once the JVM has had time to do some runtime optimizations
         // is 0.1 - 0.2 milliseconds
@@ -163,17 +189,7 @@ public class RPGCharacterFacade {
                 .onHover(TextActions.showText(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.")))
                 .onClick(TextActions.executeCallback(source -> {
                     if (source instanceof Player) {
-                        PlayerCharacter pc = characterService.getOrCreateCharacter((Player) source);
-
-                        characterService.addAttribute(pc, type, 1.0);
-                        characterService.removeExperience(pc, config.ATTRIBUTE_UPGRADE_COST);
-
-                        rpgMsg.info((Player) source,
-                                "You have added ", 1.0, " ",
-                                type.getColor(), type.getName(), TextColors.RESET,
-                                " for ", TextColors.GOLD, config.ATTRIBUTE_UPGRADE_COST, TextColors.RESET,
-                                " experience."
-                        );
+                        purchaseAttribute((Player) source, type, 1.0);
                     }
                 }))
                 .build();

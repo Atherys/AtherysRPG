@@ -31,6 +31,8 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     private double experience;
 
+    private double experienceSpendingLimit;
+
     public PlayerCharacter() {}
 
     public PlayerCharacter(Player entity, Map<AttributeType, Double> attributes) {
@@ -69,5 +71,13 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void setExperience(double experience) {
         this.experience = experience;
+    }
+
+    public double getExperienceSpendingLimit() {
+        return experienceSpendingLimit;
+    }
+
+    public void setExperienceSpendingLimit(double experienceSpendingLimit) {
+        this.experienceSpendingLimit = experienceSpendingLimit;
     }
 }
