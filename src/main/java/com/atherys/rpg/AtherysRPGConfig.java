@@ -103,6 +103,18 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("attribute-upgrade-cost")
     public double ATTRIBUTE_UPGRADE_COST = 100.0;
 
+    @Setting("experience-max")
+    public double EXPERIENCE_MAX = 100_000.0;
+
+    @Setting("experience-min")
+    public double EXPERIENCE_MIN = 0.0;
+
+    @Setting("attribute-max")
+    public double ATTRIBUTE_MAX = 99.0;
+
+    @Setting("attribute-min")
+    public double ATTRIBUTE_MIN = 0.0;
+
     protected AtherysRPGConfig() throws IOException {
         super("config/atherysrpg", "config.conf");
     }

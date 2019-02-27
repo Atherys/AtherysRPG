@@ -4,6 +4,7 @@ import com.atherys.rpg.AtherysRPGConfig;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
+import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
@@ -63,31 +64,47 @@ public class RPGCharacterFacade {
 
     public void showPlayerExperience(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-
         rpgMsg.info(player, Text.of(TextColors.DARK_GREEN, "Your current experience: ", TextColors.GOLD, pc.getExperience()));
     }
 
-    public void addPlayerExperience(Player player, double amount) {
+    public void addPlayerExperience(Player player, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        if (pc.getExperience() + amount < config.EXPERIENCE_MAX) {
+            throw new RPGCommandException("A player cannot have experience bigger than ", config.EXPERIENCE_MAX);
+        }
+
         characterService.addExperience(pc, amount);
     }
 
-    public void removePlayerExperience(Player player, double amount) {
+    public void removePlayerExperience(Player player, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        if (pc.getExperience() - amount < config.EXPERIENCE_MIN) {
+            throw new RPGCommandException("A player cannot have experience less than ", config.EXPERIENCE_MIN);
+        }
+
         characterService.removeExperience(pc, amount);
     }
 
-    public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) {
+    public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        characterService.addAttribute(pc, attributeType, amount);
+        if (pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount > config.ATTRIBUTE_MAX) {
+            throw new RPGCommandException("A player cannot have attributes bigger than ", config.ATTRIBUTE_MAX);
+        }
 
-        rpgMsg.info(player,
-                "You have added ", amount, " ",
-                attributeType.getColor(), attributeType.getName(), TextColors.RESET,
-                " for ", TextColors.GOLD, amount * config.ATTRIBUTE_UPGRADE_COST, TextColors.RESET,
-                " experience."
-        );
+        characterService.addAttribute(pc, attributeType, amount);
+    }
+
+    public void removePlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        if (pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount < config.ATTRIBUTE_MIN) {
+            throw new RPGCommandException("A player cannot have attributes less than ", config.ATTRIBUTE_MIN);
+        }
+
+        characterService.removeAttribute(pc, attributeType, amount);
     }
 
     public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
@@ -146,7 +163,17 @@ public class RPGCharacterFacade {
                 .onHover(TextActions.showText(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.")))
                 .onClick(TextActions.executeCallback(source -> {
                     if (source instanceof Player) {
-                        addPlayerAttribute((Player) source, type, 1.0);
+                        PlayerCharacter pc = characterService.getOrCreateCharacter((Player) source);
+
+                        characterService.addAttribute(pc, type, 1.0);
+                        characterService.removeExperience(pc, config.ATTRIBUTE_UPGRADE_COST);
+
+                        rpgMsg.info((Player) source,
+                                "You have added ", 1.0, " ",
+                                type.getColor(), type.getName(), TextColors.RESET,
+                                " for ", TextColors.GOLD, config.ATTRIBUTE_UPGRADE_COST, TextColors.RESET,
+                                " experience."
+                        );
                     }
                 }))
                 .build();

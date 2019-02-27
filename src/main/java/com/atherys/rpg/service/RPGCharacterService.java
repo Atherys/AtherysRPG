@@ -94,6 +94,11 @@ public class RPGCharacterService {
 
     public void addAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
         pc.getAttributes().merge(attributeType, amount, (v1, v2) -> v1 + v2);
-        removeExperience(pc, amount * config.ATTRIBUTE_UPGRADE_COST);
+        repository.saveOne(pc);
+    }
+
+    public void removeAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
+        pc.getAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
+        repository.saveOne(pc);
     }
 }

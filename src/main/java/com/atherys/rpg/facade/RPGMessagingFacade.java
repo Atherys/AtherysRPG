@@ -12,8 +12,12 @@ public class RPGMessagingFacade {
 
     public RPGMessagingFacade() {}
 
+    public Text format(Object... msg) {
+        return Text.of(PREFIX, Text.of(msg));
+    }
+
     public void info(Player player, Object... msg) {
-        player.sendMessage(Text.of(PREFIX, Text.of(msg)));
+        player.sendMessage(format(msg));
     }
 
     public void error(Player player, Object... msg) {
