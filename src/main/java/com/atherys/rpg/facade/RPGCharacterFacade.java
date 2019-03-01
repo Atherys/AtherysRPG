@@ -7,6 +7,7 @@ import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.atherys.skills.api.event.ResourceRegenEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.entity.Entity;
@@ -149,6 +150,12 @@ public class RPGCharacterFacade {
         }
     }
 
+    public void onResourceRegen(ResourceRegenEvent event, Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        double amount = characterService.getResourceRegenAmount(pc);
+        event.setRegenAmount(amount);
+    }
+
     public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
         // The average time taken for these, once the JVM has had time to do some runtime optimizations
         // is 0.1 - 0.2 milliseconds
@@ -163,14 +170,12 @@ public class RPGCharacterFacade {
         Entity source = rootSource.getSource();
         Entity target = event.getTargetEntity();
 
-        ItemType weaponType;
+        ItemType weaponType = ItemTypes.NONE;
 
         if ( source instanceof Equipable ) {
             weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
                     .map(ItemStack::getType)
                     .orElse(ItemTypes.NONE);
-        } else {
-            weaponType = ItemTypes.NONE;
         }
 
         RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);

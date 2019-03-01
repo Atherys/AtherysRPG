@@ -26,6 +26,9 @@ public class DamageService {
     @Inject
     private AttributeService attributeService;
 
+    @Inject
+    private ExpressionService expressionService;
+
     private Map<String, Expression> cachedExpressions = new HashMap<>();
 
     public DamageService() {
@@ -57,39 +60,28 @@ public class DamageService {
     }
 
     public double calcDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType type) {
-        Expression expression = getExpression(config.DAMAGE_CALCULATIONS.get(type));
+        Expression expression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
 
-        populateAttributes(expression, attacker, "source");
-        populateAttributes(expression, target, "target");
+        expressionService.populateAttributes(expression, attacker, "source");
+        expressionService.populateAttributes(expression, target, "target");
 
         return expression.eval().doubleValue();
     }
 
     public double calcHealthRegen(RPGCharacter<?> source) {
-        Expression expression = getExpression(config.HEALTH_REGEN_CALCULATION);
+        Expression expression = expressionService.getExpression(config.HEALTH_REGEN_CALCULATION);
 
-        populateAttributes(expression, source, "source");
+        expressionService.populateAttributes(expression, source, "source");
 
         return expression.eval().doubleValue();
     }
 
     public double calcResourceRegen(RPGCharacter<?> source) {
-        Expression expression = getExpression(config.RESOURCE_REGEN_CALCULATION);
+        Expression expression = expressionService.getExpression(config.RESOURCE_REGEN_CALCULATION);
 
-        populateAttributes(expression, source, "source");
+        expressionService.populateAttributes(expression, source, "source");
 
         return expression.eval().doubleValue();
-    }
-
-    private Expression getExpression(String expression) {
-        Expression result = cachedExpressions.get(expression);
-
-        if (result == null) {
-            result = new Expression(expression);
-            cachedExpressions.put(expression, result);
-        }
-
-        return result;
     }
 
     private AtherysDamageType getMeleeDamageType(ItemType itemType) {
@@ -118,13 +110,5 @@ public class DamageService {
         }
 
         return entity;
-    }
-
-    private void populateAttributes(Expression expression, RPGCharacter<?> character, String name) {
-        String pattern = name.toUpperCase() + "_%s";
-        attributeService.getDefaultAttributes().forEach((type, defaultValue) -> expression.setVariable(
-                String.format(pattern, type.getId().toUpperCase()),
-                BigDecimal.valueOf(character.getAttributes().getOrDefault(type, defaultValue))
-        ));
     }
 }

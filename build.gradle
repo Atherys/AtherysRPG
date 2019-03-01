@@ -39,7 +39,8 @@ repositories {
 dependencies {
     shadow 'org.spongepowered:spongeapi:7.1.0'
     shadow 'com.github.Atherys-Horizons:AtherysCore:1.13.2'
-    
+    shadow 'com.github.Atherys-Horizons:AtherysSkills:master-SNAPSHOT'
+
     compile 'com.udojava:EvalEx:2.1'
 
     testCompile 'junit:junit:4.12'
