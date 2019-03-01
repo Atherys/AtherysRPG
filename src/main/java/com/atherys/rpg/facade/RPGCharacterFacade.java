@@ -138,6 +138,9 @@ public class RPGCharacterFacade {
         if (pc.getExperienceSpendingLimit() < expAmount) {
             rpgMsg.error(player, "You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
         } else {
+
+            // TODO: Validate amount to fit within configured min-max range
+
             characterService.addAttribute(pc, type, amount);
             characterService.removeExperience(pc, expAmount);
 
