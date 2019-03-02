@@ -11,6 +11,8 @@ import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
+import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
 import com.atherys.rpg.listener.EntityListener;
@@ -21,15 +23,19 @@ import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.data.DataManager;
+import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameRegistryEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 
 @Plugin(
         id = "atherysrpg",
@@ -53,16 +59,15 @@ public class AtherysRPG {
     @Inject
     private Injector spongeInjector;
 
+    @Inject
+    private PluginContainer container;
+
     private Components components;
 
     private void init() {
         instance = this;
 
         components = new Components();
-
-        // Register custom CatalogType registry modules
-        Sponge.getRegistry().registerModule(AttributeType.class, new AttributeTypeRegistry());
-        Sponge.getRegistry().registerModule(AtherysDamageType.class, new AtherysDamageTypeRegistry());
 
         // Create injector
         Injector rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
@@ -118,6 +123,22 @@ public class AtherysRPG {
         }
     }
 
+    @Listener
+    public void onDataRegistration(GamePreInitializationEvent event) {
+        // Register custom CatalogType registry modules
+        Sponge.getRegistry().registerModule(AttributeType.class, new AttributeTypeRegistry());
+        Sponge.getRegistry().registerModule(AtherysDamageType.class, new AtherysDamageTypeRegistry());
+
+        // Register custom data
+        DataRegistration.builder()
+                .dataClass(AttributeData.class)
+                .immutableClass(AttributeData.Immutable.class)
+                .builder(new AttributeData.Builder())
+                .dataName("Attributes")
+                .manipulatorId("attributes")
+                .buildAndRegister(container);
+    }
+
     private static class Components {
         @Inject
         AtherysRPGConfig config;
@@ -139,6 +160,9 @@ public class AtherysRPG {
 
         @Inject
         RPGCharacterFacade rpgCharacterFacade;
+
+        @Inject
+        AttributeFacade attributeFacade;
 
         @Inject
         EntityListener entityListener;
@@ -177,5 +201,9 @@ public class AtherysRPG {
 
     public RPGCharacterFacade getRPGCharacterFacade() {
         return components.rpgCharacterFacade;
+    }
+
+    public AttributeFacade getAttributeFacade() {
+        return components.attributeFacade;
     }
 }

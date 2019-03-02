@@ -52,29 +52,6 @@ public class RPGCharacterFacade {
     @Inject
     private RPGMessagingFacade rpgMsg;
 
-    public void showPlayerAttributes(Player player) {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-
-        Text.Builder attributeText = Text.builder();
-
-        pc.getAttributes().forEach((type, value) -> {
-            Text attribute = Text.builder()
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET))
-                    .append(
-                            Text.of(
-                                    value, " ",
-                                    getAddAttributeButton(type),
-                                    Text.NEW_LINE
-                            )
-                    )
-                    .build();
-
-            attributeText.append(attribute);
-        });
-
-        player.sendMessage(attributeText.build());
-    }
-
     public void showPlayerExperience(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
         rpgMsg.info(player, Text.of(TextColors.DARK_GREEN, "Your current experience: ", TextColors.GOLD, pc.getExperience()));
@@ -108,61 +85,9 @@ public class RPGCharacterFacade {
         return true;
     }
 
-    public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-
-        if (validateAttribute(pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount)) {
-            characterService.addAttribute(pc, attributeType, amount);
-        }
-    }
-
-    public void removePlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-
-        if (validateAttribute(pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount)) {
-            characterService.removeAttribute(pc, attributeType, amount);
-        }
-    }
-
-    private boolean validateAttribute(double amount) throws RPGCommandException {
-        if (amount < config.ATTRIBUTE_MIN) {
-            throw new RPGCommandException("A player cannot have attributes less than ", config.ATTRIBUTE_MIN);
-        }
-
-        if (amount > config.ATTRIBUTE_MAX) {
-            throw new RPGCommandException("A player cannot have attributes bigger than ", config.ATTRIBUTE_MAX);
-        }
-
-        return true;
-    }
-
     public void setPlayerExperienceSpendingLimit(Player player, Double amount) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
         characterService.setCharacterExperienceSpendingLimit(pc, amount);
-    }
-
-    public void purchaseAttribute(Player player, AttributeType type, double amount) {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-
-        double expAmount = amount * (pc.getExperience() + config.ATTRIBUTE_UPGRADE_COST);
-
-        // If the player has already reached their experience spending limit, cancel
-        if (pc.getExperienceSpendingLimit() < expAmount) {
-            rpgMsg.error(player, "You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
-        } else {
-
-            // TODO: Validate amount to fit within configured min-max range
-
-            characterService.addAttribute(pc, type, amount);
-            characterService.removeExperience(pc, expAmount);
-
-            rpgMsg.info(player,
-                    "You have added ", 1.0, " ",
-                    type.getColor(), type.getName(), TextColors.RESET,
-                    " for ", TextColors.GOLD, config.ATTRIBUTE_UPGRADE_COST, TextColors.RESET,
-                    " experience."
-            );
-        }
     }
 
     public void onResourceRegen(ResourceRegenEvent event, Player player) {
@@ -215,18 +140,6 @@ public class RPGCharacterFacade {
         EntityType projectileType = rootSource.getSource().getType();
 
         event.setBaseDamage(damageService.getRangedDamage(attackerCharacter, targetCharacter, projectileType));
-    }
-
-    private Text getAddAttributeButton(AttributeType type) {
-        return Text.builder()
-                .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
-                .onHover(TextActions.showText(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.")))
-                .onClick(TextActions.executeCallback(source -> {
-                    if (source instanceof Player) {
-                        purchaseAttribute((Player) source, type, 1.0);
-                    }
-                }))
-                .build();
     }
 
 // Healing is currently not implementable as such due to Sponge

@@ -1,5 +1,6 @@
 package com.atherys.rpg;
 
+import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
 import com.atherys.rpg.listener.EntityListener;
@@ -30,6 +31,7 @@ public class AtherysRPGModule extends AbstractModule {
         // Facades
         bind(RPGMessagingFacade.class).in(Scopes.SINGLETON);
         bind(RPGCharacterFacade.class).in(Scopes.SINGLETON);
+        bind(AttributeFacade.class).in(Scopes.SINGLETON);
 
         // Listeners
         bind(EntityListener.class).in(Scopes.SINGLETON);

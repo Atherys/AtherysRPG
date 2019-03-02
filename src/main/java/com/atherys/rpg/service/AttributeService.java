@@ -2,6 +2,7 @@ package com.atherys.rpg.service;
 
 import com.atherys.rpg.AtherysRPGConfig;
 import com.atherys.rpg.api.stat.AttributeType;
+import com.atherys.rpg.data.AttributeData;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.entity.ArmorEquipable;
@@ -11,6 +12,7 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Singleton
 public class AttributeService {
@@ -18,15 +20,21 @@ public class AttributeService {
     @Inject
     private AtherysRPGConfig config;
 
-    public AttributeService() {}
+    public AttributeService() {
+    }
 
     public Map<AttributeType, Double> getDefaultAttributes() {
         return new HashMap<>(config.DEFAULT_ATTRIBUTES);
     }
 
     public Map<AttributeType, Double> getItemStackAttributes(ItemStack stack) {
-        // TODO: Fetch AttributeData from the itemstack and get the attribute values from it
-        return new HashMap<>();
+        Optional<AttributeData> attributeData = stack.get(AttributeData.class);
+
+        if (attributeData.isPresent()) {
+            return attributeData.get().asMap();
+        } else {
+            return new HashMap<>();
+        }
     }
 
     public Map<AttributeType, Double> getOffhandAttributes(Equipable equipable) {
@@ -38,19 +46,19 @@ public class AttributeService {
     }
 
     public Map<AttributeType, Double> getHelmetAttributes(ArmorEquipable equipable) {
-        return equipable.getHelmet().map(this::getItemStackAttributes).orElse(new HashMap<>());
+        return equipable.getEquipped(EquipmentTypes.HEADWEAR).map(this::getItemStackAttributes).orElse(new HashMap<>());
     }
 
     public Map<AttributeType, Double> getChestplateAttributes(ArmorEquipable equipable) {
-        return equipable.getChestplate().map(this::getItemStackAttributes).orElse(new HashMap<>());
+        return equipable.getEquipped(EquipmentTypes.CHESTPLATE).map(this::getItemStackAttributes).orElse(new HashMap<>());
     }
 
     public Map<AttributeType, Double> getLeggingsAttributes(ArmorEquipable equipable) {
-        return equipable.getLeggings().map(this::getItemStackAttributes).orElse(new HashMap<>());
+        return equipable.getEquipped(EquipmentTypes.LEGGINGS).map(this::getItemStackAttributes).orElse(new HashMap<>());
     }
 
     public Map<AttributeType, Double> getBootsAttributes(ArmorEquipable equipable) {
-        return equipable.getBoots().map(this::getItemStackAttributes).orElse(new HashMap<>());
+        return equipable.getEquipped(EquipmentTypes.BOOTS).map(this::getItemStackAttributes).orElse(new HashMap<>());
     }
 
     public Map<AttributeType, Double> getArmorAttributes(ArmorEquipable equipable) {
@@ -77,11 +85,13 @@ public class AttributeService {
      * Merge the values of the two attribute type maps.<br>
      * WARNING: This will ALTER the source map
      *
-     * @param source The map to be altered
+     * @param source     The map to be altered
      * @param additional The additional attributes to be added
      * @return The altered source map
      */
     public Map<AttributeType, Double> mergeAttributes(Map<AttributeType, Double> source, Map<AttributeType, Double> additional) {
+        System.out.println(source);
+        System.out.println(additional);
         additional.forEach((type, value) -> source.merge(type, value, (v1, v2) -> v1 + v2));
         return additional;
     }

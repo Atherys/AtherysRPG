@@ -14,13 +14,14 @@ import javax.annotation.Nonnull;
 @Aliases({"attributes", "attribs", "stats"})
 @Children({
         AddAttributeCommand.class,
-        RemoveAttributeCommand.class
+        RemoveAttributeCommand.class,
+        AddAttributeToItemCommand.class
 })
 public class AttributesCommand implements PlayerCommand {
     @Nonnull
     @Override
     public CommandResult execute(@Nonnull Player source, @Nonnull CommandContext args) throws CommandException {
-        AtherysRPG.getInstance().getRPGCharacterFacade().showPlayerAttributes(source);
+        AtherysRPG.getInstance().getAttributeFacade().showPlayerAttributes(source);
         return CommandResult.success();
     }
 }

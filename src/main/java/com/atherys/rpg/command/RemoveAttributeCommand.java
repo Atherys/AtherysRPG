@@ -29,7 +29,7 @@ public class RemoveAttributeCommand implements ParameterizedCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        AtherysRPG.getInstance().getRPGCharacterFacade().removePlayerAttribute(
+        AtherysRPG.getInstance().getAttributeFacade().removePlayerAttribute(
                 args.<Player>getOne("player").orElse(null),
                 args.<AttributeType>getOne("attributeType").orElse(null),
                 args.<Double>getOne("amount").orElse(0.0d)
