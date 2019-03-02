@@ -90,8 +90,6 @@ public class AttributeService {
      * @return The altered source map
      */
     public Map<AttributeType, Double> mergeAttributes(Map<AttributeType, Double> source, Map<AttributeType, Double> additional) {
-        System.out.println(source);
-        System.out.println(additional);
         additional.forEach((type, value) -> source.merge(type, value, (v1, v2) -> v1 + v2));
         return additional;
     }

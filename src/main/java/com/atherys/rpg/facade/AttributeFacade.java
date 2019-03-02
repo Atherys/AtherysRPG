@@ -112,7 +112,17 @@ public class AttributeFacade {
             rpgMsg.error(player, "You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
         } else {
 
-            // TODO: Validate amount to fit within configured min-max range
+            if (pc.getExperience() < expAmount) {
+                rpgMsg.error(player, "You do not have enough experience to increase this attribute.");
+                return;
+            }
+
+            double afterPurchase = pc.getAttributes().getOrDefault(type, config.ATTRIBUTE_MIN) + amount;
+
+            if (afterPurchase > config.ATTRIBUTE_MAX) {
+                rpgMsg.error(player, "You cannot have more than a base of ", config.ATTRIBUTE_MAX, " in this attribute.");
+                return;
+            }
 
             characterService.addAttribute(pc, type, amount);
             characterService.removeExperience(pc, expAmount);
@@ -164,7 +174,6 @@ public class AttributeFacade {
             List<Text> lore = stack.get(Keys.ITEM_LORE).orElse(new ArrayList<>());
 
             data.asMap().forEach((type, value) -> {
-                System.out.println(type + ": " + value);
                 if (value == 0.0d) {
                     return;
                 }
