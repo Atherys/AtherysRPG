@@ -5,11 +5,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
+import org.spongepowered.api.event.data.ChangeDataHolderEvent;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 
 @Singleton
-public class DamageListener {
+public class EntityListener {
 
     @Inject
     private RPGCharacterFacade characterFacade;

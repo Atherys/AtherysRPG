@@ -48,15 +48,9 @@ public class DamageService {
         return calcDamage(attacker, target, damageType);
     }
 
-    public void damageMagic(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType damageType) {
-        Living targetEntity = getAsLiving(target);
-        Equipable attackingEntity = getAsEquipable(attacker);
-
-        // Calculate the damage
-        double damage = calcDamage(attacker, target, damageType);
-
-        // Deal the damage
-        targetEntity.damage(damage, AtherysDamageSources.ranged(damageType, (Living) attackingEntity).build());
+    public double getMagicDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType damageType) {
+        // Calculate and return the damage
+        return calcDamage(attacker, target, damageType);
     }
 
     public double calcDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType type) {
@@ -64,14 +58,6 @@ public class DamageService {
 
         expressionService.populateAttributes(expression, attacker, "source");
         expressionService.populateAttributes(expression, target, "target");
-
-        return expression.eval().doubleValue();
-    }
-
-    public double calcHealthRegen(RPGCharacter<?> source) {
-        Expression expression = expressionService.getExpression(config.HEALTH_REGEN_CALCULATION);
-
-        expressionService.populateAttributes(expression, source, "source");
 
         return expression.eval().doubleValue();
     }

@@ -6,7 +6,6 @@ import com.atherys.core.event.AtherysHibernateConfigurationEvent;
 import com.atherys.core.event.AtherysHibernateInitializedEvent;
 import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
-import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -14,7 +13,8 @@ import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
-import com.atherys.rpg.listener.DamageListener;
+import com.atherys.rpg.listener.EntityListener;
+import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.DamageService;
@@ -23,6 +23,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
@@ -58,16 +60,22 @@ public class AtherysRPG {
 
         components = new Components();
 
+        // Register custom CatalogType registry modules
         Sponge.getRegistry().registerModule(AttributeType.class, new AttributeTypeRegistry());
         Sponge.getRegistry().registerModule(AtherysDamageType.class, new AtherysDamageTypeRegistry());
 
+        // Create injector
         Injector rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
         rpgInjector.injectMembers(components);
 
+        // Initialize the config
         getConfig().init();
 
-        Sponge.getEventManager().registerListeners(this, components.damageListener);
+        // Register listeners
+        Sponge.getEventManager().registerListeners(this, components.entityListener);
+        Sponge.getEventManager().registerListeners(this, components.skillsListener);
 
+        // Register commands
         try {
             AtherysCore.getCommandService().register(new AttributesCommand(), this);
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
@@ -133,7 +141,10 @@ public class AtherysRPG {
         RPGCharacterFacade rpgCharacterFacade;
 
         @Inject
-        DamageListener damageListener;
+        EntityListener entityListener;
+
+        @Inject
+        SkillsListener skillsListener;
     }
 
     public static AtherysRPG getInstance() {
