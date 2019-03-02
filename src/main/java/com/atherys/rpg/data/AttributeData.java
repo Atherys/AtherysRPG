@@ -327,16 +327,16 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Optional<AttributeData> from(DataView container) {
-        container.getObject(AttributeKeys.AGILITY.getQuery(), Double.class).ifPresent(v -> agility = v);
-        container.getObject(AttributeKeys.CONSTITUTION.getQuery(), Double.class).ifPresent(v -> constitution = v);
-        container.getObject(AttributeKeys.CHARISMA.getQuery(), Double.class).ifPresent(v -> charisma = v);
-        container.getObject(AttributeKeys.DEFENSE.getQuery(), Double.class).ifPresent(v -> defense = v);
-        container.getObject(AttributeKeys.INTELLIGENCE.getQuery(), Double.class).ifPresent(v -> intelligence = v);
-        container.getObject(AttributeKeys.LUCK.getQuery(), Double.class).ifPresent(v -> luck = v);
-        container.getObject(AttributeKeys.PERCEPTION.getQuery(), Double.class).ifPresent(v -> perception = v);
-        container.getObject(AttributeKeys.STRENGTH.getQuery(), Double.class).ifPresent(v -> strength = v);
-        container.getObject(AttributeKeys.WILLPOWER.getQuery(), Double.class).ifPresent(v -> willpower = v);
-        container.getObject(AttributeKeys.WISDOM.getQuery(), Double.class).ifPresent(v -> wisdom = v);
+        container.getDouble(AttributeKeys.AGILITY.getQuery()).ifPresent(v -> agility = v);
+        container.getDouble(AttributeKeys.CONSTITUTION.getQuery()).ifPresent(v -> constitution = v);
+        container.getDouble(AttributeKeys.CHARISMA.getQuery()).ifPresent(v -> charisma = v);
+        container.getDouble(AttributeKeys.DEFENSE.getQuery()).ifPresent(v -> defense = v);
+        container.getDouble(AttributeKeys.INTELLIGENCE.getQuery()).ifPresent(v -> intelligence = v);
+        container.getDouble(AttributeKeys.LUCK.getQuery()).ifPresent(v -> luck = v);
+        container.getDouble(AttributeKeys.PERCEPTION.getQuery()).ifPresent(v -> perception = v);
+        container.getDouble(AttributeKeys.STRENGTH.getQuery()).ifPresent(v -> strength = v);
+        container.getDouble(AttributeKeys.WILLPOWER.getQuery()).ifPresent(v -> willpower = v);
+        container.getDouble(AttributeKeys.WISDOM.getQuery()).ifPresent(v -> wisdom = v);
         return Optional.of(this);
     }
 

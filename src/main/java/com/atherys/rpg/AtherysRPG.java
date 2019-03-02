@@ -12,6 +12,7 @@ import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.data.AttributeKeys;
 import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
@@ -21,13 +22,15 @@ import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataManager;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataRegistration;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
@@ -124,11 +127,89 @@ public class AtherysRPG {
     }
 
     @Listener
-    public void onDataRegistration(GamePreInitializationEvent event) {
+    public void onPreInit(GamePreInitializationEvent event) {
         // Register custom CatalogType registry modules
         Sponge.getRegistry().registerModule(AttributeType.class, new AttributeTypeRegistry());
         Sponge.getRegistry().registerModule(AtherysDamageType.class, new AtherysDamageTypeRegistry());
+    }
 
+    @Listener
+    public void onKeyRegistration(GameRegistryEvent.Register<Key<?>> event) {
+        final TypeToken<Value<Double>> doubleToken = new TypeToken<Value<Double>>(){};
+
+        AttributeKeys.AGILITY = Key.builder()
+                .id("agility")
+                .name("Agility")
+                .query(DataQuery.of("Agility"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.CONSTITUTION = Key.builder()
+                .id("constitution")
+                .name("Constitution")
+                .query(DataQuery.of("Constitution"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.CHARISMA = Key.builder()
+                .id("charisma")
+                .name("Charisma")
+                .query(DataQuery.of("Charisma"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.DEFENSE = Key.builder()
+                .id("defense")
+                .name("Defense")
+                .query(DataQuery.of("Defense"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.INTELLIGENCE = Key.builder()
+                .id("intelligence")
+                .name("Intelligence")
+                .query(DataQuery.of("Intelligence"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.LUCK = Key.builder()
+                .id("luck")
+                .name("Luck")
+                .query(DataQuery.of("Luck"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.PERCEPTION = Key.builder()
+                .id("perception")
+                .name("Perception")
+                .query(DataQuery.of("Perception"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.STRENGTH = Key.builder()
+                .id("strength")
+                .name("Strength")
+                .query(DataQuery.of("Strength"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.WILLPOWER = Key.builder()
+                .id("willpower")
+                .name("Willpower")
+                .query(DataQuery.of("Willpower"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.WISDOM = Key.builder()
+                .id("wisdom")
+                .name("Wisdom")
+                .query(DataQuery.of("Wisdom"))
+                .type(doubleToken)
+                .build();
+    }
+
+    @Listener
+    public void onDataRegistration(GameRegistryEvent.Register<DataRegistration<?,?>> event) {
         // Register custom data
         DataRegistration.builder()
                 .dataClass(AttributeData.class)
