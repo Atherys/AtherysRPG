@@ -105,14 +105,16 @@ public class AttributeFacade {
     public void purchaseAttribute(Player player, AttributeType type, double amount) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        double expAmount = amount * (pc.getExperience() + config.ATTRIBUTE_UPGRADE_COST);
+        double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
 
         // If the player has already reached their experience spending limit, cancel
-        if (pc.getExperienceSpendingLimit() < expAmount) {
+        // TODO: In order for this to work, the overall experience spent by the player must be tracked
+        // This is currently not done, therefore this check is a placeholder for the actual one
+        if (pc.getExperienceSpendingLimit() < 0.0d) {
             rpgMsg.error(player, "You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
         } else {
 
-            if (pc.getExperience() < expAmount) {
+            if (pc.getExperience() - expCost < config.EXPERIENCE_MIN) {
                 rpgMsg.error(player, "You do not have enough experience to increase this attribute.");
                 return;
             }
@@ -125,7 +127,7 @@ public class AttributeFacade {
             }
 
             characterService.addAttribute(pc, type, amount);
-            characterService.removeExperience(pc, expAmount);
+            characterService.removeExperience(pc, expCost);
 
             rpgMsg.info(player,
                     "You have added ", 1.0, " ",
