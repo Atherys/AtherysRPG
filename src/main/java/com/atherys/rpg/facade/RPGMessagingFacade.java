@@ -21,6 +21,6 @@ public class RPGMessagingFacade {
     }
 
     public void error(Player player, Object... msg) {
-        info(player, TextColors.RED, msg);
+        player.sendMessage(Text.of(TextColors.RED, format(msg)));
     }
 }
