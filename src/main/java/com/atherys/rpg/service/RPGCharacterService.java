@@ -115,6 +115,11 @@ public class RPGCharacterService {
         repository.saveOne(pc);
     }
 
+    public void addSpentExperience(PlayerCharacter pc, double amount) {
+        pc.setSpentExperience(pc.getSpentExperience() + amount);
+        repository.saveOne(pc);
+    }
+
     public double getResourceRegenAmount(PlayerCharacter pc) {
         Expression regen = expressionService.getExpression(config.RESOURCE_REGEN_CALCULATION);
         expressionService.populateAttributes(regen, pc, "target");

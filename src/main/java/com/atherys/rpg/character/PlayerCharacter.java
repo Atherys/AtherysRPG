@@ -30,6 +30,8 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     private double experience;
 
+    private double spentExperience;
+
     private double experienceSpendingLimit;
 
     public PlayerCharacter() {}
@@ -76,5 +78,13 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void setExperienceSpendingLimit(double experienceSpendingLimit) {
         this.experienceSpendingLimit = experienceSpendingLimit;
+    }
+
+    public double getSpentExperience() {
+        return spentExperience;
+    }
+
+    public void setSpentExperience(double spentExperience) {
+        this.spentExperience = spentExperience;
     }
 }

@@ -6,6 +6,7 @@ import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.service.AttributeService;
+import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -17,9 +18,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Singleton
 public class AttributeFacade {
@@ -36,6 +35,9 @@ public class AttributeFacade {
     @Inject
     private AttributeService attributeService;
 
+    @Inject
+    private ExpressionService expressionService;
+
     public void showPlayerAttributes(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
@@ -43,19 +45,9 @@ public class AttributeFacade {
 
         pc.getAttributes().forEach((type, value) -> {
 
-            double finalAttributeValue = getFinalAttributeValue(pc, player, type);
-            double baseAttributeValue = value;
-
-            Text attributeValue = Text.builder()
-                    .append(Text.of(finalAttributeValue))
-                    .onHover(TextActions.showText(Text.of(
-                            "Base of ", baseAttributeValue, " + ", (finalAttributeValue - baseAttributeValue), " from equipment"
-                    )))
-                    .build();
-
             Text attribute = Text.builder()
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, attributeValue, " "))
-                    .append(getAddAttributeButton(type))
+                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, getAttributeValue(pc, player, type, value), " "))
+                    .append(getAddAttributeButton(type, value))
                     .append(Text.NEW_LINE)
                     .build();
 
@@ -63,6 +55,32 @@ public class AttributeFacade {
         });
 
         player.sendMessage(attributeText.build());
+    }
+
+    private Text getAttributeValue(PlayerCharacter pc, Player player, AttributeType type, double base) {
+        double finalAttributeValue = getFinalAttributeValue(pc, player, type);
+
+        return Text.builder()
+                .append(Text.of(finalAttributeValue))
+                .onHover(TextActions.showText(Text.of(
+                        "Base of ", base, " + ", (finalAttributeValue - base), " from equipment"
+                )))
+                .build();
+    }
+
+    private Text getAddAttributeButton(AttributeType type, double currentValue) {
+
+        // TODO: Display effects of increasing attribute
+
+        return Text.builder()
+                .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
+                .onHover(TextActions.showText(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.")))
+                .onClick(TextActions.executeCallback(source -> {
+                    if (source instanceof Player) {
+                        purchaseAttribute((Player) source, type, 1.0);
+                    }
+                }))
+                .build();
     }
 
     private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {
@@ -108,9 +126,7 @@ public class AttributeFacade {
         double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
 
         // If the player has already reached their experience spending limit, cancel
-        // TODO: In order for this to work, the overall experience spent by the player must be tracked
-        // This is currently not done, therefore this check is a placeholder for the actual one
-        if (pc.getExperienceSpendingLimit() < 0.0d) {
+        if (pc.getSpentExperience() + expCost > pc.getExperienceSpendingLimit()) {
             rpgMsg.error(player, "You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
         } else {
 
@@ -128,6 +144,7 @@ public class AttributeFacade {
 
             characterService.addAttribute(pc, type, amount);
             characterService.removeExperience(pc, expCost);
+            characterService.addSpentExperience(pc, expCost);
 
             rpgMsg.info(player,
                     "You have added ", 1.0, " ",
@@ -136,18 +153,6 @@ public class AttributeFacade {
                     " experience."
             );
         }
-    }
-
-    private Text getAddAttributeButton(AttributeType type) {
-        return Text.builder()
-                .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
-                .onHover(TextActions.showText(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.")))
-                .onClick(TextActions.executeCallback(source -> {
-                    if (source instanceof Player) {
-                        purchaseAttribute((Player) source, type, 1.0);
-                    }
-                }))
-                .build();
     }
 
     public void enchantPlayerHeldItem(Player source, AttributeType attributeType, Double amount) throws RPGCommandException {
