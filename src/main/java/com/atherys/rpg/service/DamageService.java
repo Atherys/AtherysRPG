@@ -29,13 +29,13 @@ public class DamageService {
     @Inject
     private ExpressionService expressionService;
 
-    private Map<String, Expression> cachedExpressions = new HashMap<>();
-
     public DamageService() {
     }
 
     public double getMeleeDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, ItemType weaponType) {
         AtherysDamageType damageType = getMeleeDamageType(weaponType);
+
+        // TODO: Account for items
 
         // Calculate and return the damage
         return calcDamage(attacker, target, damageType);
@@ -44,11 +44,16 @@ public class DamageService {
     public double getRangedDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, EntityType projectileType) {
         AtherysDamageType damageType = getRangedDamageType(projectileType);
 
+        // TODO: Account for items
+
         // Calculate and return the damage
         return calcDamage(attacker, target, damageType);
     }
 
     public double getMagicDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType damageType) {
+
+        // TODO: Account for items?
+
         // Calculate and return the damage
         return calcDamage(attacker, target, damageType);
     }

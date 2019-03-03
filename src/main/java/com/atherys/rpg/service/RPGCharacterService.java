@@ -75,21 +75,6 @@ public class RPGCharacterService {
         }
     }
 
-    public void updateAttributes(RPGCharacter<?> character, Entity source) {
-        if (source instanceof Equipable) {
-            // Get the attributes of the held items
-            Map<AttributeType, Double> result = attributeService.getHeldItemAttributes((Equipable) source);
-
-            if (source instanceof ArmorEquipable) {
-                // Merge the held item and armor attributes
-                result = attributeService.mergeAttributes(result, attributeService.getArmorAttributes((ArmorEquipable) source));
-            }
-
-            // Merge all into the character's attributes
-            attributeService.mergeAttributes(character.getAttributes(), result);
-        }
-    }
-
     public void addExperience(PlayerCharacter pc, double amount) {
         pc.setExperience(pc.getExperience() + amount);
         repository.saveOne(pc);

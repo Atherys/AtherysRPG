@@ -10,6 +10,7 @@ import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -19,6 +20,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 @Singleton
 public class AttributeFacade {
@@ -47,7 +49,7 @@ public class AttributeFacade {
 
             Text attribute = Text.builder()
                     .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, getAttributeValue(pc, player, type, value), " "))
-                    .append(getAddAttributeButton(type, value))
+                    .append(getAddAttributeButton(pc, type, value))
                     .append(Text.NEW_LINE)
                     .build();
 
@@ -68,19 +70,28 @@ public class AttributeFacade {
                 .build();
     }
 
-    private Text getAddAttributeButton(AttributeType type, double currentValue) {
+    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double currentValue) {
 
-        // TODO: Display effects of increasing attribute
+        Consumer<CommandSource> onClick = source -> {
+            if (source instanceof Player) {
+                purchaseAttribute((Player) source, type, 1.0);
+            }
+        };
+
+        Text hoverText = Text.builder()
+                .append(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.", Text.NEW_LINE))
+                .append(getEffectsOfIncreasingAttribute(pc, type, currentValue))
+                .build();
 
         return Text.builder()
                 .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
-                .onHover(TextActions.showText(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.")))
-                .onClick(TextActions.executeCallback(source -> {
-                    if (source instanceof Player) {
-                        purchaseAttribute((Player) source, type, 1.0);
-                    }
-                }))
+                .onHover(TextActions.showText(hoverText))
+                .onClick(TextActions.executeCallback(onClick))
                 .build();
+    }
+
+    private Text getEffectsOfIncreasingAttribute(PlayerCharacter pc, AttributeType type, double currentValue) {
+        return Text.of("<Placeholder for effects>");
     }
 
     private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {

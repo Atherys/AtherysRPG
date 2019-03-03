@@ -121,9 +121,6 @@ public class RPGCharacterFacade {
         RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);
         RPGCharacter<?> targetCharacter = characterService.getOrCreateCharacter(target);
 
-        characterService.updateAttributes(attackerCharacter, source);
-        characterService.updateAttributes(targetCharacter, target);
-
         event.setBaseDamage(damageService.getMeleeDamage(attackerCharacter, targetCharacter, weaponType));
     }
 
@@ -133,9 +130,6 @@ public class RPGCharacterFacade {
 
         RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);
         RPGCharacter<?> targetCharacter = characterService.getOrCreateCharacter(target);
-
-        characterService.updateAttributes(attackerCharacter, source);
-        characterService.updateAttributes(targetCharacter, target);
 
         EntityType projectileType = rootSource.getSource().getType();
 
