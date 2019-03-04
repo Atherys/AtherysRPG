@@ -29,13 +29,13 @@ public class ExpressionService {
         return result;
     }
 
-    public void populateAttributes(Expression expression, RPGCharacter<?> character, String name) {
-        String pattern = name.toUpperCase() + "_%s";
-        attributeService.getDefaultAttributes().forEach((type, defaultValue) -> expression.setVariable(
-                String.format(pattern, type.getId().toUpperCase()),
-                BigDecimal.valueOf(character.getAttributes().getOrDefault(type, defaultValue))
-        ));
-    }
+//    public void populateAttributes(Expression expression, RPGCharacter<?> character, String name) {
+//        String pattern = name.toUpperCase() + "_%s";
+//        attributeService.getDefaultAttributes().forEach((type, defaultValue) -> expression.setVariable(
+//                String.format(pattern, type.getId().toUpperCase()),
+//                BigDecimal.valueOf(character.getAttributes().getOrDefault(type, defaultValue))
+//        ));
+//    }
 
     public void populateAttributes(Expression expression, Map<AttributeType, Double> attributes, String name) {
         String pattern = name.toUpperCase() + "_%s";

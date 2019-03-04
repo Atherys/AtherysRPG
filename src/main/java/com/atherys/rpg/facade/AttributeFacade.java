@@ -1,6 +1,7 @@
 package com.atherys.rpg.facade;
 
 import com.atherys.rpg.AtherysRPGConfig;
+import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
@@ -12,6 +13,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.ArmorEquipable;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
@@ -39,69 +43,6 @@ public class AttributeFacade {
 
     @Inject
     private ExpressionService expressionService;
-
-    public void showPlayerAttributes(Player player) {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-
-        Text.Builder attributeText = Text.builder();
-
-        pc.getAttributes().forEach((type, value) -> {
-
-            Text attribute = Text.builder()
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, getAttributeValue(pc, player, type, value), " "))
-                    .append(getAddAttributeButton(pc, type, value))
-                    .append(Text.NEW_LINE)
-                    .build();
-
-            attributeText.append(attribute);
-        });
-
-        player.sendMessage(attributeText.build());
-    }
-
-    private Text getAttributeValue(PlayerCharacter pc, Player player, AttributeType type, double base) {
-        double finalAttributeValue = getFinalAttributeValue(pc, player, type);
-
-        return Text.builder()
-                .append(Text.of(finalAttributeValue))
-                .onHover(TextActions.showText(Text.of(
-                        "Base of ", base, " + ", (finalAttributeValue - base), " from equipment"
-                )))
-                .build();
-    }
-
-    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double currentValue) {
-
-        Consumer<CommandSource> onClick = source -> {
-            if (source instanceof Player) {
-                purchaseAttribute((Player) source, type, 1.0);
-            }
-        };
-
-        Text hoverText = Text.builder()
-                .append(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.", Text.NEW_LINE))
-                .append(getEffectsOfIncreasingAttribute(pc, type, currentValue))
-                .build();
-
-        return Text.builder()
-                .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
-                .onHover(TextActions.showText(hoverText))
-                .onClick(TextActions.executeCallback(onClick))
-                .build();
-    }
-
-    private Text getEffectsOfIncreasingAttribute(PlayerCharacter pc, AttributeType type, double currentValue) {
-        return Text.of("<Placeholder for effects>");
-    }
-
-    private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {
-        double finalValue = pc.getAttributes().get(type);
-
-        finalValue += attributeService.getHeldItemAttributes(player).getOrDefault(type, 0.0d);
-        finalValue += attributeService.getArmorAttributes(player).getOrDefault(type, 0.0d);
-
-        return finalValue;
-    }
 
     public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
@@ -183,6 +124,96 @@ public class AttributeFacade {
         if (!item.offer(data).isSuccessful()) {
             throw new RPGCommandException("Failed to set data on item.");
         }
+    }
+
+    public Map<AttributeType, Double> getAllAttributes(Entity entity) {
+        RPGCharacter<?> character = characterService.getOrCreateCharacter(entity);
+
+        Map<AttributeType, Double> attributes = attributeService.getAttributes(character);
+        attributeService.mergeAttributes(attributes, getEquipmentAttributes(entity));
+
+        return attributes;
+    }
+
+    public Map<AttributeType, Double> getBaseAttributes(Entity entity) {
+        return attributeService.getAttributes(characterService.getOrCreateCharacter(entity));
+    }
+
+    public Map<AttributeType, Double> getEquipmentAttributes(Entity entity) {
+        Map<AttributeType, Double> result = new HashMap<>();
+
+        if (entity instanceof Equipable) {
+            attributeService.mergeAttributes(result, attributeService.getHeldItemAttributes((Equipable) entity));
+        }
+
+        if (entity instanceof ArmorEquipable) {
+            attributeService.mergeAttributes(result, attributeService.getArmorAttributes((ArmorEquipable) entity));
+        }
+
+        return result;
+    }
+
+    public void showPlayerAttributes(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        Text.Builder attributeText = Text.builder();
+
+        pc.getAttributes().forEach((type, value) -> {
+
+            Text attribute = Text.builder()
+                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, getAttributeValue(pc, player, type, value), " "))
+                    .append(getAddAttributeButton(pc, type, value))
+                    .append(Text.NEW_LINE)
+                    .build();
+
+            attributeText.append(attribute);
+        });
+
+        player.sendMessage(attributeText.build());
+    }
+
+    private Text getAttributeValue(PlayerCharacter pc, Player player, AttributeType type, double base) {
+        double finalAttributeValue = getFinalAttributeValue(pc, player, type);
+
+        return Text.builder()
+                .append(Text.of(finalAttributeValue))
+                .onHover(TextActions.showText(Text.of(
+                        "Base of ", base, " + ", (finalAttributeValue - base), " from equipment"
+                )))
+                .build();
+    }
+
+    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double currentValue) {
+
+        Consumer<CommandSource> onClick = source -> {
+            if (source instanceof Player) {
+                purchaseAttribute((Player) source, type, 1.0);
+            }
+        };
+
+        Text hoverText = Text.builder()
+                .append(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.", Text.NEW_LINE))
+                .append(getEffectsOfIncreasingAttribute(pc, type, currentValue))
+                .build();
+
+        return Text.builder()
+                .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
+                .onHover(TextActions.showText(hoverText))
+                .onClick(TextActions.executeCallback(onClick))
+                .build();
+    }
+
+    private Text getEffectsOfIncreasingAttribute(PlayerCharacter pc, AttributeType type, double currentValue) {
+        return Text.of("<Placeholder for effects>");
+    }
+
+    private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {
+        double finalValue = pc.getAttributes().get(type);
+
+        finalValue += attributeService.getHeldItemAttributes(player).getOrDefault(type, 0.0d);
+        finalValue += attributeService.getArmorAttributes(player).getOrDefault(type, 0.0d);
+
+        return finalValue;
     }
 
     private void updateItemLore(ItemStack stack) {

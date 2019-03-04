@@ -17,20 +17,12 @@ public class HealingService {
     @Inject
     private ExpressionService expressionService;
 
-    public double getHealthRegenAmount(RPGCharacter<?> target) {
-        return calcHealthRegen(target);
-    }
+//    public double getHealthRegenAmount(RPGCharacter<?> target) {
+//        return calcHealthRegen(target);
+//    }
 
     public void heal(Living entity, double amount) {
         entity.transform(Keys.HEALTH, (value) -> value + amount);
-    }
-
-    private double calcHealthRegen(RPGCharacter<?> source) {
-        Expression expression = expressionService.getExpression(config.HEALTH_REGEN_CALCULATION);
-
-        expressionService.populateAttributes(expression, source, "source");
-
-        return expression.eval().doubleValue();
     }
 
 }

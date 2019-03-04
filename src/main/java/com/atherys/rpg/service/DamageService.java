@@ -4,6 +4,7 @@ import com.atherys.rpg.AtherysRPGConfig;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypes;
+import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.sources.AtherysDamageSources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -32,45 +33,42 @@ public class DamageService {
     public DamageService() {
     }
 
-    public double getMeleeDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, ItemType weaponType) {
+    public double getMeleeDamage(
+            Map<AttributeType, Double> attackerAttributes,
+            Map<AttributeType, Double> targetAttributes,
+            ItemType weaponType
+    ) {
         AtherysDamageType damageType = getMeleeDamageType(weaponType);
 
-        // TODO: Account for items
-
         // Calculate and return the damage
-        return calcDamage(attacker, target, damageType);
+        return calcDamage(attackerAttributes, targetAttributes, damageType);
     }
 
-    public double getRangedDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, EntityType projectileType) {
+    public double getRangedDamage(
+            Map<AttributeType, Double> attackerAttributes,
+            Map<AttributeType, Double> targetAttributes,
+            EntityType projectileType
+    ) {
         AtherysDamageType damageType = getRangedDamageType(projectileType);
 
-        // TODO: Account for items
-
         // Calculate and return the damage
-        return calcDamage(attacker, target, damageType);
+        return calcDamage(attackerAttributes, targetAttributes, damageType);
     }
 
-    public double getMagicDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType damageType) {
-
-        // TODO: Account for items?
-
+    public double getMagicDamage(
+            Map<AttributeType, Double> attackerAttributes,
+            Map<AttributeType, Double> targetAttributes,
+            AtherysDamageType damageType
+    ) {
         // Calculate and return the damage
-        return calcDamage(attacker, target, damageType);
+        return calcDamage(attackerAttributes, targetAttributes, damageType);
     }
 
-    public double calcDamage(RPGCharacter<?> attacker, RPGCharacter<?> target, AtherysDamageType type) {
+    public double calcDamage(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, AtherysDamageType type) {
         Expression expression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
 
-        expressionService.populateAttributes(expression, attacker, "source");
-        expressionService.populateAttributes(expression, target, "target");
-
-        return expression.eval().doubleValue();
-    }
-
-    public double calcResourceRegen(RPGCharacter<?> source) {
-        Expression expression = expressionService.getExpression(config.RESOURCE_REGEN_CALCULATION);
-
-        expressionService.populateAttributes(expression, source, "source");
+        expressionService.populateAttributes(expression, attackerAttributes, "source");
+        expressionService.populateAttributes(expression, targetAttributes, "target");
 
         return expression.eval().doubleValue();
     }
@@ -81,25 +79,5 @@ public class DamageService {
 
     private AtherysDamageType getRangedDamageType(EntityType projectileType) {
         return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, AtherysDamageTypes.PIERCE);
-    }
-
-    private Living getAsLiving(RPGCharacter<? extends Living> character) {
-        Living entity = character.getEntity().orElse(null);
-
-        if (entity == null) {
-            throw new IllegalStateException("Entity cannot be null.");
-        }
-
-        return entity;
-    }
-
-    private Equipable getAsEquipable(RPGCharacter<? extends Equipable> character) {
-        Equipable entity = character.getEntity().orElse(null);
-
-        if (entity == null) {
-            throw new IllegalStateException("Entity cannot be null.");
-        }
-
-        return entity;
     }
 }

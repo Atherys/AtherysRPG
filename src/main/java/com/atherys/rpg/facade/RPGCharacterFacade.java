@@ -34,6 +34,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.util.Map;
+
 @Singleton
 public class RPGCharacterFacade {
 
@@ -48,6 +50,9 @@ public class RPGCharacterFacade {
 
     @Inject
     private RPGCharacterService characterService;
+
+    @Inject
+    private AttributeFacade attributeFacade;
 
     @Inject
     private RPGMessagingFacade rpgMsg;
@@ -92,13 +97,16 @@ public class RPGCharacterFacade {
 
     public void onResourceRegen(ResourceRegenEvent event, Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-        double amount = characterService.getResourceRegenAmount(pc);
+
+        // TODO: Account for items
+
+        double amount = characterService.calcResourceRegen(pc.getAttributes());
         event.setRegenAmount(amount);
     }
 
     public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
         // The average time taken for these, once the JVM has had time to do some runtime optimizations
-        // is 0.1 - 0.2 milliseconds
+        // is 0.2 - 0.3 milliseconds
         if (rootSource instanceof IndirectEntityDamageSource) {
             onIndirectDamage(event, (IndirectEntityDamageSource) rootSource);
         } else {
@@ -118,22 +126,28 @@ public class RPGCharacterFacade {
                     .orElse(ItemTypes.NONE);
         }
 
-        RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);
-        RPGCharacter<?> targetCharacter = characterService.getOrCreateCharacter(target);
+//        characterService.updateCachedEntity(source);
+//        characterService.updateCachedEntity(target);
 
-        event.setBaseDamage(damageService.getMeleeDamage(attackerCharacter, targetCharacter, weaponType));
+        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+        event.setBaseDamage(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType));
     }
 
     private void onIndirectDamage(DamageEntityEvent event, IndirectEntityDamageSource rootSource) {
         Entity source = rootSource.getIndirectSource();
         Entity target = event.getTargetEntity();
 
-        RPGCharacter<?> attackerCharacter = characterService.getOrCreateCharacter(source);
-        RPGCharacter<?> targetCharacter = characterService.getOrCreateCharacter(target);
+//        characterService.updateCachedEntity(source);
+//        characterService.updateCachedEntity(target);
+
+        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
         EntityType projectileType = rootSource.getSource().getType();
 
-        event.setBaseDamage(damageService.getRangedDamage(attackerCharacter, targetCharacter, projectileType));
+        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
     }
 
 // Healing is currently not implementable as such due to Sponge

@@ -1,6 +1,7 @@
 package com.atherys.rpg.service;
 
 import com.atherys.rpg.AtherysRPGConfig;
+import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.data.AttributeData;
 import com.google.inject.Inject;
@@ -92,5 +93,9 @@ public class AttributeService {
     public Map<AttributeType, Double> mergeAttributes(Map<AttributeType, Double> source, Map<AttributeType, Double> additional) {
         additional.forEach((type, value) -> source.merge(type, value, (v1, v2) -> v1 + v2));
         return additional;
+    }
+
+    public Map<AttributeType, Double> getAttributes(RPGCharacter<?> character) {
+        return new HashMap<>(character.getAttributes());
     }
 }

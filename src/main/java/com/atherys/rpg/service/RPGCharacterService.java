@@ -105,9 +105,11 @@ public class RPGCharacterService {
         repository.saveOne(pc);
     }
 
-    public double getResourceRegenAmount(PlayerCharacter pc) {
-        Expression regen = expressionService.getExpression(config.RESOURCE_REGEN_CALCULATION);
-        expressionService.populateAttributes(regen, pc, "target");
-        return regen.eval().doubleValue();
+    public double calcResourceRegen(Map<AttributeType, Double> attributes) {
+        Expression expression = expressionService.getExpression(config.RESOURCE_REGEN_CALCULATION);
+
+        expressionService.populateAttributes(expression, attributes, "source");
+
+        return expression.eval().doubleValue();
     }
 }
