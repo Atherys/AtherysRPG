@@ -172,6 +172,38 @@ public class AttributeFacade {
         player.sendMessage(attributeText.build());
     }
 
+    /**
+     * Updates the lore of an item to reflect the attributes contained within it
+     *
+     * @param stack The itemstack whose lore is to be updated
+     */
+    public void updateItemLore(ItemStack stack) {
+        Optional<AttributeData> attributeData = stack.get(AttributeData.class);
+
+        attributeData.ifPresent((data) -> {
+            List<Text> lore = stack.get(Keys.ITEM_LORE).orElse(new ArrayList<>());
+
+            data.asMap().forEach((type, value) -> {
+                if (value == 0.0d) {
+                    return;
+                }
+
+                for (int i = 0; i < lore.size(); i++) {
+                    // TODO: Remove lore line if attribute is no longer present
+                    // TODO: Update amount of attribute if already present
+                    if (lore.get(i).toPlain().contains(type.getName())) {
+                        lore.set(i, getAttributeLoreLine(type, value));
+                        return;
+                    }
+                }
+
+                lore.add(getAttributeLoreLine(type, value));
+            });
+
+            stack.offer(Keys.ITEM_LORE, lore);
+        });
+    }
+
     private Text getAttributeValue(PlayerCharacter pc, Player player, AttributeType type, double base) {
         double finalAttributeValue = getFinalAttributeValue(pc, player, type);
 
@@ -214,31 +246,6 @@ public class AttributeFacade {
         finalValue += attributeService.getArmorAttributes(player).getOrDefault(type, 0.0d);
 
         return finalValue;
-    }
-
-    private void updateItemLore(ItemStack stack) {
-        Optional<AttributeData> attributeData = stack.get(AttributeData.class);
-
-        attributeData.ifPresent((data) -> {
-            List<Text> lore = stack.get(Keys.ITEM_LORE).orElse(new ArrayList<>());
-
-            data.asMap().forEach((type, value) -> {
-                if (value == 0.0d) {
-                    return;
-                }
-
-                for (int i = 0; i < lore.size(); i++) {
-                    if (lore.get(i).toPlain().contains(type.getName())) {
-                        lore.set(i, getAttributeLoreLine(type, value));
-                        return;
-                    }
-                }
-
-                lore.add(getAttributeLoreLine(type, value));
-            });
-
-            stack.offer(Keys.ITEM_LORE, lore);
-        });
     }
 
     private Text getAttributeLoreLine(AttributeType type, Double amount) {

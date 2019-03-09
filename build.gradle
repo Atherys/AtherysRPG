@@ -45,8 +45,3 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
-
-shadowJar {
-    relocate 'org.bson', 'com.atherys.libs.org.bson'
-    relocate 'com.mongodb', 'com.atherys.libs.com.mongodb'
-}
