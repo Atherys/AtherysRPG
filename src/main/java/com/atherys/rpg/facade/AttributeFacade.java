@@ -161,8 +161,9 @@ public class AttributeFacade {
         pc.getAttributes().forEach((type, value) -> {
 
             Text attribute = Text.builder()
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, getAttributeValue(pc, player, type, value), " "))
                     .append(getAddAttributeButton(pc, type, value))
+                    .append(Text.of(" "))
+                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, getAttributeValue(pc, player, type, value), " "))
                     .append(Text.NEW_LINE)
                     .build();
 

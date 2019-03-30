@@ -24,6 +24,9 @@ import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.atherys.rpg.skill.RPGSimpleDamageSkill;
+import com.atherys.skills.api.skill.Castable;
+import com.atherys.skills.event.SkillRegistrationEvent;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -225,6 +228,16 @@ public class AtherysRPG {
                 .dataName("Attributes")
                 .manipulatorId("attributes")
                 .buildAndRegister(container);
+    }
+
+    @Listener
+    public void onSkillRegistration(SkillRegistrationEvent event) {
+        event.registerSkill(new RPGSimpleDamageSkill());
+    }
+
+    @Listener
+    public void onSkillReg(GameRegistryEvent.Register<Castable> event) {
+        event.register(new RPGSimpleDamageSkill());
     }
 
     public AtherysRPGConfig getConfig() {

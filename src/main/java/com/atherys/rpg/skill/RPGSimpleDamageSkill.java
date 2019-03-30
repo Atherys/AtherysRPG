@@ -18,13 +18,17 @@ public class RPGSimpleDamageSkill extends TargetedRPGSkill {
 
     private static final String RESOURCE_EXPRESSION = "12.0";
 
-    protected RPGSimpleDamageSkill() {
-        id("simple-damage");
-        name("Simple Damage");
+    public RPGSimpleDamageSkill() {
+        id("rpg-simple-damage");
+        name("RPG Simple Damage");
         description(
-                TextTemplate.of("A simple damage skill which deals {damage}, costs {resource} and has a {cooldown} cooldown."),
+                TextTemplate.of(
+                        "A simple damage skill which deals ", TextTemplate.arg("damage").build(),
+                        "damage, costs ", TextTemplate.arg("resource").build(),
+                        " and has a ", TextTemplate.arg("cooldown").build(), " cooldown."
+                ),
                 Tuple.of("damage", asExpression(DAMAGE_EXPRESSION)),
-                Tuple.of("resource", asExpression(COOLDOWN_EXPRESSION)),
+                Tuple.of("cooldown", asExpression(COOLDOWN_EXPRESSION)),
                 Tuple.of("resource", asExpression(RESOURCE_EXPRESSION))
         );
         cooldown(COOLDOWN_EXPRESSION);
@@ -33,10 +37,16 @@ public class RPGSimpleDamageSkill extends TargetedRPGSkill {
 
     @Override
     public CastResult cast(Living user, Living target, long timestamp, String... args) throws CastException {
+
         double damage = asDouble(DAMAGE_EXPRESSION, user, target);
 
         if (user instanceof MessageReceiver) {
-            ((MessageReceiver) user).sendMessage(Text.of("Dealing ", damage, " damage to ", target.getType().getName()));
+            MessageReceiver receiver = (MessageReceiver) user;
+            receiver.sendMessage(Text.of("Using Skill: ", getName()));
+            receiver.sendMessage(Text.of("Description: ", getDescription(user)));
+            receiver.sendMessage(Text.of("Cooldown: ", getCooldown(user)));
+            receiver.sendMessage(Text.of("Resource Cost: ", getResourceCost(user)));
+            receiver.sendMessage(Text.of("Dealing ", damage, " damage to ", target.getType().getName()));
         }
 
         target.damage(damage, DamageSources.VOID);

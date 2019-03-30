@@ -4,6 +4,7 @@ import com.atherys.rpg.service.ExpressionService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
@@ -32,13 +33,19 @@ public class RPGSkillFacade {
 
         for (Tuple<String, ?> argument : descriptionArguments) {
 
-            TextRepresentable value = null;
+            TextRepresentable value = Text.of(argument.getSecond());
 
             // If the description argument is an expression, populate it with the entity's attributes and evaluate
             if (argument.getSecond() instanceof Expression) {
                 Expression expression = (Expression) argument.getSecond();
                 expressionService.populateAttributes(expression, attributeFacade.getAllAttributes(living), SKILL_SOURCE_NAME);
-                value = Text.of(expression.eval().doubleValue());
+
+                // If this is a cooldown, format it as a time duration of milliseconds
+                if (argument.getFirst().equals("cooldown")) {
+                    value = Text.of(DurationFormatUtils.formatDuration(expression.eval().longValue(), "HH'h' mm'm' ss's'", false));
+                } else {
+                    value = Text.of(expression.eval().doubleValue());
+                }
             }
 
             // put the rendered argument into the map
