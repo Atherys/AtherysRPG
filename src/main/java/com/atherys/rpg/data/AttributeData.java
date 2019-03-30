@@ -1,10 +1,5 @@
 package com.atherys.rpg.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Generated;
-
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypes;
 import org.spongepowered.api.Sponge;
@@ -19,6 +14,11 @@ import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.data.value.mutable.Value;
+
+import javax.annotation.Generated;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-03-02T15:51:24.723Z")
 public class AttributeData extends AbstractData<AttributeData, AttributeData.Immutable> {
@@ -225,7 +225,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Double getAttribute(AttributeType type) {
-        switch(type.getId()) {
+        switch (type.getId()) {
             case "agility":
                 return getAgility();
             case "charisma":
@@ -252,7 +252,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public void setAttribute(AttributeType type, Double value) {
-        switch(type.getId()) {
+        switch (type.getId()) {
             case "agility":
                 setAgility(value);
                 break;
@@ -306,17 +306,17 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     @Override
     public Optional<AttributeData> fill(DataHolder dataHolder, MergeFunction overlap) {
         dataHolder.get(AttributeData.class).ifPresent(that -> {
-                AttributeData data = overlap.merge(this, that);
-                this.agility = data.agility;
-                this.constitution = data.constitution;
-                this.charisma = data.charisma;
-                this.defense = data.defense;
-                this.intelligence = data.intelligence;
-                this.luck = data.luck;
-                this.perception = data.perception;
-                this.strength = data.strength;
-                this.willpower = data.willpower;
-                this.wisdom = data.wisdom;
+            AttributeData data = overlap.merge(this, that);
+            this.agility = data.agility;
+            this.constitution = data.constitution;
+            this.charisma = data.charisma;
+            this.defense = data.defense;
+            this.intelligence = data.intelligence;
+            this.luck = data.luck;
+            this.perception = data.perception;
+            this.strength = data.strength;
+            this.willpower = data.willpower;
+            this.wisdom = data.wisdom;
         });
         return Optional.of(this);
     }

@@ -6,7 +6,10 @@ import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class SimpleCharacter<T extends Living & Equipable> implements RPGCharacter<T> {
 

@@ -16,11 +16,13 @@ import com.atherys.rpg.data.AttributeKeys;
 import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
+import com.atherys.rpg.facade.RPGSkillFacade;
 import com.atherys.rpg.listener.EntityListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.DamageService;
+import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -66,6 +68,10 @@ public class AtherysRPG {
     private PluginContainer container;
 
     private Components components;
+
+    public static AtherysRPG getInstance() {
+        return instance;
+    }
 
     private void init() {
         instance = this;
@@ -135,7 +141,8 @@ public class AtherysRPG {
 
     @Listener
     public void onKeyRegistration(GameRegistryEvent.Register<Key<?>> event) {
-        final TypeToken<Value<Double>> doubleToken = new TypeToken<Value<Double>>(){};
+        final TypeToken<Value<Double>> doubleToken = new TypeToken<Value<Double>>() {
+        };
 
         AttributeKeys.AGILITY = Key.builder()
                 .id("agility")
@@ -209,7 +216,7 @@ public class AtherysRPG {
     }
 
     @Listener
-    public void onDataRegistration(GameRegistryEvent.Register<DataRegistration<?,?>> event) {
+    public void onDataRegistration(GameRegistryEvent.Register<DataRegistration<?, ?>> event) {
         // Register custom data
         DataRegistration.builder()
                 .dataClass(AttributeData.class)
@@ -220,48 +227,16 @@ public class AtherysRPG {
                 .buildAndRegister(container);
     }
 
-    private static class Components {
-        @Inject
-        AtherysRPGConfig config;
-
-        @Inject
-        PlayerCharacterRepository playerCharacterRepository;
-
-        @Inject
-        AttributeService attributeService;
-
-        @Inject
-        DamageService damageService;
-
-        @Inject
-        RPGCharacterService characterService;
-
-        @Inject
-        RPGMessagingFacade rpgMessagingFacade;
-
-        @Inject
-        RPGCharacterFacade rpgCharacterFacade;
-
-        @Inject
-        AttributeFacade attributeFacade;
-
-        @Inject
-        EntityListener entityListener;
-
-        @Inject
-        SkillsListener skillsListener;
-    }
-
-    public static AtherysRPG getInstance() {
-        return instance;
-    }
-
     public AtherysRPGConfig getConfig() {
         return components.config;
     }
 
     public PlayerCharacterRepository getPlayerCharacterRepository() {
         return components.playerCharacterRepository;
+    }
+
+    public ExpressionService getExpressionService() {
+        return components.expressionService;
     }
 
     public AttributeService getAttributeService() {
@@ -286,5 +261,47 @@ public class AtherysRPG {
 
     public AttributeFacade getAttributeFacade() {
         return components.attributeFacade;
+    }
+
+    public RPGSkillFacade getRPGSkillFacade() {
+        return components.rpgSkillFacade;
+    }
+
+    private static class Components {
+        @Inject
+        AtherysRPGConfig config;
+
+        @Inject
+        PlayerCharacterRepository playerCharacterRepository;
+
+        @Inject
+        AttributeService attributeService;
+
+        @Inject
+        DamageService damageService;
+
+        @Inject
+        RPGCharacterService characterService;
+
+        @Inject
+        ExpressionService expressionService;
+
+        @Inject
+        RPGMessagingFacade rpgMessagingFacade;
+
+        @Inject
+        RPGCharacterFacade rpgCharacterFacade;
+
+        @Inject
+        RPGSkillFacade rpgSkillFacade;
+
+        @Inject
+        AttributeFacade attributeFacade;
+
+        @Inject
+        EntityListener entityListener;
+
+        @Inject
+        SkillsListener skillsListener;
     }
 }

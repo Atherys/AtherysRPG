@@ -19,7 +19,7 @@ public class SetExperienceSpendingLimitCommand implements ParameterizedCommand {
 
     @Override
     public CommandElement[] getArguments() {
-        return new CommandElement[] {
+        return new CommandElement[]{
                 GenericArguments.player(Text.of("player")),
                 GenericArguments.doubleNum(Text.of("amount"))
         };

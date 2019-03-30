@@ -34,7 +34,8 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     private double experienceSpendingLimit;
 
-    public PlayerCharacter() {}
+    public PlayerCharacter() {
+    }
 
     public PlayerCharacter(UUID uniqueId) {
         this.id = uniqueId;

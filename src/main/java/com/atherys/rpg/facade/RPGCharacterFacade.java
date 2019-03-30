@@ -1,37 +1,28 @@
 package com.atherys.rpg.facade;
 
 import com.atherys.rpg.AtherysRPGConfig;
-import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.service.DamageService;
+import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.HealingService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.skills.api.event.ResourceRegenEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.spongepowered.api.data.DataTransactionResult;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableHealthData;
-import org.spongepowered.api.data.manipulator.mutable.entity.HealthData;
-import org.spongepowered.api.data.persistence.DataBuilder;
-import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
-import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
-import org.spongepowered.api.event.data.ChangeDataHolderEvent;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Map;
@@ -47,6 +38,9 @@ public class RPGCharacterFacade {
 
     @Inject
     private HealingService healingService;
+
+    @Inject
+    private ExpressionService expressionService;
 
     @Inject
     private RPGCharacterService characterService;
@@ -120,7 +114,7 @@ public class RPGCharacterFacade {
 
         ItemType weaponType = ItemTypes.NONE;
 
-        if ( source instanceof Equipable ) {
+        if (source instanceof Equipable) {
             weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
                     .map(ItemStack::getType)
                     .orElse(ItemTypes.NONE);

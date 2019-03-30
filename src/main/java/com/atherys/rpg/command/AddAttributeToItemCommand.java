@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 public class AddAttributeToItemCommand implements PlayerCommand, ParameterizedCommand {
     @Override
     public CommandElement[] getArguments() {
-        return new CommandElement[] {
+        return new CommandElement[]{
                 GenericArguments.catalogedElement(Text.of("attributeType"), AttributeType.class),
                 GenericArguments.doubleNum(Text.of("amount"))
         };

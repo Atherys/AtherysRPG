@@ -1,21 +1,15 @@
 package com.atherys.rpg.service;
 
 import com.atherys.rpg.AtherysRPGConfig;
-import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
-import com.atherys.rpg.sources.AtherysDamageSources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.entity.EntityType;
-import org.spongepowered.api.entity.Equipable;
-import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.item.ItemType;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 @Singleton

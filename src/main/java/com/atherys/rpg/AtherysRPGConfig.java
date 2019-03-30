@@ -21,6 +21,29 @@ public class AtherysRPGConfig extends PluginConfig {
 
     @Setting("item-damage-types")
     public Map<ItemType, AtherysDamageType> ITEM_DAMAGE_TYPES = new HashMap<>();
+    @Setting("projectile-damage-types")
+    public Map<EntityType, AtherysDamageType> PROJECTILE_DAMAGE_TYPES = new HashMap<>();
+    @Setting("damage-calculations")
+    public Map<AtherysDamageType, String> DAMAGE_CALCULATIONS = new HashMap<>();
+    @Setting("health-regen-calculation")
+    public String HEALTH_REGEN_CALCULATION = "1.33 * TARGET_CONSTITUTION";
+    @Setting("resource-regen-calculation")
+    public String RESOURCE_REGEN_CALCULATION = "1.33 * TARGET_WISDOM";
+    @Setting("default-attributes")
+    public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
+    @Setting("attribute-upgrade-cost")
+    public double ATTRIBUTE_UPGRADE_COST = 100.0;
+    @Setting("experience-max")
+    public double EXPERIENCE_MAX = 100_000.0;
+    @Setting("experience-min")
+    public double EXPERIENCE_MIN = 0.0;
+    @Setting("attribute-max")
+    public double ATTRIBUTE_MAX = 99.0;
+    @Setting("attribute-min")
+    public double ATTRIBUTE_MIN = 0.0;
+    @Setting("default-experience-spending-limit")
+    public double DEFAULT_EXPERIENCE_SPENDING_LIMIT = 100_000.0;
+
     {
         // Wood
         ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_HOE, AtherysDamageTypes.BLUNT);
@@ -61,15 +84,11 @@ public class AtherysRPGConfig extends PluginConfig {
         ITEM_DAMAGE_TYPES.put(ItemTypes.NONE, AtherysDamageTypes.UNARMED);
     }
 
-    @Setting("projectile-damage-types")
-    public Map<EntityType, AtherysDamageType> PROJECTILE_DAMAGE_TYPES = new HashMap<>();
     {
         // Bow
         PROJECTILE_DAMAGE_TYPES.put(EntityTypes.TIPPED_ARROW, AtherysDamageTypes.PIERCE);
     }
 
-    @Setting("damage-calculations")
-    public Map<AtherysDamageType, String> DAMAGE_CALCULATIONS = new HashMap<>();
     {
         DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BLUNT, "IF(SOURCE_STRENGTH <= TARGET_DEFENSE, 1.0, SOURCE_CONSTITUTION - TARGET_DEFENSE)");
         DAMAGE_CALCULATIONS.put(AtherysDamageTypes.STAB, "IF(SOURCE_STRENGTH <= TARGET_DEFENSE, 1.0, SOURCE_STRENGTH - TARGET_DEFENSE)");
@@ -79,14 +98,6 @@ public class AtherysRPGConfig extends PluginConfig {
         DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BALLISTIC, "IF(SOURCE_STRENGTH <= TARGET_DEFENSE, 1.0, SOURCE_AGILITY - TARGET_DEFENSE)");
     }
 
-    @Setting("health-regen-calculation")
-    public String HEALTH_REGEN_CALCULATION = "1.33 * TARGET_CONSTITUTION";
-
-    @Setting("resource-regen-calculation")
-    public String RESOURCE_REGEN_CALCULATION = "1.33 * TARGET_WISDOM";
-
-    @Setting("default-attributes")
-    public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
     {
         DEFAULT_ATTRIBUTES.put(AttributeTypes.STRENGTH, 1.0d);
         DEFAULT_ATTRIBUTES.put(AttributeTypes.CONSTITUTION, 1.0d);
@@ -99,24 +110,6 @@ public class AtherysRPGConfig extends PluginConfig {
         DEFAULT_ATTRIBUTES.put(AttributeTypes.PERCEPTION, 1.0d);
         DEFAULT_ATTRIBUTES.put(AttributeTypes.LUCK, 1.0d);
     }
-
-    @Setting("attribute-upgrade-cost")
-    public double ATTRIBUTE_UPGRADE_COST = 100.0;
-
-    @Setting("experience-max")
-    public double EXPERIENCE_MAX = 100_000.0;
-
-    @Setting("experience-min")
-    public double EXPERIENCE_MIN = 0.0;
-
-    @Setting("attribute-max")
-    public double ATTRIBUTE_MAX = 99.0;
-
-    @Setting("attribute-min")
-    public double ATTRIBUTE_MIN = 0.0;
-
-    @Setting("default-experience-spending-limit")
-    public double DEFAULT_EXPERIENCE_SPENDING_LIMIT = 100_000.0;
 
     protected AtherysRPGConfig() throws IOException {
         super("config/atherysrpg", "config.conf");

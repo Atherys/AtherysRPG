@@ -12,11 +12,12 @@ import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Singleton
 public class RPGCharacterService {

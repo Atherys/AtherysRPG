@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public final class AttributeTypeRegistry implements CatalogRegistryModule<AttributeType> {
 
-    private Map<String,AttributeType> attributeTypeMap = new HashMap<>();
+    private Map<String, AttributeType> attributeTypeMap = new HashMap<>();
 
     public AttributeTypeRegistry() {
         attributeTypeMap.put(AttributeTypes.STRENGTH.getId(), AttributeTypes.STRENGTH);

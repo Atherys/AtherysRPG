@@ -1,13 +1,10 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.expression.ClampFunction;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

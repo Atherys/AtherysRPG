@@ -8,138 +8,6 @@ import java.util.function.Consumer;
 
 public class Graph<T> {
 
-    public static class Node<T> {
-
-        private T data;
-
-        private Set<Edge<T>> links = new HashSet<>();
-
-        Node(T data) {
-            this.data = data;
-        }
-
-        public static <T> Node<T> of(T data) {
-            return new Node<>(data);
-        }
-
-        public T get() {
-            return data;
-        }
-
-        public Set<Edge<T>> getLinks() {
-            return links;
-        }
-
-        protected boolean addLink(Node<T> target) {
-            return addLink(new Edge<>(this, target));
-        }
-
-        protected boolean addLink(Node<T> target, float weight) {
-            return addLink(new Edge<>(this, target, weight));
-        }
-
-        private boolean addLink(Edge<T> edge) {
-            if (links.contains(edge)) return false;
-
-            boolean result = links.add(edge);
-
-            if (!edge.getTarget().containsLink(this)) {
-                result = result && edge.getTarget().addLink(edge.inverse());
-            }
-
-            return result;
-        }
-
-        protected boolean removeLink(Node<T> target) {
-            Edge<T> edge = Edge.of(this, target);
-
-            if (!links.contains(edge)) return false;
-
-            boolean result = links.remove(edge);
-
-            if (target.containsLink(this)) {
-                result = result && target.removeLink(this);
-            }
-
-            return result;
-        }
-
-        public boolean containsLink(Node<T> criteria) {
-            return links.stream().anyMatch(edge -> edge.getTarget().equals(criteria));
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Node<?> node = (Node<?>) o;
-            return Objects.equals(data, node.data);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(data);
-        }
-    }
-
-    public static class Edge<T> {
-
-        private Node<T> source;
-        private Node<T> target;
-
-        private float weight;
-
-        Edge(Node<T> source, Node<T> target) {
-            this.source = source;
-            this.target = target;
-        }
-
-        Edge(Node<T> source, Node<T> target, float weight) {
-            this(source, target);
-            this.weight = weight;
-        }
-
-        public static <T> Edge<T> of(Node<T> source, Node<T> target) {
-            return new Edge<>(source, target);
-        }
-
-        public static <T> Edge<T> of(Node<T> source, Node<T> target, float weight) {
-            return new Edge<>(source, target, weight);
-        }
-
-        public Node<T> getSource() {
-            return source;
-        }
-
-        public Node<T> getTarget() {
-            return target;
-        }
-
-        public float getWeight() {
-            return weight;
-        }
-
-        protected Edge<T> inverse() {
-            return Edge.of(target, source, weight);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Edge<?> edge = (Edge<?>) o;
-            return (Objects.equals(source, edge.source) &&
-                    Objects.equals(target, edge.target)) ||
-                    (Objects.equals(source, edge.target) &&
-                            Objects.equals(target, edge.source));
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(source) + Objects.hash(target);
-        }
-    }
-
     private Node<T> root;
 
     public Graph() {
@@ -363,5 +231,137 @@ public class Graph<T> {
     @Override
     public int hashCode() {
         return Objects.hash(root);
+    }
+
+    public static class Node<T> {
+
+        private T data;
+
+        private Set<Edge<T>> links = new HashSet<>();
+
+        Node(T data) {
+            this.data = data;
+        }
+
+        public static <T> Node<T> of(T data) {
+            return new Node<>(data);
+        }
+
+        public T get() {
+            return data;
+        }
+
+        public Set<Edge<T>> getLinks() {
+            return links;
+        }
+
+        protected boolean addLink(Node<T> target) {
+            return addLink(new Edge<>(this, target));
+        }
+
+        protected boolean addLink(Node<T> target, float weight) {
+            return addLink(new Edge<>(this, target, weight));
+        }
+
+        private boolean addLink(Edge<T> edge) {
+            if (links.contains(edge)) return false;
+
+            boolean result = links.add(edge);
+
+            if (!edge.getTarget().containsLink(this)) {
+                result = result && edge.getTarget().addLink(edge.inverse());
+            }
+
+            return result;
+        }
+
+        protected boolean removeLink(Node<T> target) {
+            Edge<T> edge = Edge.of(this, target);
+
+            if (!links.contains(edge)) return false;
+
+            boolean result = links.remove(edge);
+
+            if (target.containsLink(this)) {
+                result = result && target.removeLink(this);
+            }
+
+            return result;
+        }
+
+        public boolean containsLink(Node<T> criteria) {
+            return links.stream().anyMatch(edge -> edge.getTarget().equals(criteria));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node<?> node = (Node<?>) o;
+            return Objects.equals(data, node.data);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(data);
+        }
+    }
+
+    public static class Edge<T> {
+
+        private Node<T> source;
+        private Node<T> target;
+
+        private float weight;
+
+        Edge(Node<T> source, Node<T> target) {
+            this.source = source;
+            this.target = target;
+        }
+
+        Edge(Node<T> source, Node<T> target, float weight) {
+            this(source, target);
+            this.weight = weight;
+        }
+
+        public static <T> Edge<T> of(Node<T> source, Node<T> target) {
+            return new Edge<>(source, target);
+        }
+
+        public static <T> Edge<T> of(Node<T> source, Node<T> target, float weight) {
+            return new Edge<>(source, target, weight);
+        }
+
+        public Node<T> getSource() {
+            return source;
+        }
+
+        public Node<T> getTarget() {
+            return target;
+        }
+
+        public float getWeight() {
+            return weight;
+        }
+
+        protected Edge<T> inverse() {
+            return Edge.of(target, source, weight);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Edge<?> edge = (Edge<?>) o;
+            return (Objects.equals(source, edge.source) &&
+                    Objects.equals(target, edge.target)) ||
+                    (Objects.equals(source, edge.target) &&
+                            Objects.equals(target, edge.source));
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(source) + Objects.hash(target);
+        }
     }
 }

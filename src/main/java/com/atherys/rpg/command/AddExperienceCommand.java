@@ -18,7 +18,7 @@ import org.spongepowered.api.text.Text;
 public class AddExperienceCommand implements ParameterizedCommand {
     @Override
     public CommandElement[] getArguments() {
-        return new CommandElement[] {
+        return new CommandElement[]{
                 GenericArguments.player(Text.of("player")),
                 GenericArguments.doubleNum(Text.of("amount"))
         };

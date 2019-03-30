@@ -10,7 +10,8 @@ public class RPGMessagingFacade {
 
     public static final Text PREFIX = Text.of(TextColors.DARK_GREEN, "[", TextColors.DARK_RED, "RPG", TextColors.DARK_GREEN, "] ", TextColors.RESET);
 
-    public RPGMessagingFacade() {}
+    public RPGMessagingFacade() {
+    }
 
     public Text format(Object... msg) {
         return Text.of(PREFIX, Text.of(msg));

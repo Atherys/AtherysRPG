@@ -20,7 +20,7 @@ public class RemoveAttributeCommand implements ParameterizedCommand {
 
     @Override
     public CommandElement[] getArguments() {
-        return new CommandElement[] {
+        return new CommandElement[]{
                 GenericArguments.player(Text.of("player")),
                 GenericArguments.catalogedElement(Text.of("attributeType"), AttributeType.class),
                 GenericArguments.doubleNum(Text.of("amount"))
