@@ -1,10 +1,10 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.service.ExpressionService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
@@ -16,10 +16,6 @@ import java.util.Map;
 
 @Singleton
 public class RPGSkillFacade {
-
-    private static final String SKILL_SOURCE_NAME = "source";
-
-    private static final String SKILL_TARGET_NAME = "target";
 
     @Inject
     private ExpressionService expressionService;
@@ -33,21 +29,18 @@ public class RPGSkillFacade {
 
         for (Tuple<String, ?> argument : descriptionArguments) {
 
+            // by default, the value of the argument is the Text of the argument value
             TextRepresentable value = Text.of(argument.getSecond());
 
-            // If the description argument is an expression, populate it with the entity's attributes and evaluate
-            if (argument.getSecond() instanceof Expression) {
-                Expression expression = (Expression) argument.getSecond();
-                expressionService.populateAttributes(expression, attributeFacade.getAllAttributes(living), SKILL_SOURCE_NAME);
-
-                // If this is a cooldown, format it as a time duration of milliseconds
-                if (argument.getFirst().equals("cooldown")) {
-                    value = Text.of(DurationFormatUtils.formatDuration(expression.eval().longValue(), "HH'h' mm'm' ss's'", false));
-                } else {
-                    value = Text.of(expression.eval().doubleValue());
-                }
+            // if the argument is of type DescriptionArgument, pass in the living as the source and evaluate
+            if (argument.getSecond() instanceof DescriptionArgument) {
+                value = ((DescriptionArgument) argument.getSecond()).apply(living);
             }
 
+            // if the argument is of type Expression, evaluate it with the user as source
+            if (argument.getSecond() instanceof Expression) {
+                value = Text.of(expressionService.evalExpression(living, (Expression) argument.getSecond()));
+            }
             // put the rendered argument into the map
             renderedArguments.put(argument.getFirst(), value);
         }
@@ -57,15 +50,11 @@ public class RPGSkillFacade {
     }
 
     public long getSkillCooldown(Living living, String cooldownExpression) {
-        Expression expression = expressionService.getExpression(cooldownExpression);
-        expressionService.populateAttributes(expression, attributeFacade.getAllAttributes(living), SKILL_SOURCE_NAME);
-        return expression.eval().longValue();
+        return expressionService.evalExpression(living, cooldownExpression).longValue();
     }
 
     public double getSkillResourceCost(Living living, String resourceCostExpression) {
-        Expression expression = expressionService.getExpression(resourceCostExpression);
-        expressionService.populateAttributes(expression, attributeFacade.getAllAttributes(living), SKILL_SOURCE_NAME);
-        return expression.eval().doubleValue();
+        return expressionService.evalExpression(living, resourceCostExpression).doubleValue();
     }
 
 }

@@ -95,32 +95,11 @@ public abstract class RPGSkill implements Castable {
         return AtherysRPG.getInstance().getExpressionService().getExpression(expression);
     }
 
-    protected double asDouble(String exp, Living source) {
-        Expression expression = AtherysRPG.getInstance().getExpressionService().getExpression(exp);
-        AtherysRPG.getInstance().getExpressionService().populateAttributes(
-                expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source),
-                "source"
-        );
-
-        return expression.eval().doubleValue();
+    protected double asDouble(Living source, String exp) {
+        return AtherysRPG.getInstance().getExpressionService().evalExpression(source, exp).doubleValue();
     }
 
-    protected double asDouble(String exp, Living source, Living target) {
-        Expression expression = AtherysRPG.getInstance().getExpressionService().getExpression(exp);
-
-        AtherysRPG.getInstance().getExpressionService().populateAttributes(
-                expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source),
-                "source"
-        );
-
-        AtherysRPG.getInstance().getExpressionService().populateAttributes(
-                expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(target),
-                "target"
-        );
-
-        return expression.eval().doubleValue();
+    protected double asDouble(Living source, Living target, String exp) {
+        return AtherysRPG.getInstance().getExpressionService().evalExpression(source, target, exp).doubleValue();
     }
 }

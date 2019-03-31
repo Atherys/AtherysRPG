@@ -1,5 +1,7 @@
 package com.atherys.rpg.skill;
 
+import com.atherys.rpg.api.skill.DescriptionArgument;
+import com.atherys.rpg.api.skill.DescriptionArguments;
 import com.atherys.rpg.api.skill.TargetedRPGSkill;
 import com.atherys.skills.api.exception.CastException;
 import com.atherys.skills.api.skill.CastResult;
@@ -24,11 +26,11 @@ public class RPGSimpleDamageSkill extends TargetedRPGSkill {
         description(
                 TextTemplate.of(
                         "A simple damage skill which deals ", TextTemplate.arg("damage").build(),
-                        "damage, costs ", TextTemplate.arg("resource").build(),
+                        " damage, costs ", TextTemplate.arg("resource").build(),
                         " and has a ", TextTemplate.arg("cooldown").build(), " cooldown."
                 ),
-                Tuple.of("damage", asExpression(DAMAGE_EXPRESSION)),
-                Tuple.of("cooldown", asExpression(COOLDOWN_EXPRESSION)),
+                Tuple.of("damage", DescriptionArguments.ofSource(DAMAGE_EXPRESSION)),
+                Tuple.of("cooldown", DescriptionArguments.cooldown(COOLDOWN_EXPRESSION)),
                 Tuple.of("resource", asExpression(RESOURCE_EXPRESSION))
         );
         cooldown(COOLDOWN_EXPRESSION);
@@ -38,15 +40,15 @@ public class RPGSimpleDamageSkill extends TargetedRPGSkill {
     @Override
     public CastResult cast(Living user, Living target, long timestamp, String... args) throws CastException {
 
-        double damage = asDouble(DAMAGE_EXPRESSION, user, target);
+        double damage = asDouble(user, target, DAMAGE_EXPRESSION);
 
         if (user instanceof MessageReceiver) {
             MessageReceiver receiver = (MessageReceiver) user;
-            receiver.sendMessage(Text.of("Using Skill: ", getName()));
-            receiver.sendMessage(Text.of("Description: ", getDescription(user)));
-            receiver.sendMessage(Text.of("Cooldown: ", getCooldown(user)));
-            receiver.sendMessage(Text.of("Resource Cost: ", getResourceCost(user)));
-            receiver.sendMessage(Text.of("Dealing ", damage, " damage to ", target.getType().getName()));
+            receiver.sendMessage(Text.of("DEBUG/ Using Skill: ", getName()));
+            receiver.sendMessage(Text.of("DEBUG/ Description: ", getDescription(user)));
+            receiver.sendMessage(Text.of("DEBUG/ Cooldown: ", getCooldown(user)));
+            receiver.sendMessage(Text.of("DEBUG/ Resource Cost: ", getResourceCost(user)));
+            receiver.sendMessage(Text.of("DEBUG/ Dealing ", damage, " damage to ", target.getType().getName()));
         }
 
         target.damage(damage, DamageSources.VOID);
