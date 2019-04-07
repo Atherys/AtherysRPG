@@ -1,6 +1,6 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.AtherysRPGConfig;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;

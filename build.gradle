@@ -43,5 +43,5 @@ dependencies {
 
     compile 'com.udojava:EvalEx:2.1'
 
-    testCompile 'junit:junit:4.12'
+    compile 'junit:junit:4.12'
 }

@@ -1,6 +1,6 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.AtherysRPGConfig;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.data.key.Keys;

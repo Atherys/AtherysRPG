@@ -11,6 +11,7 @@ import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.data.AttributeKeys;
 import com.atherys.rpg.facade.AttributeFacade;

@@ -1,5 +1,6 @@
 package com.atherys.rpg;
 
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
