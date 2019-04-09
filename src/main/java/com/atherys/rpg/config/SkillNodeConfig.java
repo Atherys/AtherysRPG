@@ -3,6 +3,9 @@ package com.atherys.rpg.config;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @ConfigSerializable
 public class SkillNodeConfig {
 
@@ -14,5 +17,8 @@ public class SkillNodeConfig {
 
     @Setting("cost")
     private String COST_EXPRESSION = "5.0";
+
+    @Setting("properties")
+    private Map<String, String> PROPERTIES = new HashMap<>();
 
 }

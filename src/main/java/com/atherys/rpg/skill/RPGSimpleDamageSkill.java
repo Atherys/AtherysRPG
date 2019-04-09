@@ -1,7 +1,7 @@
 package com.atherys.rpg.skill;
 
-import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.DescriptionArguments;
+import com.atherys.rpg.api.skill.SkillSpec;
 import com.atherys.rpg.api.skill.TargetedRPGSkill;
 import com.atherys.skills.api.exception.CastException;
 import com.atherys.skills.api.skill.CastResult;
@@ -14,33 +14,38 @@ import org.spongepowered.api.util.Tuple;
 
 public class RPGSimpleDamageSkill extends TargetedRPGSkill {
 
-    private static final String DAMAGE_EXPRESSION = "CLAMP(SOURCE_WILLPOWER * 1.5, 0.5, 10.0)";
+    private static final String DEFAULT_DAMAGE_EXPRESSION = "CLAMP(SOURCE_WILLPOWER * 1.5, 0.5, 10.0)";
 
     private static final String COOLDOWN_EXPRESSION = "6000";
 
     private static final String RESOURCE_EXPRESSION = "12.0";
 
     public RPGSimpleDamageSkill() {
-        id("rpg-simple-damage");
-        name("RPG Simple Damage");
-        description(
-                TextTemplate.of(
-                        "A simple damage skill which deals ", TextTemplate.arg("damage").build(),
-                        " damage, costs ", TextTemplate.arg("resource").build(),
-                        " and has a ", TextTemplate.arg("cooldown").build(), " cooldown."
-                ),
-                Tuple.of("damage", DescriptionArguments.ofSource(DAMAGE_EXPRESSION)),
-                Tuple.of("cooldown", DescriptionArguments.cooldown(COOLDOWN_EXPRESSION)),
-                Tuple.of("resource", asExpression(RESOURCE_EXPRESSION))
+        super(
+                SkillSpec.create()
+                .id("rpg-simple-damage")
+                .name("RPG Simple Damage Skill")
+                //.descriptionTemplate("A simple damage skill which deals ${damage} damage, costs ${resource} and has a ${cooldown} cooldown.")
+                .descriptionTemplate(TextTemplate.of(
+                        "A simple damage skill which deals ", TextTemplate.arg("damage").build(), " damage, ",
+                        "costs ", TextTemplate.arg("resource").build(), " ",
+                        "and has a ", TextTemplate.arg("cooldown").build(), " cooldown."
+                ))
+                .descriptionArguments(
+                        Tuple.of("damage", DescriptionArguments.ofSource(DEFAULT_DAMAGE_EXPRESSION)),
+                        Tuple.of("cooldown", DescriptionArguments.cooldown(COOLDOWN_EXPRESSION)),
+                        Tuple.of("resource", asExpression(RESOURCE_EXPRESSION))
+                )
+                .cooldown(COOLDOWN_EXPRESSION)
+                .resourceCost(RESOURCE_EXPRESSION)
+                .property("damage", DEFAULT_DAMAGE_EXPRESSION)
         );
-        cooldown(COOLDOWN_EXPRESSION);
-        resourceCost(RESOURCE_EXPRESSION);
     }
 
     @Override
     public CastResult cast(Living user, Living target, long timestamp, String... args) throws CastException {
 
-        double damage = asDouble(user, target, DAMAGE_EXPRESSION);
+        double damage = asDouble(user, target, getProperty("damage", String.class, DEFAULT_DAMAGE_EXPRESSION));
 
         if (user instanceof MessageReceiver) {
             MessageReceiver receiver = (MessageReceiver) user;

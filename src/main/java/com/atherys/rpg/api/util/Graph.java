@@ -8,6 +8,10 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * A graph implementation which can only be written to and then read.
+ * Does not include logic for removing nodes.
+ */
 public class Graph<T> {
 
     public enum LinkType {
@@ -245,7 +249,7 @@ public class Graph<T> {
      * @param linkType The type of link to create
      */
     public void add(T object, LinkType linkType) {
-        add(lastAdded.getData(), 0.0, linkType);
+        add(object, 0.0, linkType);
     }
 
     /**
