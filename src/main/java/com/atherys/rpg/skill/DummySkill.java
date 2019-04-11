@@ -10,12 +10,12 @@ import org.spongepowered.api.text.TextTemplate;
 
 public class DummySkill extends RPGSkill {
 
-    protected DummySkill() {
+    public DummySkill(String id, String name, String description) {
         super(
                 SkillSpec.create()
-                .id("root")
-                .name("Root")
-                .descriptionTemplate(TextTemplate.of("The root node in a skill tree."))
+                .id(id)
+                .name(name)
+                .descriptionTemplate(TextTemplate.of(description))
                 .cooldown("0")
                 .resourceCost("0.0")
                 .permission("atherysrpg.skill.cast.root")

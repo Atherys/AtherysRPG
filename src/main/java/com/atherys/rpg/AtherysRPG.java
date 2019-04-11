@@ -14,10 +14,7 @@ import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.data.AttributeKeys;
-import com.atherys.rpg.facade.AttributeFacade;
-import com.atherys.rpg.facade.RPGCharacterFacade;
-import com.atherys.rpg.facade.RPGMessagingFacade;
-import com.atherys.rpg.facade.RPGSkillFacade;
+import com.atherys.rpg.facade.*;
 import com.atherys.rpg.listener.EntityListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
@@ -281,6 +278,10 @@ public class AtherysRPG {
         return components.rpgSkillFacade;
     }
 
+    public SkillGraphFacade getSkillGraphFacade() {
+        return components.skillGraphFacade;
+    }
+
     private static class Components {
         @Inject
         AtherysRPGConfig config;
@@ -305,6 +306,9 @@ public class AtherysRPG {
 
         @Inject
         RPGCharacterFacade rpgCharacterFacade;
+
+        @Inject
+        SkillGraphFacade skillGraphFacade;
 
         @Inject
         RPGSkillFacade rpgSkillFacade;

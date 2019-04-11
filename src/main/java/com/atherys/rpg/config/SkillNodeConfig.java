@@ -10,15 +10,15 @@ import java.util.Map;
 public class SkillNodeConfig {
 
     @Setting("skill-id")
-    private String SKILL_ID = "skill-id";
+    public String SKILL_ID = "skill-id";
 
     @Setting("cooldown")
-    private String COOLDOWN_EXPRESSION = "5000";
+    public String COOLDOWN_EXPRESSION = "5000";
 
     @Setting("cost")
-    private String COST_EXPRESSION = "5.0";
+    public String COST_EXPRESSION = "5.0";
 
     @Setting("properties")
-    private Map<String, String> PROPERTIES = new HashMap<>();
+    public Map<String, String> PROPERTIES = new HashMap<>();
 
 }

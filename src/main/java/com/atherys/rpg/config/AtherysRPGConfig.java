@@ -55,8 +55,8 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("default-experience-spending-limit")
     public double DEFAULT_EXPERIENCE_SPENDING_LIMIT = 100_000.0;
 
-    @Setting("skill-tree")
-    public SkillTreeConfig SKILL_TREE_CONFIG = new SkillTreeConfig();
+    @Setting("skill-graph")
+    public SkillGraphConfig SKILL_GRAPH = new SkillGraphConfig();
 
     {
         // Wood

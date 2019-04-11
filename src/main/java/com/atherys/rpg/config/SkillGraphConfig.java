@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 @ConfigSerializable
-public class SkillTreeConfig {
+public class SkillGraphConfig {
 
     @Setting("skill-nodes")
-    public Map<String, SkillNodeConfig> SKILL_NODES = new HashMap<>();
+    public Map<String, SkillNodeConfig> NODES = new HashMap<>();
 
     @Setting("skill-links")
-    public Set<SkillNodeLinkConfig> SKILL_LINKS = new HashSet<>();
+    public Set<SkillNodeLinkConfig> LINKS = new HashSet<>();
 
 }

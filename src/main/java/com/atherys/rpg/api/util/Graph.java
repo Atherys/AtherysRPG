@@ -130,6 +130,8 @@ public class Graph<T> {
         }
     }
 
+    private Node<T> firstAdded;
+
     private Node<T> lastAdded;
 
     private Set<Node<T>> nodes = new HashSet<>();
@@ -137,10 +139,14 @@ public class Graph<T> {
     private Set<Link<T>> links = new HashSet<>();
 
     public Graph(T root) {
-        Node<T> firstNode = new Node<>(root);
-        nodes.add(firstNode);
-        links.add(new Link<>(firstNode, firstNode, -1.0, LinkType.UNIDIRECTIONAL));
-        lastAdded = firstNode;
+        firstAdded = new Node<>(root);
+        nodes.add(firstAdded);
+        links.add(new Link<>(firstAdded, firstAdded, -1.0, LinkType.UNIDIRECTIONAL));
+        lastAdded = firstAdded;
+    }
+
+    public T getRoot() {
+        return firstAdded.getData();
     }
 
     public Set<Node<T>> getNodes() {
@@ -268,9 +274,31 @@ public class Graph<T> {
      * @param object The criteria parent/child object
      * @return A set of links, or empty if none could be found
      */
-    public Set<Link<T>> getLinks(T object) {
+    public Set<Link<T>> getAllLinks(T object) {
         Assert.notNull(object, "Object cannot be null.");
         return links.stream().filter(link -> link.getParent().getData().equals(object) || link.getChild().getData().equals(object)).collect(Collectors.toSet());
+    }
+
+    /**
+     * Retrieve all links within the graph where the provided object is the parent
+     *
+     * @param object The object
+     * @return The set of links pointing away to other nodes from this object
+     */
+    public Set<Link<T>> getLinksWhereParent(T object) {
+        Assert.notNull(object, "Object cannot be null.");
+        return links.stream().filter(link -> link.getParent().getData().equals(object) || link.getType().equals(LinkType.BIDIRECTIONAL)).collect(Collectors.toSet());
+    }
+
+    /**
+     * Retrieve all links within the graph where the provided object is the child
+     *
+     * @param object the object
+     * @return The set of links pointing to this object from others
+     */
+    public Set<Link<T>> getLinksWhereChild(T object) {
+        Assert.notNull(object, "Object cannot be null.");
+        return links.stream().filter(link -> link.getChild().getData().equals(object) || link.getType().equals(LinkType.BIDIRECTIONAL)).collect(Collectors.toSet());
     }
 
     /**

@@ -82,6 +82,18 @@ public abstract class RPGSkill implements Castable {
         return AtherysRPG.getInstance().getRPGSkillFacade().getSkillResourceCost(living, resourceCostExpression);
     }
 
+    public void setCooldownExpression(String cooldownExpression) {
+        this.cooldownExpression = cooldownExpression;
+    }
+
+    public void setResourceCostExpression(String resourceCostExpression) {
+        this.resourceCostExpression = resourceCostExpression;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
+
     @SuppressWarnings("unchecked")
     protected <T> T getProperty(String propertyKey, Class<T> asClass, T defaultValue) {
         if (String.class.equals(asClass)) {
