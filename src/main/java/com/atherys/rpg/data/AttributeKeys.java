@@ -5,7 +5,6 @@ import org.spongepowered.api.data.value.mutable.Value;
 
 import javax.annotation.Generated;
 
-@Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-03-02T15:51:24.813Z")
 public class AttributeKeys {
 
     public static Key<Value<Double>> AGILITY;

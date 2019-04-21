@@ -8,6 +8,7 @@ import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
+import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
@@ -229,13 +230,22 @@ public class AtherysRPG {
     }
 
     @Listener
-    public void onSkillRegistration(SkillRegistrationEvent event) {
-        event.registerSkill(new RPGSimpleDamageSkill());
+    public void onSkillRegistration(GameRegistryEvent.Register<Castable> event) {
+        event.register(new RPGSimpleDamageSkill());
     }
 
     @Listener
-    public void onSkillReg(GameRegistryEvent.Register<Castable> event) {
-        event.register(new RPGSimpleDamageSkill());
+    public void onAttributeRegistration(GameRegistryEvent.Register<AttributeType> event) {
+        event.register(AttributeTypes.STRENGTH);
+        event.register(AttributeTypes.CONSTITUTION);
+        event.register(AttributeTypes.DEFENSE);
+        event.register(AttributeTypes.AGILITY);
+        event.register(AttributeTypes.INTELLIGENCE);
+        event.register(AttributeTypes.CHARISMA);
+        event.register(AttributeTypes.WISDOM);
+        event.register(AttributeTypes.WILLPOWER);
+        event.register(AttributeTypes.PERCEPTION);
+        event.register(AttributeTypes.LUCK);
     }
 
     public AtherysRPGConfig getConfig() {

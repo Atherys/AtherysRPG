@@ -18,7 +18,6 @@ public class DummySkill extends RPGSkill {
                 .descriptionTemplate(TextTemplate.of(description))
                 .cooldown("0")
                 .resourceCost("0.0")
-                .permission("atherysrpg.skill.cast.root")
         );
     }
 

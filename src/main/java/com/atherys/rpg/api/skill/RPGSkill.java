@@ -27,7 +27,7 @@ public abstract class RPGSkill implements Castable {
 
     private String resourceCostExpression;
 
-    private Map<String,String> properties;
+    private Map<String, String> properties;
 
     protected RPGSkill(SkillSpec skillSpec) {
         this.id = skillSpec.getId();
