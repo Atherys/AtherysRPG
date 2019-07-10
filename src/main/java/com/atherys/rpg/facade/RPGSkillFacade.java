@@ -1,18 +1,25 @@
 package com.atherys.rpg.facade;
 
 import com.atherys.rpg.api.skill.DescriptionArgument;
+import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.service.ExpressionService;
+import com.atherys.skills.AtherysSkills;
+import com.atherys.skills.api.skill.Castable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.TextTemplate;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tuple;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Singleton
 public class RPGSkillFacade {
@@ -23,9 +30,20 @@ public class RPGSkillFacade {
     @Inject
     private AttributeFacade attributeFacade;
 
+    public Text renderSkill(RPGSkill skill, Player source) {
+        Text.Builder skillText = Text.builder().append(Text.of(TextColors.GOLD, skill.getName()));
+        skillText.append(Text.of(" - ", skill.getDescription(source)));
+
+        return skillText.build();
+    }
+
     @SafeVarargs
     public final Text renderSkillDescription(Living living, TextTemplate descriptionTemplate, Tuple<String, ?>... descriptionArguments) {
-        Map<String, TextRepresentable> renderedArguments = new HashMap<>(descriptionArguments.length);
+        if (descriptionArguments == null) {
+            return descriptionTemplate.toText();
+        }
+
+        Map<String, TextRepresentable> renderedArguments = new HashMap<>();
 
         for (Tuple<String, ?> argument : descriptionArguments) {
 
@@ -57,4 +75,9 @@ public class RPGSkillFacade {
         return expressionService.evalExpression(living, resourceCostExpression).doubleValue();
     }
 
+    public Optional<RPGSkill> getSkillById(String skillId) {
+        return AtherysSkills.getInstance().getSkillService().getSkillById(skillId)
+                .filter(skill -> skill instanceof RPGSkill)
+                .map(skill -> (RPGSkill) skill);
+    }
 }

@@ -1,5 +1,7 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.api.damage.AtherysDamageType;
+import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -49,6 +51,12 @@ public class RPGCharacterFacade {
     private AttributeFacade attributeFacade;
 
     @Inject
+    private RPGSkillFacade skillFacade;
+
+    @Inject
+    private SkillGraphFacade skillGraphFacade;
+
+    @Inject
     private RPGMessagingFacade rpgMsg;
 
     public void showPlayerExperience(Player player) {
@@ -69,6 +77,39 @@ public class RPGCharacterFacade {
 
         if (validateExperience(pc.getExperience() - amount)) {
             characterService.removeExperience(pc, amount);
+        }
+    }
+
+    public void displaySkills(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        Text.Builder skills = Text.builder().append(Text.of("Skills", Text.NEW_LINE));
+        pc.getSkills().forEach(s -> {
+            RPGSkill skill = skillFacade.getSkillById(s).get();
+            skills.append(skillFacade.renderSkill(skill, player), Text.NEW_LINE);
+        });
+
+        player.sendMessage(skills.build());
+    }
+
+    public void getAvailableSkills(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        Text.Builder skills = Text.builder().append(Text.of("Available Skills", Text.NEW_LINE));
+        skillGraphFacade.getLinkedSkills(pc.getSkills()).forEach(s -> {
+            skills.append(skillFacade.renderSkill(s, player), Text.NEW_LINE);
+        });
+
+        player.sendMessage(skills.build());
+    }
+
+    public void checkTreeOnLogin(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        if (!skillGraphFacade.isPathValid(pc.getSkills())) {
+            characterService.resetCharacter(pc);
+            characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot().getId());
+            rpgMsg.info(player, "The server's skill tree has changed. Your attributes and skill tree have been reset.");
         }
     }
 

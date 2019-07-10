@@ -11,10 +11,12 @@ import java.util.Set;
 @ConfigSerializable
 public class SkillGraphConfig {
 
+    @Setting("root-skill")
+    public SkillNodeConfig ROOT = new SkillNodeConfig();
+
     @Setting("skill-nodes")
     public Map<String, SkillNodeConfig> NODES = new HashMap<>();
 
     @Setting("skill-links")
     public Set<SkillNodeLinkConfig> LINKS = new HashSet<>();
-
 }

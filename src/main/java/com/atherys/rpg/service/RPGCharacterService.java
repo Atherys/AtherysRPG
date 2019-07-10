@@ -6,6 +6,7 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.character.SimpleCharacter;
+import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -15,9 +16,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class RPGCharacterService {
@@ -34,6 +33,9 @@ public class RPGCharacterService {
     @Inject
     private ExpressionService expressionService;
 
+    @Inject
+    private SkillGraphFacade skillGraphFacade;
+
     private HashMap<UUID, RPGCharacter<? extends Living>> nonPlayerCharacters = new HashMap<>();
 
     public PlayerCharacter getOrCreateCharacter(Player player) {
@@ -42,6 +44,7 @@ public class RPGCharacterService {
             pc.setEntity(player);
             pc.setAttributes(attributeService.getDefaultAttributes());
             pc.setExperienceSpendingLimit(config.DEFAULT_EXPERIENCE_SPENDING_LIMIT);
+            pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
             repository.saveOne(pc);
 
             return pc;
@@ -74,6 +77,16 @@ public class RPGCharacterService {
         } else {
             throw new IllegalArgumentException("Entity must be some sort of Living.");
         }
+    }
+
+    public void setSkills(PlayerCharacter pc, List<String> skills) {
+        pc.setSkills(skills);
+        repository.saveOne(pc);
+    }
+
+    public void addSkill(PlayerCharacter pc, String skill) {
+        pc.addSkill(skill);
+        repository.saveOne(pc);
     }
 
     public void addExperience(PlayerCharacter pc, double amount) {
@@ -112,5 +125,19 @@ public class RPGCharacterService {
         expressionService.populateAttributes(expression, attributes, "source");
 
         return expression.eval().doubleValue();
+    }
+
+    /**
+     * Resets the characters attributes & skills, and gives back used experience.
+     */
+    public void resetCharacter(PlayerCharacter pc) {
+        pc.setAttributes(new HashMap<>());
+        pc.setSkills(new ArrayList<>());
+
+        double spent = pc.getSpentExperience();
+        pc.setSpentExperience(0);
+        pc.setExperience(pc.getExperience() + spent);
+
+        repository.saveOne(pc);
     }
 }

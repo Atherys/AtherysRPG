@@ -3,7 +3,6 @@ package com.atherys.rpg;
 import com.atherys.core.AtherysCore;
 import com.atherys.core.command.CommandService;
 import com.atherys.core.event.AtherysHibernateConfigurationEvent;
-import com.atherys.core.event.AtherysHibernateInitializedEvent;
 import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeType;
@@ -12,6 +11,7 @@ import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
+import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.data.AttributeKeys;
@@ -23,9 +23,9 @@ import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.atherys.rpg.skill.DummySkill;
 import com.atherys.rpg.skill.RPGSimpleDamageSkill;
-import com.atherys.skills.api.skill.Castable;
-import com.atherys.skills.event.SkillRegistrationEvent;
+import com.atherys.skills.AtherysSkills;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -36,7 +36,9 @@ import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.GameRegistryEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
@@ -79,8 +81,6 @@ public class AtherysRPG {
         instance = this;
 
         components = new Components();
-
-        // Create injector
         Injector rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
         rpgInjector.injectMembers(components);
 
@@ -95,9 +95,12 @@ public class AtherysRPG {
         try {
             AtherysCore.getCommandService().register(new AttributesCommand(), this);
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
+            AtherysCore.getCommandService().register(new SkillsCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }
+
+        registerSkills();
 
         init = true;
     }
@@ -115,8 +118,8 @@ public class AtherysRPG {
         event.registerEntity(PlayerCharacter.class);
     }
 
-    @Listener
-    public void onInit(AtherysHibernateInitializedEvent event) {
+    @Listener(order = Order.LATE)
+    public void onInit(GameInitializationEvent event) {
         init();
     }
 
@@ -229,23 +232,20 @@ public class AtherysRPG {
                 .buildAndRegister(container);
     }
 
-    @Listener
-    public void onSkillRegistration(GameRegistryEvent.Register<Castable> event) {
-        event.register(new RPGSimpleDamageSkill());
+    private void registerSkills() {
+        AtherysSkills.getInstance().getSkillService().registerSkills(
+                new RPGSimpleDamageSkill(),
+                // Dummy skills for testing
+                new DummySkill("skill-1", "Skill 1", "A skill"),
+                new DummySkill("skill-2", "Skill 2", "A skill"),
+                new DummySkill("skill-3", "Skill 3", "A skill"),
+                new DummySkill("skill-4", "Skill 4", "A skill"),
+                new DummySkill("skill-5", "Skill 5", "A skill")
+        );
     }
 
-    @Listener
-    public void onAttributeRegistration(GameRegistryEvent.Register<AttributeType> event) {
-        event.register(AttributeTypes.STRENGTH);
-        event.register(AttributeTypes.CONSTITUTION);
-        event.register(AttributeTypes.DEFENSE);
-        event.register(AttributeTypes.AGILITY);
-        event.register(AttributeTypes.INTELLIGENCE);
-        event.register(AttributeTypes.CHARISMA);
-        event.register(AttributeTypes.WISDOM);
-        event.register(AttributeTypes.WILLPOWER);
-        event.register(AttributeTypes.PERCEPTION);
-        event.register(AttributeTypes.LUCK);
+    public Logger getLogger() {
+        return logger;
     }
 
     public AtherysRPGConfig getConfig() {
