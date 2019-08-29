@@ -33,6 +33,8 @@ public class RPGSkillFacade {
     public Text renderSkill(RPGSkill skill, Player source) {
         Text.Builder skillText = Text.builder().append(Text.of(TextColors.GOLD, skill.getName()));
         skillText.append(Text.of(" - ", skill.getDescription(source)));
+        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", skill.getCooldown(source)));
+        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", skill.getResourceCost(source)));
 
         return skillText.build();
     }

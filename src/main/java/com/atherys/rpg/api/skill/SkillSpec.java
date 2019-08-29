@@ -66,16 +66,12 @@ public class SkillSpec {
 
     public SkillSpec id(String id) {
         this.id = id;
+        permission = id;
         return this;
     }
 
     public SkillSpec name(String name) {
         this.name = name;
-        return this;
-    }
-
-    public SkillSpec permission(String permission) {
-        this.permission = permission;
         return this;
     }
 

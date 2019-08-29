@@ -24,10 +24,13 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
+import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Tristate;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Singleton
 public class RPGCharacterFacade {
@@ -110,6 +113,27 @@ public class RPGCharacterFacade {
             characterService.resetCharacter(pc);
             characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot().getId());
             rpgMsg.info(player, "The server's skill tree has changed. Your attributes and skill tree have been reset.");
+        }
+    }
+
+    public void chooseSkill(Player player, String skillId) throws RPGCommandException {
+        RPGSkill skill = skillFacade.getSkillById(skillId).orElseThrow(() -> {
+            return new RPGCommandException("No skill with ID ", skillId, " found.");
+        });
+
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        double cost = skillGraphFacade.getCostForSkill(skill, pc.getSkills()).orElseThrow(() -> {
+            return new RPGCommandException("You do not have access to that skill.");
+        });
+
+        if (pc.getExperience() >= cost)  {
+            characterService.addSkill(pc, skillId);
+            characterService.removeExperience(pc, cost);
+            player.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillId, Tristate.TRUE);
+            rpgMsg.info(player, "You have unlocked the skill, ", TextColors.GOLD, skill.getName(), ".");
+        } else {
+            throw new RPGCommandException("You do not have enough experience to unlock that skill.");
         }
     }
 

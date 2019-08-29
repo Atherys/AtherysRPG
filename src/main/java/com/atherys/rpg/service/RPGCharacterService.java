@@ -11,10 +11,15 @@ import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.permission.SubjectData;
+import org.spongepowered.api.service.user.UserStorageService;
+import org.spongepowered.api.util.Tristate;
 
 import java.util.*;
 
@@ -81,12 +86,30 @@ public class RPGCharacterService {
 
     public void setSkills(PlayerCharacter pc, List<String> skills) {
         pc.setSkills(skills);
+        skills.forEach(s -> setSkillPermission(pc, s, true));
         repository.saveOne(pc);
     }
 
     public void addSkill(PlayerCharacter pc, String skill) {
         pc.addSkill(skill);
+        setSkillPermission(pc, skill, true);
         repository.saveOne(pc);
+    }
+
+    public void removeSkill(PlayerCharacter pc, String skill) {
+        pc.removeSkill(skill);
+        setSkillPermission(pc, skill, false);
+        repository.saveOne(pc);
+    }
+
+    private void setSkillPermission(PlayerCharacter pc, String skill, boolean value) {
+        getUser(pc).ifPresent(user -> {
+            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skill, value ? Tristate.TRUE : Tristate.UNDEFINED);
+        });
+    }
+
+    private Optional<User> getUser(PlayerCharacter pc) {
+        return Sponge.getServiceManager().provide(UserStorageService.class).get().get(pc.getUniqueId());
     }
 
     public void addExperience(PlayerCharacter pc, double amount) {
@@ -131,7 +154,12 @@ public class RPGCharacterService {
      * Resets the characters attributes & skills, and gives back used experience.
      */
     public void resetCharacter(PlayerCharacter pc) {
-        pc.setAttributes(new HashMap<>());
+        pc.setAttributes(attributeService.getDefaultAttributes());
+
+        // Remove old permissions
+        pc.getSkills().forEach(s -> {
+            setSkillPermission(pc, s, false);
+        });
         pc.setSkills(new ArrayList<>());
 
         double spent = pc.getSpentExperience();

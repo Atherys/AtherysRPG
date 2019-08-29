@@ -44,6 +44,7 @@ public class SkillGraphFacade {
             RPGSkill child = namedSkillNodes.get(linkConfig.CHILD_SKILL_NODE_ID);
             double cost = linkConfig.COST;
             Graph.LinkType type = Graph.LinkType.valueOf(linkConfig.TYPE.toString());
+            AtherysRPG.getInstance().getLogger().info(type.name());
 
             newSkillGraph.add(parent, child, cost, type);
         });
@@ -115,7 +116,6 @@ public class SkillGraphFacade {
     }
 
     private boolean checkLink(RPGSkill skill, List<String> previousIds) {
-        AtherysRPG.getInstance().getLogger().info(skill.getId());
         for (String id : previousIds) {
             RPGSkill s = skillFacade.getSkillById(id).get();
             if (getSkillGraph().getLink(skill, s) != null) {
@@ -137,5 +137,20 @@ public class SkillGraphFacade {
         });
 
         return linked;
+    }
+
+
+    public Optional<Graph.Link<RPGSkill>> getLinkBetween(RPGSkill skill, List<String> skillIds) {
+        for (String skillId : skillIds) {
+            Graph.Link<RPGSkill> link = getSkillGraph().getLink(skill, skillFacade.getSkillById(skillId).get());
+            if (link != null) {
+                return Optional.of(link);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Double> getCostForSkill(RPGSkill skill, List<String> skillIds) {
+        return getLinkBetween(skill, skillIds).map(Graph.Link::getWeight);
     }
 }

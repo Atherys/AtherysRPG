@@ -1,8 +1,6 @@
 package com.atherys.rpg.character;
 
 import com.atherys.rpg.api.character.RPGCharacter;
-import com.atherys.rpg.api.skill.RPGSkill;
-import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.repository.converter.AttributeTypeConverter;
 import org.spongepowered.api.entity.living.player.Player;
@@ -101,5 +99,9 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void addSkill(String skill) {
         skills.add(skill);
+    }
+
+    public void removeSkill(String skill) {
+        skills.remove(skill);
     }
 }
