@@ -25,7 +25,6 @@ import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.rpg.skill.RPGSimpleDamageSkill;
 import com.atherys.skills.api.skill.Castable;
-import com.atherys.skills.event.SkillRegistrationEvent;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
