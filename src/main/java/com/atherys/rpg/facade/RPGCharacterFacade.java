@@ -1,9 +1,5 @@
 package com.atherys.rpg.facade;
 
-<<<<<<< Updated upstream
-=======
-import com.atherys.rpg.api.skill.RPGSkill;
->>>>>>> Stashed changes
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;

@@ -113,26 +113,4 @@ public class RPGCharacterService {
 
         return expression.eval().doubleValue();
     }
-<<<<<<< Updated upstream
-=======
-
-    /**
-     * Resets the characters attributes & skills, and gives back used experience.
-     */
-    public void resetCharacter(PlayerCharacter pc) {
-        pc.setBaseAttributes(attributeService.getDefaultAttributes());
-
-        // Remove old permissions
-        pc.getSkills().forEach(s -> {
-            setSkillPermission(pc, s, false);
-        });
-        pc.setSkills(new ArrayList<>());
-
-        double spent = pc.getSpentExperience();
-        pc.setSpentExperience(0);
-        pc.setExperience(pc.getExperience() + spent);
-
-        repository.saveOne(pc);
-    }
->>>>>>> Stashed changes
 }
