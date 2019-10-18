@@ -17,12 +17,15 @@ public class SimpleCharacter<T extends Living & Equipable> implements RPGCharact
 
     private T entity;
 
-    private Map<AttributeType, Double> attributes = new HashMap<>();
+    private Map<AttributeType, Double> baseAttributes;
 
-    public SimpleCharacter(T entity, Map<AttributeType, Double> attributes) {
+    private Map<AttributeType, Double> buffAttributes;
+
+    public SimpleCharacter(T entity, Map<AttributeType, Double> baseAttributes) {
         this.id = entity.getUniqueId();
         this.entity = entity;
-        this.attributes = attributes;
+        this.baseAttributes = baseAttributes;
+        this.buffAttributes = new HashMap<>();
     }
 
     @Nonnull
@@ -41,11 +44,20 @@ public class SimpleCharacter<T extends Living & Equipable> implements RPGCharact
     }
 
     @Override
-    public Map<AttributeType, Double> getAttributes() {
-        return attributes;
+    public Map<AttributeType, Double> getBaseAttributes() {
+        return baseAttributes;
     }
 
-    public void setAttributes(Map<AttributeType, Double> attributes) {
-        this.attributes = attributes;
+    public void setBaseAttributes(Map<AttributeType, Double> baseAttributes) {
+        this.baseAttributes = baseAttributes;
+    }
+
+    @Override
+    public Map<AttributeType, Double> getBuffAttributes() {
+        return buffAttributes;
+    }
+
+    public void setBuffAttributes(Map<AttributeType, Double> buffAttributes) {
+        this.buffAttributes = baseAttributes;
     }
 }

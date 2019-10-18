@@ -47,7 +47,7 @@ public class AttributeFacade {
     public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (validateAttribute(pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount)) {
+        if (validateAttribute(pc.getBaseAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount)) {
             characterService.addAttribute(pc, attributeType, amount);
         }
     }
@@ -55,7 +55,7 @@ public class AttributeFacade {
     public void removePlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (validateAttribute(pc.getAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount)) {
+        if (validateAttribute(pc.getBaseAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount)) {
             characterService.removeAttribute(pc, attributeType, amount);
         }
     }
@@ -87,7 +87,7 @@ public class AttributeFacade {
                 return;
             }
 
-            double afterPurchase = pc.getAttributes().getOrDefault(type, config.ATTRIBUTE_MIN) + amount;
+            double afterPurchase = pc.getBaseAttributes().getOrDefault(type, config.ATTRIBUTE_MIN) + amount;
 
             if (afterPurchase > config.ATTRIBUTE_MAX) {
                 rpgMsg.error(player, "You cannot have more than a base of ", config.ATTRIBUTE_MAX, " in this attribute.");
@@ -131,6 +131,7 @@ public class AttributeFacade {
 
         Map<AttributeType, Double> attributes = attributeService.getAttributes(character);
         attributeService.mergeAttributes(attributes, getEquipmentAttributes(entity));
+        attributeService.mergeAttributes(attributes, character.getBuffAttributes());
 
         return attributes;
     }
@@ -158,7 +159,7 @@ public class AttributeFacade {
 
         Text.Builder attributeText = Text.builder();
 
-        pc.getAttributes().forEach((type, value) -> {
+        pc.getBaseAttributes().forEach((type, value) -> {
 
             Text attribute = Text.builder()
                     .append(getAddAttributeButton(pc, type, value))
@@ -241,7 +242,7 @@ public class AttributeFacade {
     }
 
     private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {
-        double finalValue = pc.getAttributes().get(type);
+        double finalValue = pc.getBaseAttributes().get(type);
 
         finalValue += attributeService.getHeldItemAttributes(player).getOrDefault(type, 0.0d);
         finalValue += attributeService.getArmorAttributes(player).getOrDefault(type, 0.0d);

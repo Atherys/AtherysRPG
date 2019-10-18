@@ -40,7 +40,7 @@ public class RPGCharacterService {
         return repository.findById(player.getUniqueId()).orElseGet(() -> {
             PlayerCharacter pc = new PlayerCharacter(player.getUniqueId());
             pc.setEntity(player);
-            pc.setAttributes(attributeService.getDefaultAttributes());
+            pc.setBaseAttributes(attributeService.getDefaultAttributes());
             pc.setExperienceSpendingLimit(config.DEFAULT_EXPERIENCE_SPENDING_LIMIT);
             repository.saveOne(pc);
 
@@ -87,12 +87,12 @@ public class RPGCharacterService {
     }
 
     public void addAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getAttributes().merge(attributeType, amount, (v1, v2) -> v1 + v2);
+        pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> v1 + v2);
         repository.saveOne(pc);
     }
 
     public void removeAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
+        pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
         repository.saveOne(pc);
     }
 
@@ -113,4 +113,26 @@ public class RPGCharacterService {
 
         return expression.eval().doubleValue();
     }
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * Resets the characters attributes & skills, and gives back used experience.
+     */
+    public void resetCharacter(PlayerCharacter pc) {
+        pc.setBaseAttributes(attributeService.getDefaultAttributes());
+
+        // Remove old permissions
+        pc.getSkills().forEach(s -> {
+            setSkillPermission(pc, s, false);
+        });
+        pc.setSkills(new ArrayList<>());
+
+        double spent = pc.getSpentExperience();
+        pc.setSpentExperience(0);
+        pc.setExperience(pc.getExperience() + spent);
+
+        repository.saveOne(pc);
+    }
+>>>>>>> Stashed changes
 }

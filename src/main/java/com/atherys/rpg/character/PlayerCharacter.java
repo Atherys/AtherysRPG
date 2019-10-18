@@ -26,7 +26,10 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @MapKeyColumn(name = "attribute_type")
     @Column(name = "value")
     @CollectionTable(name = "playercharacter_attributes")
-    private Map<AttributeType, Double> attributes = new HashMap<>();
+    private Map<AttributeType, Double> baseAttributes = new HashMap<>();
+
+    @Transient
+    private Map<AttributeType, Double> buffAttributes = new HashMap<>();
 
     private double experience;
 
@@ -57,12 +60,21 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     }
 
     @Override
-    public Map<AttributeType, Double> getAttributes() {
-        return attributes;
+    public Map<AttributeType, Double> getBaseAttributes() {
+        return baseAttributes;
     }
 
-    public void setAttributes(Map<AttributeType, Double> attributes) {
-        this.attributes = attributes;
+    public void setBaseAttributes(Map<AttributeType, Double> baseAttributes) {
+        this.baseAttributes = baseAttributes;
+    }
+
+    @Override
+    public Map<AttributeType, Double> getBuffAttributes() {
+        return buffAttributes;
+    }
+
+    public void setBuffAttributes(Map<AttributeType, Double> buffAttributes) {
+        this.buffAttributes = buffAttributes;
     }
 
     public double getExperience() {
