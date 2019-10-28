@@ -96,6 +96,6 @@ public class AttributeService {
     }
 
     public Map<AttributeType, Double> getAttributes(RPGCharacter<?> character) {
-        return new HashMap<>(character.getAttributes());
+        return new HashMap<>(character.getBaseAttributes());
     }
 }

@@ -159,7 +159,7 @@ public class RPGCharacterFacade {
 
         // TODO: Account for items
 
-        double amount = characterService.calcResourceRegen(pc.getAttributes());
+        double amount = characterService.calcResourceRegen(pc.getBaseAttributes());
         event.setRegenAmount(amount);
     }
 

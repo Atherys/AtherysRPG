@@ -47,7 +47,7 @@ public class RPGCharacterService {
         return repository.findById(player.getUniqueId()).orElseGet(() -> {
             PlayerCharacter pc = new PlayerCharacter(player.getUniqueId());
             pc.setEntity(player);
-            pc.setAttributes(attributeService.getDefaultAttributes());
+            pc.setBaseAttributes(attributeService.getDefaultAttributes());
             pc.setExperienceSpendingLimit(config.DEFAULT_EXPERIENCE_SPENDING_LIMIT);
             pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
             repository.saveOne(pc);
@@ -123,12 +123,12 @@ public class RPGCharacterService {
     }
 
     public void addAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getAttributes().merge(attributeType, amount, (v1, v2) -> v1 + v2);
+        pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> v1 + v2);
         repository.saveOne(pc);
     }
 
     public void removeAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
+        pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
         repository.saveOne(pc);
     }
 
