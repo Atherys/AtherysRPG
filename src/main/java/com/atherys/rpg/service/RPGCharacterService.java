@@ -154,7 +154,7 @@ public class RPGCharacterService {
      * Resets the characters attributes & skills, and gives back used experience.
      */
     public void resetCharacter(PlayerCharacter pc) {
-        pc.setAttributes(attributeService.getDefaultAttributes());
+        pc.setBaseAttributes(attributeService.getDefaultAttributes());
 
         // Remove old permissions
         pc.getSkills().forEach(s -> {
