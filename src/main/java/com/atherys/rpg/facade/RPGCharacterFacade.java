@@ -1,5 +1,7 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.api.damage.AtherysDamageType;
+import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -22,10 +24,13 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
+import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Tristate;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Singleton
 public class RPGCharacterFacade {
@@ -49,6 +54,12 @@ public class RPGCharacterFacade {
     private AttributeFacade attributeFacade;
 
     @Inject
+    private RPGSkillFacade skillFacade;
+
+    @Inject
+    private SkillGraphFacade skillGraphFacade;
+
+    @Inject
     private RPGMessagingFacade rpgMsg;
 
     public void showPlayerExperience(Player player) {
@@ -69,6 +80,60 @@ public class RPGCharacterFacade {
 
         if (validateExperience(pc.getExperience() - amount)) {
             characterService.removeExperience(pc, amount);
+        }
+    }
+
+    public void displaySkills(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        Text.Builder skills = Text.builder().append(Text.of("Skills", Text.NEW_LINE));
+        pc.getSkills().forEach(s -> {
+            RPGSkill skill = skillFacade.getSkillById(s).get();
+            skills.append(skillFacade.renderSkill(skill, player), Text.NEW_LINE);
+        });
+
+        player.sendMessage(skills.build());
+    }
+
+    public void getAvailableSkills(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        Text.Builder skills = Text.builder().append(Text.of("Available Skills", Text.NEW_LINE));
+        skillGraphFacade.getLinkedSkills(pc.getSkills()).forEach(s -> {
+            skills.append(skillFacade.renderSkill(s, player), Text.NEW_LINE);
+        });
+
+        player.sendMessage(skills.build());
+    }
+
+    public void checkTreeOnLogin(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        if (!skillGraphFacade.isPathValid(pc.getSkills())) {
+            characterService.resetCharacter(pc);
+            characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot().getId());
+            rpgMsg.info(player, "The server's skill tree has changed. Your attributes and skill tree have been reset.");
+        }
+    }
+
+    public void chooseSkill(Player player, String skillId) throws RPGCommandException {
+        RPGSkill skill = skillFacade.getSkillById(skillId).orElseThrow(() -> {
+            return new RPGCommandException("No skill with ID ", skillId, " found.");
+        });
+
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        double cost = skillGraphFacade.getCostForSkill(skill, pc.getSkills()).orElseThrow(() -> {
+            return new RPGCommandException("You do not have access to that skill.");
+        });
+
+        if (pc.getExperience() >= cost)  {
+            characterService.addSkill(pc, skillId);
+            characterService.removeExperience(pc, cost);
+            player.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillId, Tristate.TRUE);
+            rpgMsg.info(player, "You have unlocked the skill, ", TextColors.GOLD, skill.getName(), ".");
+        } else {
+            throw new RPGCommandException("You do not have enough experience to unlock that skill.");
         }
     }
 

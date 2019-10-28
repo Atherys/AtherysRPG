@@ -6,18 +6,22 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.character.SimpleCharacter;
+import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.permission.SubjectData;
+import org.spongepowered.api.service.user.UserStorageService;
+import org.spongepowered.api.util.Tristate;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class RPGCharacterService {
@@ -34,6 +38,9 @@ public class RPGCharacterService {
     @Inject
     private ExpressionService expressionService;
 
+    @Inject
+    private SkillGraphFacade skillGraphFacade;
+
     private HashMap<UUID, RPGCharacter<? extends Living>> nonPlayerCharacters = new HashMap<>();
 
     public PlayerCharacter getOrCreateCharacter(Player player) {
@@ -42,6 +49,7 @@ public class RPGCharacterService {
             pc.setEntity(player);
             pc.setBaseAttributes(attributeService.getDefaultAttributes());
             pc.setExperienceSpendingLimit(config.DEFAULT_EXPERIENCE_SPENDING_LIMIT);
+            pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
             repository.saveOne(pc);
 
             return pc;
@@ -74,6 +82,34 @@ public class RPGCharacterService {
         } else {
             throw new IllegalArgumentException("Entity must be some sort of Living.");
         }
+    }
+
+    public void setSkills(PlayerCharacter pc, List<String> skills) {
+        pc.setSkills(skills);
+        skills.forEach(s -> setSkillPermission(pc, s, true));
+        repository.saveOne(pc);
+    }
+
+    public void addSkill(PlayerCharacter pc, String skill) {
+        pc.addSkill(skill);
+        setSkillPermission(pc, skill, true);
+        repository.saveOne(pc);
+    }
+
+    public void removeSkill(PlayerCharacter pc, String skill) {
+        pc.removeSkill(skill);
+        setSkillPermission(pc, skill, false);
+        repository.saveOne(pc);
+    }
+
+    private void setSkillPermission(PlayerCharacter pc, String skill, boolean value) {
+        getUser(pc).ifPresent(user -> {
+            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skill, value ? Tristate.TRUE : Tristate.UNDEFINED);
+        });
+    }
+
+    private Optional<User> getUser(PlayerCharacter pc) {
+        return Sponge.getServiceManager().provide(UserStorageService.class).get().get(pc.getUniqueId());
     }
 
     public void addExperience(PlayerCharacter pc, double amount) {
@@ -112,5 +148,24 @@ public class RPGCharacterService {
         expressionService.populateAttributes(expression, attributes, "source");
 
         return expression.eval().doubleValue();
+    }
+
+    /**
+     * Resets the characters attributes & skills, and gives back used experience.
+     */
+    public void resetCharacter(PlayerCharacter pc) {
+        pc.setAttributes(attributeService.getDefaultAttributes());
+
+        // Remove old permissions
+        pc.getSkills().forEach(s -> {
+            setSkillPermission(pc, s, false);
+        });
+        pc.setSkills(new ArrayList<>());
+
+        double spent = pc.getSpentExperience();
+        pc.setSpentExperience(0);
+        pc.setExperience(pc.getExperience() + spent);
+
+        repository.saveOne(pc);
     }
 }

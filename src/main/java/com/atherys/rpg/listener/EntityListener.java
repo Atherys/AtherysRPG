@@ -8,12 +8,18 @@ import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 @Singleton
 public class EntityListener {
 
     @Inject
     private RPGCharacterFacade characterFacade;
+
+    @Listener
+    public void onJoin(ClientConnectionEvent.Join event) {
+        characterFacade.checkTreeOnLogin(event.getTargetEntity());
+    }
 
     @Listener
     public void onDamage(DamageEntityEvent event, @Root EntityDamageSource source) {

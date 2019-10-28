@@ -97,7 +97,7 @@ public abstract class RPGSkill implements Castable {
     @SuppressWarnings("unchecked")
     protected <T> T getProperty(String propertyKey, Class<T> asClass, T defaultValue) {
         if (String.class.equals(asClass)) {
-            return (T) properties.get(propertyKey);
+            return (T) properties.getOrDefault(propertyKey, (String) defaultValue);
         }
 
         if (Integer.class.equals(asClass)) {
@@ -125,5 +125,10 @@ public abstract class RPGSkill implements Castable {
         }
 
         return defaultValue;
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }

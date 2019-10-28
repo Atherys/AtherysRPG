@@ -7,10 +7,7 @@ import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class PlayerCharacter implements RPGCharacter<Player> {
@@ -36,6 +33,9 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     private double spentExperience;
 
     private double experienceSpendingLimit;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> skills = new ArrayList<>();
 
     public PlayerCharacter() {
     }
@@ -99,5 +99,21 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void setSpentExperience(double spentExperience) {
         this.spentExperience = spentExperience;
+    }
+
+    public void setSkills(List<String> skills) {
+        this.skills = skills;
+    }
+
+    public List<String> getSkills() {
+        return skills;
+    }
+
+    public void addSkill(String skill) {
+        skills.add(skill);
+    }
+
+    public void removeSkill(String skill) {
+        skills.remove(skill);
     }
 }

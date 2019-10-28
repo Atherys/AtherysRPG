@@ -8,6 +8,10 @@ import org.spongepowered.api.entity.living.Living;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Represents an entity that can have attributes
+ * @param <T> The type of Entity
+ */
 public interface RPGCharacter<T extends Living & Equipable> extends SpongeIdentifiable {
 
     Optional<T> getEntity();
