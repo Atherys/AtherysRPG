@@ -22,7 +22,6 @@ import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
-import com.atherys.rpg.skill.DummySkill;
 import com.atherys.rpg.skill.RPGSimpleDamageSkill;
 import com.atherys.skills.AtherysSkills;
 import com.google.common.reflect.TypeToken;
@@ -233,13 +232,7 @@ public class AtherysRPG {
 
     private void registerSkills() {
         AtherysSkills.getInstance().getSkillService().registerSkills(
-                new RPGSimpleDamageSkill(),
-                // Dummy skills for testing
-                new DummySkill("skill-1", "Skill 1", "A skill"),
-                new DummySkill("skill-2", "Skill 2", "A skill"),
-                new DummySkill("skill-3", "Skill 3", "A skill"),
-                new DummySkill("skill-4", "Skill 4", "A skill"),
-                new DummySkill("skill-5", "Skill 5", "A skill")
+                new RPGSimpleDamageSkill()
         );
     }
 
