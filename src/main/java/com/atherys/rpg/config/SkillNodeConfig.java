@@ -13,10 +13,10 @@ public class SkillNodeConfig {
     public String SKILL_ID = "skill-id";
 
     @Setting("cooldown")
-    public String COOLDOWN_EXPRESSION = "5000";
+    public String COOLDOWN_EXPRESSION;
 
     @Setting("cost")
-    public String COST_EXPRESSION = "5.0";
+    public String COST_EXPRESSION;
 
     @Setting("properties")
     public Map<String, String> PROPERTIES = new HashMap<>();
