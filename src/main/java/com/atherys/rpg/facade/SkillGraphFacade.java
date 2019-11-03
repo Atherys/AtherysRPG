@@ -65,12 +65,12 @@ public class SkillGraphFacade {
         RPGSkill rpgSkill = rpgSkillOptional.get();
 
         // Set configured cooldown expression, if available
-        if (!node.COOLDOWN_EXPRESSION.isEmpty()) {
+        if (node.COOLDOWN_EXPRESSION != null) {
             rpgSkill.setCooldownExpression(node.COOLDOWN_EXPRESSION);
         }
 
         // Set configured cost expression, if available
-        if (!node.COST_EXPRESSION.isEmpty()) {
+        if (node.COST_EXPRESSION != null) {
             rpgSkill.setResourceCostExpression(node.COST_EXPRESSION);
         }
 
