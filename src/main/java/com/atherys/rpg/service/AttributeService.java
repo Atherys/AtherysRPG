@@ -91,11 +91,15 @@ public class AttributeService {
      * @return The altered source map
      */
     public Map<AttributeType, Double> mergeAttributes(Map<AttributeType, Double> source, Map<AttributeType, Double> additional) {
-        additional.forEach((type, value) -> source.merge(type, value, (v1, v2) -> v1 + v2));
+        additional.forEach((type, value) -> source.merge(type, value, Double::sum));
         return additional;
     }
 
-    public Map<AttributeType, Double> getAttributes(RPGCharacter<?> character) {
+    public Map<AttributeType, Double> getBaseAttributes(RPGCharacter<?> character) {
         return new HashMap<>(character.getBaseAttributes());
+    }
+
+    public Map<AttributeType, Double> getBuffAttributes(RPGCharacter<?> character) {
+        return new HashMap<>(character.getBuffAttributes());
     }
 }

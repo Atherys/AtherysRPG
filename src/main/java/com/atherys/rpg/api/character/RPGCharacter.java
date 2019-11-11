@@ -21,4 +21,6 @@ public interface RPGCharacter<T extends Living & Equipable> extends SpongeIdenti
     Map<AttributeType, Double> getBaseAttributes();
 
     Map<AttributeType, Double> getBuffAttributes();
+
+    void setBuffAttributes(Map<AttributeType, Double> attributes);
 }

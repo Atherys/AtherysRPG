@@ -129,7 +129,7 @@ public class AttributeFacade {
     public Map<AttributeType, Double> getAllAttributes(Entity entity) {
         RPGCharacter<?> character = characterService.getOrCreateCharacter(entity);
 
-        Map<AttributeType, Double> attributes = attributeService.getAttributes(character);
+        Map<AttributeType, Double> attributes = attributeService.getBaseAttributes(character);
         attributeService.mergeAttributes(attributes, getEquipmentAttributes(entity));
         attributeService.mergeAttributes(attributes, character.getBuffAttributes());
 
@@ -137,7 +137,7 @@ public class AttributeFacade {
     }
 
     public Map<AttributeType, Double> getBaseAttributes(Entity entity) {
-        return attributeService.getAttributes(characterService.getOrCreateCharacter(entity));
+        return attributeService.getBaseAttributes(characterService.getOrCreateCharacter(entity));
     }
 
     public Map<AttributeType, Double> getEquipmentAttributes(Entity entity) {
@@ -159,6 +159,7 @@ public class AttributeFacade {
 
         Text.Builder attributeText = Text.builder();
 
+        Map<AttributeType, Double> buffAttributes = pc.getBuffAttributes();
         pc.getBaseAttributes().forEach((type, value) -> {
 
             Text attribute = Text.builder()
@@ -212,7 +213,7 @@ public class AttributeFacade {
         return Text.builder()
                 .append(Text.of(finalAttributeValue))
                 .onHover(TextActions.showText(Text.of(
-                        "Base of ", base, " + ", (finalAttributeValue - base), " from equipment"
+                        "Base of ", base, " + ", (finalAttributeValue - base), " from equipment and buffs"
                 )))
                 .build();
     }
@@ -244,8 +245,9 @@ public class AttributeFacade {
     private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {
         double finalValue = pc.getBaseAttributes().get(type);
 
-        finalValue += attributeService.getHeldItemAttributes(player).getOrDefault(type, 0.0d);
-        finalValue += attributeService.getArmorAttributes(player).getOrDefault(type, 0.0d);
+        finalValue += attributeService.getHeldItemAttributes(player).getOrDefault(type, 0.0);
+        finalValue += attributeService.getArmorAttributes(player).getOrDefault(type, 0.0);
+        finalValue += attributeService.getBuffAttributes(pc).getOrDefault(type, 0.0);
 
         return finalValue;
     }
