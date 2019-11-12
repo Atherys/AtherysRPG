@@ -1,6 +1,7 @@
 package com.atherys.rpg.api.util;
 
-import spark.utils.Assert;
+
+import com.google.common.base.Preconditions;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -186,9 +187,9 @@ public class Graph<T> {
      *                 ( if a relationship already exists, it will be modified )
      */
     public void add(T parent, T object, double weight, LinkType linkType) {
-        Assert.notNull(parent, "Parent cannot be null.");
-        Assert.notNull(object, "Object cannot be null.");
-        Assert.notNull(linkType, "Link type cannot be null.");
+        Preconditions.checkNotNull(parent, "Parent cannot be null.");
+        Preconditions.checkNotNull(object, "Object cannot be null.");
+        Preconditions.checkNotNull(linkType, "Link type cannot be null.");
 
         Node<T> parentNode = new Node<>(parent);
         Node<T> childNode = new Node<>(object);
@@ -275,7 +276,7 @@ public class Graph<T> {
      * @return A set of links, or empty if none could be found
      */
     public Set<Link<T>> getAllLinks(T object) {
-        Assert.notNull(object, "Object cannot be null.");
+        Preconditions.checkNotNull(object, "Object cannot be null.");
         return links.stream().filter(link -> link.getParent().getData().equals(object) || link.getChild().getData().equals(object)).collect(Collectors.toSet());
     }
 
@@ -286,7 +287,7 @@ public class Graph<T> {
      * @return The set of links pointing away to other nodes from this object
      */
     public Set<Link<T>> getLinksWhereParent(T object) {
-        Assert.notNull(object, "Object cannot be null.");
+        Preconditions.checkNotNull(object, "Object cannot be null.");
         return links.stream().filter(link -> link.getParent().getData().equals(object) || link.getType().equals(LinkType.BIDIRECTIONAL)).collect(Collectors.toSet());
     }
 
@@ -297,7 +298,7 @@ public class Graph<T> {
      * @return The set of links pointing to this object from others
      */
     public Set<Link<T>> getLinksWhereChild(T object) {
-        Assert.notNull(object, "Object cannot be null.");
+        Preconditions.checkNotNull(object, "Object cannot be null.");
         return links.stream().filter(link -> link.getChild().getData().equals(object) || link.getType().equals(LinkType.BIDIRECTIONAL)).collect(Collectors.toSet());
     }
 
@@ -309,7 +310,7 @@ public class Graph<T> {
      * @return The link between them, or null if none exists
      */
     public Link<T> getLink(T object1, T object2) {
-        Assert.isTrue(object1 != null && object2 != null, "Neither object can be null.");
+        Preconditions.checkArgument(object1 != null && object2 != null, "Neither object can be null.");
         return links.stream().filter(link -> {
             T linkParent = link.getParent().getData();
             T linkChild = link.getChild().getData();
