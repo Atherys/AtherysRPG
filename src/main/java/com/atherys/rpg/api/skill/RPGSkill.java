@@ -59,7 +59,7 @@ public abstract class RPGSkill implements Castable {
 
     @Override
     public String getName() {
-        return name;
+        return getProperty("name", String.class, name);
     }
 
     @Override
