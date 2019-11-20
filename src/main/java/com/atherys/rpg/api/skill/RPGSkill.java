@@ -94,6 +94,10 @@ public abstract class RPGSkill implements Castable {
         this.properties = properties;
     }
 
+    public void setDescriptionArguments(Tuple<String, ?>... descriptionArguments) {
+        this.descriptionArguments = descriptionArguments;
+    }
+
     @SuppressWarnings("unchecked")
     protected <T> T getProperty(String propertyKey, Class<T> asClass, T defaultValue) {
         if (String.class.equals(asClass)) {
