@@ -100,7 +100,7 @@ public abstract class RPGSkill implements Castable {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T getProperty(String propertyKey, Class<T> asClass, T defaultValue) {
+    public <T> T getProperty(String propertyKey, Class<T> asClass, T defaultValue) {
         if (String.class.equals(asClass)) {
             return (T) properties.getOrDefault(propertyKey, (String) defaultValue);
         }

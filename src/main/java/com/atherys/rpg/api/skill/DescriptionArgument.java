@@ -7,4 +7,5 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface DescriptionArgument extends Function<Living, TextRepresentable> {
+
 }
