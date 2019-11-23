@@ -8,13 +8,13 @@ import org.spongepowered.api.text.format.TextColors;
 @Singleton
 public class RPGMessagingFacade {
 
-    public static final Text PREFIX = Text.of(TextColors.DARK_GREEN, "[", TextColors.DARK_RED, "RPG", TextColors.DARK_GREEN, "] ", TextColors.RESET);
+    public static final Text PREFIX = Text.of(TextColors.DARK_GREEN, "[", TextColors.GOLD, "RPG", TextColors.DARK_GREEN, "] ", TextColors.RESET);
 
     public RPGMessagingFacade() {
     }
 
     public Text format(Object... msg) {
-        return Text.of(PREFIX, Text.of(msg));
+        return Text.of(PREFIX, TextColors.DARK_GREEN, Text.of(msg));
     }
 
     public void info(Player player, Object... msg) {

@@ -4,7 +4,7 @@ import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,5 +18,5 @@ public class SkillGraphConfig {
     public Map<String, SkillNodeConfig> NODES = new HashMap<>();
 
     @Setting("skill-links")
-    public Set<SkillNodeLinkConfig> LINKS = new HashSet<>();
+    public Set<SkillNodeLinkConfig> LINKS = new LinkedHashSet<>();
 }

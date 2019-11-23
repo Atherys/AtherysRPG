@@ -1,11 +1,11 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.character.SimpleCharacter;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.google.inject.Inject;

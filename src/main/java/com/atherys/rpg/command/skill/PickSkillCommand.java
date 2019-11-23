@@ -1,6 +1,5 @@
 package com.atherys.rpg.command.skill;
 
-import com.atherys.core.AtherysCore;
 import com.atherys.core.command.ParameterizedCommand;
 import com.atherys.core.command.PlayerCommand;
 import com.atherys.core.command.annotation.Aliases;
@@ -20,7 +19,7 @@ import javax.annotation.Nonnull;
 @Aliases("pick")
 @Description("Unlocks a new skill.")
 @Permission("atherysrpg.skills.pick")
-public class SkillPickCommand implements ParameterizedCommand, PlayerCommand {
+public class PickSkillCommand implements ParameterizedCommand, PlayerCommand {
     @Override
     public CommandElement[] getArguments() {
         return new CommandElement[] {

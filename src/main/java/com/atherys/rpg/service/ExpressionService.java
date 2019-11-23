@@ -7,10 +7,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.entity.living.Living;
-import org.spongepowered.api.text.Text;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 

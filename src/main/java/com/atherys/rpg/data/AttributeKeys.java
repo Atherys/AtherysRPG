@@ -3,8 +3,6 @@ package com.atherys.rpg.data;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
 
-import javax.annotation.Generated;
-
 public class AttributeKeys {
 
     public static Key<Value<Double>> AGILITY;

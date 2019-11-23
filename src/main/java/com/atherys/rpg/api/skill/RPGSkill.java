@@ -10,6 +10,7 @@ import org.spongepowered.api.text.TextTemplate;
 import org.spongepowered.api.util.Tuple;
 
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class RPGSkill implements Castable {
 
@@ -134,5 +135,18 @@ public abstract class RPGSkill implements Castable {
     @Override
     public String toString() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RPGSkill)) return false;
+        RPGSkill skill = (RPGSkill) o;
+        return id.equals(skill.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

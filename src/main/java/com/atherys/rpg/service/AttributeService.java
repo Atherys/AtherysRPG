@@ -1,8 +1,8 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

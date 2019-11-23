@@ -37,7 +37,7 @@ public class RPGSimpleDamageSkill extends TargetedRPGSkill {
                         Tuple.of("cooldown", DescriptionArguments.cooldown(COOLDOWN_EXPRESSION)),
                         Tuple.of("resource", asExpression(RESOURCE_EXPRESSION))
                 )
-                .cooldown(COOLDOWN_EXPRESSION)
+              .cooldown(COOLDOWN_EXPRESSION)
                 .resourceCost(RESOURCE_EXPRESSION)
                 .property("damage", DEFAULT_DAMAGE_EXPRESSION)
         );

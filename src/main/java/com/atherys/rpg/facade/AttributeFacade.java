@@ -1,10 +1,10 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.ExpressionService;
