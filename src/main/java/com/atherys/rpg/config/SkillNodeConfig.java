@@ -10,7 +10,7 @@ import java.util.Map;
 public class SkillNodeConfig {
 
     @Setting("skill-id")
-    public String SKILL_ID = "skill-id";
+    public String SKILL_ID = "rpg-simple-damage";
 
     @Setting("cooldown")
     public String COOLDOWN_EXPRESSION;
