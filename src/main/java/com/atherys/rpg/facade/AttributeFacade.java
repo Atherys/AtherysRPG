@@ -158,7 +158,7 @@ public class AttributeFacade {
             Text attribute = Text.builder()
                     .append(getAddAttributeButton(pc, type, value))
                     .append(Text.of(" "))
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, total, " ( ", TextColors.GREEN, buff, TextColors.RESET, " + ", TextColors.BLUE, item, TextColors.RESET, " )"))
+                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, total, " ( ", TextColors.RED, base, TextColors.RESET, " + ", TextColors.GREEN, buff, TextColors.RESET, " + ", TextColors.BLUE, item, TextColors.RESET, " )"))
                     .append(Text.NEW_LINE)
                     .build();
 
