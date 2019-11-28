@@ -31,6 +31,9 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("health-regen-calculation")
     public String HEALTH_REGEN_CALCULATION = "1.33 * TARGET_CONSTITUTION";
 
+    @Setting("health-regen-duration-in-ticks")
+    public long HEALTH_REGEN_DURATION_TICKS = 1;
+
     @Setting("resource-regen-calculation")
     public String RESOURCE_REGEN_CALCULATION = "1.33 * TARGET_WISDOM";
 

@@ -127,13 +127,7 @@ public class AttributeFacade {
     }
 
     public Map<AttributeType, Double> getAllAttributes(Entity entity) {
-        RPGCharacter<?> character = characterService.getOrCreateCharacter(entity);
-
-        Map<AttributeType, Double> attributes = attributeService.getBaseAttributes(character);
-        attributeService.mergeAttributes(attributes, getEquipmentAttributes(entity));
-        attributeService.mergeAttributes(attributes, character.getBuffAttributes());
-
-        return attributes;
+        return attributeService.getAllAttributes(entity);
     }
 
     public Map<AttributeType, Double> getBaseAttributes(Entity entity) {
@@ -141,17 +135,7 @@ public class AttributeFacade {
     }
 
     public Map<AttributeType, Double> getEquipmentAttributes(Entity entity) {
-        Map<AttributeType, Double> result = new HashMap<>();
-
-        if (entity instanceof Equipable) {
-            attributeService.mergeAttributes(result, attributeService.getHeldItemAttributes((Equipable) entity));
-        }
-
-        if (entity instanceof ArmorEquipable) {
-            attributeService.mergeAttributes(result, attributeService.getArmorAttributes((ArmorEquipable) entity));
-        }
-
-        return result;
+        return attributeService.getEquipmentAttributes(entity);
     }
 
     public void showPlayerAttributes(Player player) {
@@ -159,13 +143,22 @@ public class AttributeFacade {
 
         Text.Builder attributeText = Text.builder();
 
+        Map<AttributeType, Double> baseAttributes = pc.getBaseAttributes();
         Map<AttributeType, Double> buffAttributes = pc.getBuffAttributes();
-        pc.getBaseAttributes().forEach((type, value) -> {
+        Map<AttributeType, Double> itemAttributes = attributeService.getEquipmentAttributes(player);
+
+        baseAttributes.forEach((type, value) -> {
+
+            double base = value;
+            double buff = buffAttributes.getOrDefault(type, 0.0d);
+            double item = itemAttributes.getOrDefault(type, 0.0d);
+
+            double total = base + buff + item;
 
             Text attribute = Text.builder()
                     .append(getAddAttributeButton(pc, type, value))
                     .append(Text.of(" "))
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, getAttributeValue(pc, player, type, value), " "))
+                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, total, " ( ", TextColors.GREEN, buff, TextColors.RESET, " + ", TextColors.BLUE, item, TextColors.RESET, " )"))
                     .append(Text.NEW_LINE)
                     .build();
 

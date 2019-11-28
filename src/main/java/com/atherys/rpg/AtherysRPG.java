@@ -18,10 +18,7 @@ import com.atherys.rpg.facade.*;
 import com.atherys.rpg.listener.EntityListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
-import com.atherys.rpg.service.AttributeService;
-import com.atherys.rpg.service.DamageService;
-import com.atherys.rpg.service.ExpressionService;
-import com.atherys.rpg.service.RPGCharacterService;
+import com.atherys.rpg.service.*;
 import com.atherys.rpg.skill.RPGSimpleDamageSkill;
 import com.atherys.skills.AtherysSkills;
 import com.google.common.reflect.TypeToken;
@@ -105,6 +102,7 @@ public class AtherysRPG {
 
     private void start() {
         getPlayerCharacterRepository().initCache();
+        components.healingService.init();
     }
 
     private void stop() {
@@ -302,6 +300,9 @@ public class AtherysRPG {
 
         @Inject
         ExpressionService expressionService;
+
+        @Inject
+        HealingService healingService;
 
         @Inject
         RPGMessagingFacade rpgMessagingFacade;
