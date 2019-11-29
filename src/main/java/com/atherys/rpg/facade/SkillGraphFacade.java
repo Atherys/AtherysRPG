@@ -1,6 +1,5 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.util.Graph;
@@ -38,8 +37,6 @@ public class SkillGraphFacade {
             namedSkillNodes.put(key, getSkillFromConfigNode(node));
         });
 
-        AtherysRPG.getInstance().getLogger().info(config.SKILL_GRAPH.LINKS.toString());
-
         // Read links between skills and apply to skill graph from previously stored interpreted skills
         config.SKILL_GRAPH.LINKS.forEach((linkConfig) -> {
             RPGSkill parent = namedSkillNodes.get(linkConfig.PARENT_SKILL_NODE_ID);
@@ -50,7 +47,6 @@ public class SkillGraphFacade {
             newSkillGraph.add(parent, child, cost, type);
         });
 
-        AtherysRPG.getInstance().getLogger().info(newSkillGraph.toString());
         // Cache the skill graph for later use
         this.skillGraph = newSkillGraph;
         return skillGraph;

@@ -159,38 +159,10 @@ public class AtherysRPG {
                 .type(doubleToken)
                 .build();
 
-        AttributeKeys.CHARISMA = Key.builder()
-                .id("charisma")
-                .name("Charisma")
-                .query(DataQuery.of("Charisma"))
-                .type(doubleToken)
-                .build();
-
-        AttributeKeys.DEFENSE = Key.builder()
-                .id("defense")
-                .name("Defense")
-                .query(DataQuery.of("Defense"))
-                .type(doubleToken)
-                .build();
-
         AttributeKeys.INTELLIGENCE = Key.builder()
                 .id("intelligence")
                 .name("Intelligence")
                 .query(DataQuery.of("Intelligence"))
-                .type(doubleToken)
-                .build();
-
-        AttributeKeys.LUCK = Key.builder()
-                .id("luck")
-                .name("Luck")
-                .query(DataQuery.of("Luck"))
-                .type(doubleToken)
-                .build();
-
-        AttributeKeys.PERCEPTION = Key.builder()
-                .id("perception")
-                .name("Perception")
-                .query(DataQuery.of("Perception"))
                 .type(doubleToken)
                 .build();
 
@@ -201,17 +173,24 @@ public class AtherysRPG {
                 .type(doubleToken)
                 .build();
 
-        AttributeKeys.WILLPOWER = Key.builder()
-                .id("willpower")
-                .name("Willpower")
-                .query(DataQuery.of("Willpower"))
-                .type(doubleToken)
-                .build();
-
         AttributeKeys.WISDOM = Key.builder()
                 .id("wisdom")
                 .name("Wisdom")
                 .query(DataQuery.of("Wisdom"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.MAGICAL_RESISTANCE = Key.builder()
+                .id("magical-resistance")
+                .name("Magical Resistance")
+                .query(DataQuery.of("Magical_Resistance"))
+                .type(doubleToken)
+                .build();
+
+        AttributeKeys.PHYSICAL_RESISTANCE = Key.builder()
+                .id("physical-resistance")
+                .name("Physical Resistance")
+                .query(DataQuery.of("Physical_Resistance"))
                 .type(doubleToken)
                 .build();
     }

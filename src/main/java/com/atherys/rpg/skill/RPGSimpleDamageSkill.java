@@ -1,6 +1,5 @@
 package com.atherys.rpg.skill;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.DescriptionArguments;
 import com.atherys.rpg.api.skill.SkillSpec;
 import com.atherys.rpg.api.skill.TargetedRPGSkill;
@@ -46,7 +45,6 @@ public class RPGSimpleDamageSkill extends TargetedRPGSkill {
     @Override
     public CastResult cast(Living user, Living target, long timestamp, String... args) throws CastException {
         String exp = getProperty("damage", String.class, DEFAULT_DAMAGE_EXPRESSION);
-        AtherysRPG.getInstance().getLogger().info(exp);
         double damage = asDouble(user, target, exp);
 
         if (user instanceof MessageReceiver) {

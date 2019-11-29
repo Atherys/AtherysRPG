@@ -1,15 +1,10 @@
 package com.atherys.rpg.service;
 
 import com.atherys.rpg.AtherysRPG;
-import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.expression.ClampFunction;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
-import org.spongepowered.api.entity.ArmorEquipable;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 
 import java.math.BigDecimal;
@@ -18,12 +13,6 @@ import java.util.Map;
 
 @Singleton
 public class ExpressionService {
-
-    @Inject
-    private AttributeService attributeService;
-
-    @Inject
-    private RPGCharacterService characterService;
 
     private Map<String, Expression> cachedExpressions = new HashMap<>();
 
@@ -70,9 +59,9 @@ public class ExpressionService {
     }
 
     public BigDecimal evalExpression(Living source, Expression expression) {
-        populateAttributes(
+        AtherysRPG.getInstance().getExpressionService().populateAttributes(
                 expression,
-                attributeService.getAllAttributes(source),
+                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source),
                 "source"
         );
 
@@ -80,19 +69,18 @@ public class ExpressionService {
     }
 
     public BigDecimal evalExpression(Living source, Living target, Expression expression) {
-        populateAttributes(
+        AtherysRPG.getInstance().getExpressionService().populateAttributes(
                 expression,
-                attributeService.getAllAttributes(source),
+                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source),
                 "source"
         );
 
-        populateAttributes(
+        AtherysRPG.getInstance().getExpressionService().populateAttributes(
                 expression,
-                attributeService.getAllAttributes(target),
+                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(target),
                 "target"
         );
 
         return expression.eval(true);
     }
-
 }

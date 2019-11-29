@@ -7,14 +7,11 @@ public class AttributeKeys {
 
     public static Key<Value<Double>> AGILITY;
     public static Key<Value<Double>> CONSTITUTION;
-    public static Key<Value<Double>> CHARISMA;
-    public static Key<Value<Double>> DEFENSE;
     public static Key<Value<Double>> INTELLIGENCE;
-    public static Key<Value<Double>> LUCK;
-    public static Key<Value<Double>> PERCEPTION;
     public static Key<Value<Double>> STRENGTH;
-    public static Key<Value<Double>> WILLPOWER;
     public static Key<Value<Double>> WISDOM;
+    public static Key<Value<Double>> MAGICAL_RESISTANCE;
+    public static Key<Value<Double>> PHYSICAL_RESISTANCE;
 
     private AttributeKeys() {
     }

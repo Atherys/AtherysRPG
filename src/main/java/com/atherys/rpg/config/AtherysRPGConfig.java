@@ -118,14 +118,11 @@ public class AtherysRPGConfig extends PluginConfig {
     {
         DEFAULT_ATTRIBUTES.put(AttributeTypes.STRENGTH, 1.0d);
         DEFAULT_ATTRIBUTES.put(AttributeTypes.CONSTITUTION, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.DEFENSE, 1.0d);
         DEFAULT_ATTRIBUTES.put(AttributeTypes.AGILITY, 1.0d);
         DEFAULT_ATTRIBUTES.put(AttributeTypes.INTELLIGENCE, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.CHARISMA, 1.0d);
         DEFAULT_ATTRIBUTES.put(AttributeTypes.WISDOM, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.WILLPOWER, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.PERCEPTION, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.LUCK, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.MAGICAL_RESISTANCE, 1.0d);
+        DEFAULT_ATTRIBUTES.put(AttributeTypes.PHYSICAL_RESISTANCE, 1.0d);
     }
 
     protected AtherysRPGConfig() throws IOException {

@@ -14,14 +14,11 @@ public final class AttributeTypeRegistry implements CatalogRegistryModule<Attrib
     public AttributeTypeRegistry() {
         attributeTypeMap.put(AttributeTypes.STRENGTH.getId(), AttributeTypes.STRENGTH);
         attributeTypeMap.put(AttributeTypes.CONSTITUTION.getId(), AttributeTypes.CONSTITUTION);
-        attributeTypeMap.put(AttributeTypes.DEFENSE.getId(), AttributeTypes.DEFENSE);
         attributeTypeMap.put(AttributeTypes.AGILITY.getId(), AttributeTypes.AGILITY);
         attributeTypeMap.put(AttributeTypes.INTELLIGENCE.getId(), AttributeTypes.INTELLIGENCE);
-        attributeTypeMap.put(AttributeTypes.CHARISMA.getId(), AttributeTypes.CHARISMA);
         attributeTypeMap.put(AttributeTypes.WISDOM.getId(), AttributeTypes.WISDOM);
-        attributeTypeMap.put(AttributeTypes.WILLPOWER.getId(), AttributeTypes.WILLPOWER);
-        attributeTypeMap.put(AttributeTypes.PERCEPTION.getId(), AttributeTypes.PERCEPTION);
-        attributeTypeMap.put(AttributeTypes.LUCK.getId(), AttributeTypes.LUCK);
+        attributeTypeMap.put(AttributeTypes.MAGICAL_RESISTANCE.getId(), AttributeTypes.MAGICAL_RESISTANCE);
+        attributeTypeMap.put(AttributeTypes.PHYSICAL_RESISTANCE.getId(), AttributeTypes.PHYSICAL_RESISTANCE);
     }
 
     @Override
