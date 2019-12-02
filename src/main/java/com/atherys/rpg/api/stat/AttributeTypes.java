@@ -22,7 +22,7 @@ public final class AttributeTypes {
 
     public static final AttributeType CONSTITUTION = new AttributeType("constitution", CONSTITUTION_NAME, TextColors.GOLD);
 
-    public static final AttributeType DEXTERITY = new AttributeType("Dexterity", DEXTERITY_NAME, TextColors.AQUA);
+    public static final AttributeType DEXTERITY = new AttributeType("dexterity", DEXTERITY_NAME, TextColors.AQUA);
 
     public static final AttributeType INTELLIGENCE = new AttributeType("intelligence", INTELLIGENCE_NAME, TextColors.DARK_PURPLE);
 
