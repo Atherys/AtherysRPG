@@ -14,7 +14,7 @@ public final class AttributeTypeRegistry implements CatalogRegistryModule<Attrib
     public AttributeTypeRegistry() {
         attributeTypeMap.put(AttributeTypes.STRENGTH.getId(), AttributeTypes.STRENGTH);
         attributeTypeMap.put(AttributeTypes.CONSTITUTION.getId(), AttributeTypes.CONSTITUTION);
-        attributeTypeMap.put(AttributeTypes.AGILITY.getId(), AttributeTypes.AGILITY);
+        attributeTypeMap.put(AttributeTypes.DEXTERITY.getId(), AttributeTypes.DEXTERITY);
         attributeTypeMap.put(AttributeTypes.INTELLIGENCE.getId(), AttributeTypes.INTELLIGENCE);
         attributeTypeMap.put(AttributeTypes.WISDOM.getId(), AttributeTypes.WISDOM);
         attributeTypeMap.put(AttributeTypes.MAGICAL_RESISTANCE.getId(), AttributeTypes.MAGICAL_RESISTANCE);

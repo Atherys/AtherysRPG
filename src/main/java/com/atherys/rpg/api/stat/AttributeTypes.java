@@ -8,7 +8,7 @@ public final class AttributeTypes {
 
     private static final String CONSTITUTION_NAME = "Constitution";
 
-    private static final String AGILITY_NAME = "Dexterity";
+    private static final String DEXTERITY_NAME = "Dexterity";
 
     private static final String INTELLIGENCE_NAME = "Intelligence";
 
@@ -22,7 +22,7 @@ public final class AttributeTypes {
 
     public static final AttributeType CONSTITUTION = new AttributeType("constitution", CONSTITUTION_NAME, TextColors.GOLD);
 
-    public static final AttributeType AGILITY = new AttributeType("agility", AGILITY_NAME, TextColors.AQUA);
+    public static final AttributeType DEXTERITY = new AttributeType("Dexterity", DEXTERITY_NAME, TextColors.AQUA);
 
     public static final AttributeType INTELLIGENCE = new AttributeType("intelligence", INTELLIGENCE_NAME, TextColors.DARK_PURPLE);
 

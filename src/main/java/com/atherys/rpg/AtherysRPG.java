@@ -145,10 +145,10 @@ public class AtherysRPG {
         final TypeToken<Value<Double>> doubleToken = new TypeToken<Value<Double>>() {
         };
 
-        AttributeKeys.AGILITY = Key.builder()
-                .id("agility")
-                .name("Agility")
-                .query(DataQuery.of("Agility"))
+        AttributeKeys.DEXTERITY= Key.builder()
+                .id("dexterity")
+                .name("Dexterity")
+                .query(DataQuery.of("Dexterity"))
                 .type(doubleToken)
                 .build();
 

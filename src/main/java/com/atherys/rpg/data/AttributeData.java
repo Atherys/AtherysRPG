@@ -23,7 +23,7 @@ import java.util.Optional;
 @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-03-02T15:51:24.723Z")
 public class AttributeData extends AbstractData<AttributeData, AttributeData.Immutable> {
 
-    private Double agility = 0.0d;
+    private Double dexterity = 0.0d;
 
     private Double constitution = 0.0d;
 
@@ -41,8 +41,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         registerGettersAndSetters();
     }
 
-    AttributeData(Double agility, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance) {
-        this.agility = agility;
+    AttributeData(Double dexterity, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance) {
+        this.dexterity = dexterity;
         this.constitution = constitution;
         this.intelligence = intelligence;
         this.strength = strength;
@@ -54,9 +54,9 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     @Override
     protected void registerGettersAndSetters() {
-        registerFieldGetter(AttributeKeys.AGILITY, this::getAgility);
-        registerFieldSetter(AttributeKeys.AGILITY, this::setAgility);
-        registerKeyValue(AttributeKeys.AGILITY, this::agility);
+        registerFieldGetter(AttributeKeys.DEXTERITY, this::getDexterity);
+        registerFieldSetter(AttributeKeys.DEXTERITY, this::setDexterity);
+        registerKeyValue(AttributeKeys.DEXTERITY, this::dexterity);
 
         registerFieldGetter(AttributeKeys.CONSTITUTION, this::getConstitution);
         registerFieldSetter(AttributeKeys.CONSTITUTION, this::setConstitution);
@@ -83,16 +83,16 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         registerKeyValue(AttributeKeys.PHYSICAL_RESISTANCE, this::physicalResistance);
     }
 
-    public Double getAgility() {
-        return agility;
+    public Double getDexterity() {
+        return dexterity;
     }
 
-    public void setAgility(Double agility) {
-        this.agility = agility;
+    public void setDexterity(Double dexterity) {
+        this.dexterity = dexterity;
     }
 
-    public Value<Double> agility() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.AGILITY, agility);
+    public Value<Double> dexterity() {
+        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.DEXTERITY, dexterity);
     }
 
     public Double getConstitution() {
@@ -169,8 +169,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     public Double getAttribute(AttributeType type) {
         switch (type.getId()) {
-            case "agility":
-                return getAgility();
+            case "dexterity":
+                return getDexterity();
             case "constitution":
                 return getConstitution();
             case "intelligence":
@@ -190,8 +190,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     public void setAttribute(AttributeType type, Double value) {
         switch (type.getId()) {
-            case "agility":
-                setAgility(value);
+            case "dexterity":
+                setDexterity(value);
                 break;
             case "constitution":
                 setConstitution(value);
@@ -217,7 +217,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     public Map<AttributeType, Double> asMap() {
         Map<AttributeType, Double> map = new HashMap<>();
 
-        map.put(AttributeTypes.AGILITY, agility);
+        map.put(AttributeTypes.DEXTERITY, dexterity);
         map.put(AttributeTypes.CONSTITUTION, constitution);
         map.put(AttributeTypes.INTELLIGENCE, intelligence);
         map.put(AttributeTypes.STRENGTH, strength);
@@ -230,7 +230,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     public Optional<AttributeData> fill(DataHolder dataHolder, MergeFunction overlap) {
         dataHolder.get(AttributeData.class).ifPresent(that -> {
             AttributeData data = overlap.merge(this, that);
-            this.agility = data.agility;
+            this.dexterity = data.dexterity;
             this.constitution = data.constitution;
             this.intelligence = data.intelligence;
             this.strength = data.strength;
@@ -247,7 +247,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Optional<AttributeData> from(DataView container) {
-        container.getDouble(AttributeKeys.AGILITY.getQuery()).ifPresent(v -> agility = v);
+        container.getDouble(AttributeKeys.DEXTERITY.getQuery()).ifPresent(v -> dexterity = v);
         container.getDouble(AttributeKeys.CONSTITUTION.getQuery()).ifPresent(v -> constitution = v);
         container.getDouble(AttributeKeys.INTELLIGENCE.getQuery()).ifPresent(v -> intelligence = v);
         container.getDouble(AttributeKeys.STRENGTH.getQuery()).ifPresent(v -> strength = v);
@@ -259,12 +259,12 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     @Override
     public AttributeData copy() {
-        return new AttributeData(agility, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
+        return new AttributeData(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
     }
 
     @Override
     public Immutable asImmutable() {
-        return new Immutable(agility, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
+        return new Immutable(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
     }
 
     @Override
@@ -275,7 +275,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     @Override
     public DataContainer toContainer() {
         return super.toContainer()
-                .set(AttributeKeys.AGILITY.getQuery(), agility)
+                .set(AttributeKeys.DEXTERITY.getQuery(), dexterity)
                 .set(AttributeKeys.CONSTITUTION.getQuery(), constitution)
                 .set(AttributeKeys.INTELLIGENCE.getQuery(), intelligence)
                 .set(AttributeKeys.STRENGTH.getQuery(), strength)
@@ -287,7 +287,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-03-02T15:51:24.795Z")
     public static class Immutable extends AbstractImmutableData<Immutable, AttributeData> {
 
-        private Double agility = 0.0d;
+        private Double dexterity = 0.0d;
 
         private Double constitution = 0.0d;
 
@@ -305,8 +305,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
             registerGetters();
         }
 
-        Immutable(Double agility, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance) {
-            this.agility = agility;
+        Immutable(Double dexterity, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance) {
+            this.dexterity = dexterity;
             this.constitution = constitution;
             this.intelligence = intelligence;
             this.strength = strength;
@@ -318,8 +318,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
         @Override
         protected void registerGetters() {
-            registerFieldGetter(AttributeKeys.AGILITY, this::getAgility);
-            registerKeyValue(AttributeKeys.AGILITY, this::agility);
+            registerFieldGetter(AttributeKeys.DEXTERITY, this::getDexterity);
+            registerKeyValue(AttributeKeys.DEXTERITY, this::dexterity);
 
             registerFieldGetter(AttributeKeys.CONSTITUTION, this::getConstitution);
             registerKeyValue(AttributeKeys.CONSTITUTION, this::constitution);
@@ -340,12 +340,12 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
             registerKeyValue(AttributeKeys.WISDOM, this::wisdom);
         }
 
-        public Double getAgility() {
-            return agility;
+        public Double getDexterity() {
+            return dexterity;
         }
 
-        public ImmutableValue<Double> agility() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.AGILITY, agility).asImmutable();
+        public ImmutableValue<Double> dexterity() {
+            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.DEXTERITY, dexterity).asImmutable();
         }
 
         public Double getConstitution() {
@@ -398,7 +398,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
         @Override
         public AttributeData asMutable() {
-            return new AttributeData(agility, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
+            return new AttributeData(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
         }
 
         @Override
@@ -409,7 +409,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         @Override
         public DataContainer toContainer() {
             return super.toContainer()
-                    .set(AttributeKeys.AGILITY.getQuery(), agility)
+                    .set(AttributeKeys.DEXTERITY.getQuery(), dexterity)
                     .set(AttributeKeys.CONSTITUTION.getQuery(), constitution)
                     .set(AttributeKeys.INTELLIGENCE.getQuery(), intelligence)
                     .set(AttributeKeys.STRENGTH.getQuery(), strength)

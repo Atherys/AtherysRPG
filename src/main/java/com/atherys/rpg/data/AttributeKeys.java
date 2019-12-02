@@ -5,7 +5,7 @@ import org.spongepowered.api.data.value.mutable.Value;
 
 public class AttributeKeys {
 
-    public static Key<Value<Double>> AGILITY;
+    public static Key<Value<Double>> DEXTERITY;
     public static Key<Value<Double>> CONSTITUTION;
     public static Key<Value<Double>> INTELLIGENCE;
     public static Key<Value<Double>> STRENGTH;
