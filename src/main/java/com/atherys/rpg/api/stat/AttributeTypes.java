@@ -18,17 +18,17 @@ public final class AttributeTypes {
 
     private static final String PHY_RESISTANCE_NAME = "Physical Resistance";
 
-    public static final AttributeType STRENGTH = new AttributeType("strength", STRENGTH_NAME, TextColors.DARK_RED);
+    public static final AttributeType STRENGTH = new AttributeType("str", STRENGTH_NAME, TextColors.RED);
 
-    public static final AttributeType CONSTITUTION = new AttributeType("constitution", CONSTITUTION_NAME, TextColors.GOLD);
+    public static final AttributeType CONSTITUTION = new AttributeType("con", CONSTITUTION_NAME, TextColors.GOLD);
 
-    public static final AttributeType DEXTERITY = new AttributeType("dexterity", DEXTERITY_NAME, TextColors.AQUA);
+    public static final AttributeType DEXTERITY = new AttributeType("dex", DEXTERITY_NAME, TextColors.GREEN);
 
-    public static final AttributeType INTELLIGENCE = new AttributeType("intelligence", INTELLIGENCE_NAME, TextColors.DARK_PURPLE);
+    public static final AttributeType INTELLIGENCE = new AttributeType("int", INTELLIGENCE_NAME, TextColors.BLUE);
 
-    public static final AttributeType WISDOM = new AttributeType("wisdom", WISDOM_NAME, TextColors.DARK_GREEN);
+    public static final AttributeType WISDOM = new AttributeType("wis", WISDOM_NAME, TextColors.LIGHT_PURPLE);
 
-    public static final AttributeType MAGICAL_RESISTANCE = new AttributeType("magical-resistance", MAG_RESISTANCE_NAME, TextColors.DARK_RED);
+    public static final AttributeType MAGICAL_RESISTANCE = new AttributeType("magicres", MAG_RESISTANCE_NAME, TextColors.DARK_RED);
 
-    public static final AttributeType PHYSICAL_RESISTANCE = new AttributeType("physical-resistance", PHY_RESISTANCE_NAME, TextColors.GOLD);
+    public static final AttributeType PHYSICAL_RESISTANCE = new AttributeType("physres", PHY_RESISTANCE_NAME, TextColors.GOLD);
 }

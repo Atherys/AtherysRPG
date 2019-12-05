@@ -6,6 +6,7 @@ import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Equipable;
@@ -30,7 +31,11 @@ public class AttributeService {
     }
 
     public Map<AttributeType, Double> getDefaultAttributes() {
-        return new HashMap<>(config.DEFAULT_ATTRIBUTES);
+        Map<AttributeType, Double> attributes = new HashMap<>(config.DEFAULT_ATTRIBUTES);
+        for (AttributeType type : Sponge.getRegistry().getAllOf(AttributeType.class)) {
+            attributes.putIfAbsent(type, 0.0);
+        }
+        return attributes;
     }
 
     public Map<AttributeType, Double> getItemStackAttributes(ItemStack stack) {

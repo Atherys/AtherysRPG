@@ -146,49 +146,49 @@ public class AtherysRPG {
         };
 
         AttributeKeys.DEXTERITY= Key.builder()
-                .id("dexterity")
+                .id("dex")
                 .name("Dexterity")
                 .query(DataQuery.of("Dexterity"))
                 .type(doubleToken)
                 .build();
 
         AttributeKeys.CONSTITUTION = Key.builder()
-                .id("constitution")
+                .id("con")
                 .name("Constitution")
                 .query(DataQuery.of("Constitution"))
                 .type(doubleToken)
                 .build();
 
         AttributeKeys.INTELLIGENCE = Key.builder()
-                .id("intelligence")
+                .id("int")
                 .name("Intelligence")
                 .query(DataQuery.of("Intelligence"))
                 .type(doubleToken)
                 .build();
 
         AttributeKeys.STRENGTH = Key.builder()
-                .id("strength")
+                .id("str")
                 .name("Strength")
                 .query(DataQuery.of("Strength"))
                 .type(doubleToken)
                 .build();
 
         AttributeKeys.WISDOM = Key.builder()
-                .id("wisdom")
+                .id("wis")
                 .name("Wisdom")
                 .query(DataQuery.of("Wisdom"))
                 .type(doubleToken)
                 .build();
 
         AttributeKeys.MAGICAL_RESISTANCE = Key.builder()
-                .id("magical-resistance")
+                .id("magicres")
                 .name("Magical Resistance")
                 .query(DataQuery.of("Magical_Resistance"))
                 .type(doubleToken)
                 .build();
 
         AttributeKeys.PHYSICAL_RESISTANCE = Key.builder()
-                .id("physical-resistance")
+                .id("physres")
                 .name("Physical Resistance")
                 .query(DataQuery.of("Physical_Resistance"))
                 .type(doubleToken)

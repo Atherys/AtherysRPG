@@ -169,19 +169,19 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     public Double getAttribute(AttributeType type) {
         switch (type.getId()) {
-            case "dexterity":
+            case "dex":
                 return getDexterity();
-            case "constitution":
+            case "con":
                 return getConstitution();
-            case "intelligence":
+            case "int":
                 return getIntelligence();
-            case "perception":
+            case "str":
                 return getStrength();
-            case "wisdom":
+            case "wis":
                 return getWisdom();
-            case "magical-resistance":
+            case "magicres":
                 return getMagicalResistance();
-            case "physical-resistance":
+            case "physres":
                 return getPhysicalResistance();
             default:
                 return 0.0d;
@@ -190,25 +190,25 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     public void setAttribute(AttributeType type, Double value) {
         switch (type.getId()) {
-            case "dexterity":
+            case "dex":
                 setDexterity(value);
                 break;
-            case "constitution":
+            case "con":
                 setConstitution(value);
                 break;
-            case "intelligence":
+            case "int":
                 setIntelligence(value);
                 break;
-            case "strength":
+            case "str":
                 setStrength(value);
                 break;
-            case "wisdom":
+            case "wis":
                 setWisdom(value);
                 break;
-            case "magical-resistance":
+            case "magicres":
                 setMagicalResistance(value);
                 break;
-            case "physical-resistance":
+            case "physres":
                 setPhysicalResistance(value);
                 break;
         }
