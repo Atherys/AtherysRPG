@@ -4,12 +4,12 @@ plugins {
 }
 group 'com.atherys'
 
-version '1.0.0'
+version '1.0.1'
 
 dependencies {
+    shadow 'junit:junit:4.12'
+
     shadow 'com.github.Atherys-Horizons:AtherysSkills:master-SNAPSHOT'
 
     compile 'com.udojava:EvalEx:2.1'
-
-    compile 'junit:junit:4.12'
 }
