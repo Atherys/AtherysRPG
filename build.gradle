@@ -4,6 +4,8 @@ plugins {
 }
 group 'com.atherys'
 
+version '1.0.0'
+
 dependencies {
     shadow 'com.github.Atherys-Horizons:AtherysSkills:master-SNAPSHOT'
 

@@ -45,7 +45,7 @@ import org.spongepowered.api.plugin.PluginContainer;
         id = "atherysrpg",
         name = "A'therys RPG",
         description = "An RPG plugin for the A'therys Horizons server",
-        version = "1.0.0a",
+        version = "%PLUGIN_VERSION%",
         dependencies = {
                 @Dependency(id = "atheryscore"),
                 @Dependency(id = "atherysskills")
