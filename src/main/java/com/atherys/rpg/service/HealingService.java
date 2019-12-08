@@ -34,11 +34,17 @@ public class HealingService {
     }
 
     public void heal(Living entity, double amount) {
-        entity.transform(Keys.HEALTH, (value) -> value + amount);
+        entity.transform(Keys.HEALTH, val -> {
+            return Math.min(val + amount, entity.maxHealth().get());
+        });
     }
 
     private void tickHealthRegen() {
         Sponge.getServer().getOnlinePlayers().stream().forEach(player -> {
+            if (player.isRemoved() || player.get(Keys.HEALTH).get() <= 0) {
+                return;
+            }
+
             double healthRegenAmount = expressionService.evalExpression(player, config.HEALTH_REGEN_CALCULATION).doubleValue();
             heal(player, healthRegenAmount);
         });
