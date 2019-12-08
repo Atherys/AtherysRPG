@@ -14,7 +14,7 @@ import org.spongepowered.api.util.Tuple;
 
 public class RPGSimpleDamageSkill extends TargetedRPGSkill {
 
-    private static final String DEFAULT_DAMAGE_EXPRESSION = "CLAMP(SOURCE_INTELLIGENCE * 1.5, 0.5, 10.0)";
+    private static final String DEFAULT_DAMAGE_EXPRESSION = "CLAMP(SOURCE_INT * 1.5, 0.5, 10.0)";
 
     private static final String COOLDOWN_EXPRESSION = "6000";
 
