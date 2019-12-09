@@ -1,5 +1,6 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.util.Graph;
@@ -29,8 +30,11 @@ public class SkillGraphFacade {
 
         Map<String, RPGSkill> namedSkillNodes = new HashMap<>();
 
+        RPGSkill rootSkill = getSkillFromConfigNode(config.SKILL_GRAPH.ROOT);
+        namedSkillNodes.put("root-skill", rootSkill);
+
         // Create an empty skill graph
-        SkillGraph newSkillGraph = new SkillGraph(getSkillFromConfigNode(config.SKILL_GRAPH.ROOT));
+        SkillGraph newSkillGraph = new SkillGraph(rootSkill);
 
         // Read skills and store temporarily for later use
         config.SKILL_GRAPH.NODES.forEach((key, node) -> {

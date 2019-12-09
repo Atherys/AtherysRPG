@@ -3,10 +3,7 @@ package com.atherys.rpg.config;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @ConfigSerializable
 public class SkillGraphConfig {
@@ -18,5 +15,5 @@ public class SkillGraphConfig {
     public Map<String, SkillNodeConfig> NODES = new HashMap<>();
 
     @Setting("skill-links")
-    public Set<SkillNodeLinkConfig> LINKS = new LinkedHashSet<>();
+    public List<SkillNodeLinkConfig> LINKS = new ArrayList<>();
 }

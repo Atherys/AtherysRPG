@@ -124,10 +124,10 @@ public class Graph<T> {
         @Override
         public String toString() {
             return "Link{" +
-                    "parent=" + parent +
-                    ", child=" + child +
-                    ", type=" + type +
-                    '}';
+                    "\nparent=" + parent +
+                    ", \nchild=" + child +
+                    ", \ntype=" + type +
+                    "\n}";
         }
     }
 
