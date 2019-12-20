@@ -12,6 +12,7 @@ import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.data.AttributeKeys;
 import com.atherys.rpg.facade.*;
@@ -221,6 +222,10 @@ public class AtherysRPG {
         return components.config;
     }
 
+    public SkillGraphConfig getGraphConfig() {
+        return components.skillGraphConfig;
+    }
+
     public PlayerCharacterRepository getPlayerCharacterRepository() {
         return components.playerCharacterRepository;
     }
@@ -264,6 +269,9 @@ public class AtherysRPG {
     private static class Components {
         @Inject
         AtherysRPGConfig config;
+
+        @Inject
+        SkillGraphConfig skillGraphConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;

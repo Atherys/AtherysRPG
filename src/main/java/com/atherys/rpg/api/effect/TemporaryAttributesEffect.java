@@ -13,8 +13,8 @@ public class TemporaryAttributesEffect extends TemporaryEffect {
     private Map<AttributeType, Double> attributeIncreases;
     private Map<AttributeType, Double> attributeDecreases;
 
-    public TemporaryAttributesEffect(String id, String name, long duration, Map<AttributeType, Double> attributes) {
-        super(id, name, duration);
+    public TemporaryAttributesEffect(String id, String name, long duration, Map<AttributeType, Double> attributes, boolean isPositive) {
+        super(id, name, duration, isPositive);
         attributeIncreases = attributes;
         attributeDecreases = attributes.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() * -1));

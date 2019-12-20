@@ -5,6 +5,7 @@ import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.util.Graph;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.config.SkillNodeConfig;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -15,7 +16,7 @@ import java.util.*;
 public class SkillGraphFacade {
 
     @Inject
-    private AtherysRPGConfig config;
+    private SkillGraphConfig config;
 
     @Inject
     private RPGSkillFacade skillFacade;
@@ -30,19 +31,19 @@ public class SkillGraphFacade {
 
         Map<String, RPGSkill> namedSkillNodes = new HashMap<>();
 
-        RPGSkill rootSkill = getSkillFromConfigNode(config.SKILL_GRAPH.ROOT);
+        RPGSkill rootSkill = getSkillFromConfigNode(config.ROOT);
         namedSkillNodes.put("root-skill", rootSkill);
 
         // Create an empty skill graph
         SkillGraph newSkillGraph = new SkillGraph(rootSkill);
 
         // Read skills and store temporarily for later use
-        config.SKILL_GRAPH.NODES.forEach((key, node) -> {
+        config.NODES.forEach((key, node) -> {
             namedSkillNodes.put(key, getSkillFromConfigNode(node));
         });
 
         // Read links between skills and apply to skill graph from previously stored interpreted skills
-        config.SKILL_GRAPH.LINKS.forEach((linkConfig) -> {
+        config.LINKS.forEach((linkConfig) -> {
             RPGSkill parent = namedSkillNodes.get(linkConfig.PARENT_SKILL_NODE_ID);
             RPGSkill child = namedSkillNodes.get(linkConfig.CHILD_SKILL_NODE_ID);
             double cost = linkConfig.COST;

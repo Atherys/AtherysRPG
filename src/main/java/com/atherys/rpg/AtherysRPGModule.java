@@ -1,6 +1,7 @@
 package com.atherys.rpg;
 
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
@@ -19,6 +20,7 @@ public class AtherysRPGModule extends AbstractModule {
     protected void configure() {
         // Config
         bind(AtherysRPGConfig.class).in(Scopes.SINGLETON);
+        bind(SkillGraphConfig.class).in(Scopes.SINGLETON);
 
         // Repository
         bind(PlayerCharacterRepository.class).in(Scopes.SINGLETON);
