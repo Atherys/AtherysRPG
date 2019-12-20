@@ -82,6 +82,7 @@ public class AtherysRPG {
 
         // Initialize the config
         getConfig().init();
+        getGraphConfig().init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
