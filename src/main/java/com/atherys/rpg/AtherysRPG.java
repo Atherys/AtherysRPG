@@ -20,8 +20,6 @@ import com.atherys.rpg.listener.EntityListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.*;
-import com.atherys.rpg.skill.RPGSimpleDamageSkill;
-import com.atherys.skills.AtherysSkills;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -96,8 +94,6 @@ public class AtherysRPG {
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }
-
-        registerSkills();
 
         init = true;
     }
@@ -207,12 +203,6 @@ public class AtherysRPG {
                 .dataName("Attributes")
                 .manipulatorId("attributes")
                 .buildAndRegister(container);
-    }
-
-    private void registerSkills() {
-        AtherysSkills.getInstance().getSkillService().registerSkills(
-                new RPGSimpleDamageSkill()
-        );
     }
 
     public Logger getLogger() {

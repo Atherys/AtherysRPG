@@ -33,7 +33,7 @@ public class ExpressionService {
     public void populateAttributes(Expression expression, Map<AttributeType, Double> attributes, String name) {
         String pattern = name.toUpperCase() + "_%s";
         attributes.forEach((type, value) -> expression.setVariable(
-                String.format(pattern, type.getId().toUpperCase()),
+                String.format(pattern, type.getShortName().toUpperCase()),
                 BigDecimal.valueOf(value)
         ));
     }
