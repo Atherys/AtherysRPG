@@ -25,17 +25,20 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("projectile-damage-types")
     public Map<EntityType, AtherysDamageType> PROJECTILE_DAMAGE_TYPES = new HashMap<>();
 
-    @Setting("damage-calculations")
+    @Setting("damage-mitigation-calculation")
+    public String DAMAGE_MITIGATION_CALCULATION = "1.33 * SOURCE_CON";
+
+    @Setting("damage-production-calculations")
     public Map<AtherysDamageType, String> DAMAGE_CALCULATIONS = new HashMap<>();
 
     @Setting("health-regen-calculation")
-    public String HEALTH_REGEN_CALCULATION = "1.33 * TARGET_CON";
+    public String HEALTH_REGEN_CALCULATION = "1.33 * SOURCE_CON";
 
     @Setting("health-regen-duration-in-ticks")
     public long HEALTH_REGEN_DURATION_TICKS = 1;
 
     @Setting("resource-regen-calculation")
-    public String RESOURCE_REGEN_CALCULATION = "1.33 * TARGET_WIS";
+    public String RESOURCE_REGEN_CALCULATION = "1.33 * SOURCE_INT";
 
     @Setting("default-attributes")
     public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
@@ -104,12 +107,12 @@ public class AtherysRPGConfig extends PluginConfig {
     }
 
     {
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BLUNT, "CLAMP(SOURCE_CON - TARGET_PHYSRES, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.STAB, "CLAMP(SOURCE_STR - TARGET_PHYSRES, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.SLASH, "CLAMP(SOURCE_STR - TARGET_PHYSRES, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.UNARMED, "CLAMP(SOURCE_INT - TARGET_PHYSRES, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.PIERCE, "CLAMP(SOURCE_DEX - TARGET_PHYSRES, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BALLISTIC, "CLAMP(SOURCE_DEX - TARGET_PHYSRES, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BLUNT, "CLAMP(SOURCE_CON, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.STAB, "CLAMP(SOURCE_STR, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.SLASH, "CLAMP(SOURCE_STR, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.UNARMED, "CLAMP(SOURCE_INT, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.PIERCE, "CLAMP(SOURCE_DEX, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BALLISTIC, "CLAMP(SOURCE_DEX, 1.0, 15.0)");
     }
 
     {

@@ -59,12 +59,13 @@ public class DamageService {
     }
 
     public double calcDamage(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, AtherysDamageType type) {
-        Expression expression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
+        Expression producedDamageExpression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
+        Expression mitigatedDamageExpression = expressionService.getExpression(config.DAMAGE_MITIGATION_CALCULATION);
 
-        expressionService.populateAttributes(expression, attackerAttributes, "source");
-        expressionService.populateAttributes(expression, targetAttributes, "target");
+        expressionService.populateAttributes(producedDamageExpression, attackerAttributes, "source");
+        expressionService.populateAttributes(mitigatedDamageExpression, targetAttributes, "source");
 
-        return expression.eval().doubleValue();
+        return producedDamageExpression.eval().doubleValue() - mitigatedDamageExpression.eval().doubleValue();
     }
 
     private AtherysDamageType getMeleeDamageType(ItemType itemType) {
