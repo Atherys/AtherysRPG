@@ -4,7 +4,7 @@ plugins {
 }
 group 'com.atherys'
 
-version '1.0.1'
+version '1.0.2'
 
 dependencies {
     shadow 'junit:junit:4.12'

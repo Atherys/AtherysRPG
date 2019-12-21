@@ -16,6 +16,8 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.entity.damage.DamageType;
+import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -228,38 +230,40 @@ public class RPGCharacterFacade {
 
     private void onDirectDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
         Entity source = rootSource.getSource();
-        Entity target = event.getTargetEntity();
 
-        ItemType weaponType = ItemTypes.NONE;
+        // #15 - If damage source type is CUSTOM, skip additional damage calculations
+        if (rootSource.getType() != DamageTypes.CUSTOM) {
+            Entity target = event.getTargetEntity();
 
-        if (source instanceof Equipable) {
-            weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
-                    .map(ItemStack::getType)
-                    .orElse(ItemTypes.NONE);
+            ItemType weaponType = ItemTypes.NONE;
+
+            if (source instanceof Equipable) {
+                weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
+                        .map(ItemStack::getType)
+                        .orElse(ItemTypes.NONE);
+            }
+
+            Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType));
         }
-
-//        characterService.updateCachedEntity(source);
-//        characterService.updateCachedEntity(target);
-
-        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
-        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
-
-        event.setBaseDamage(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType));
     }
 
     private void onIndirectDamage(DamageEntityEvent event, IndirectEntityDamageSource rootSource) {
         Entity source = rootSource.getIndirectSource();
-        Entity target = event.getTargetEntity();
 
-//        characterService.updateCachedEntity(source);
-//        characterService.updateCachedEntity(target);
+        // #15 - If damage source type is CUSTOM, skip additional damage calculations
+        if (rootSource.getType() != DamageTypes.CUSTOM) {
+            Entity target = event.getTargetEntity();
 
-        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
-        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+            Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-        EntityType projectileType = rootSource.getSource().getType();
+            EntityType projectileType = rootSource.getSource().getType();
 
-        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
+            event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
+        }
     }
 
 // Healing is currently not implementable as such due to Sponge
