@@ -25,8 +25,11 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("projectile-damage-types")
     public Map<EntityType, AtherysDamageType> PROJECTILE_DAMAGE_TYPES = new HashMap<>();
 
-    @Setting("damage-mitigation-calculation")
-    public String DAMAGE_MITIGATION_CALCULATION = "1.33 * SOURCE_CON";
+    @Setting("physical-damage-mitigation-calculation")
+    public String PHYSICAL_DAMAGE_MITIGATION_CALCULATION = "1.33 * SOURCE_CON";
+
+    @Setting("magical-damage-mitigation-calculation")
+    public String MAGICAL_DAMAGE_MITIGATION_CALCULATION = "1.33 * SOURCE_INT";
 
     @Setting("damage-production-calculations")
     public Map<AtherysDamageType, String> DAMAGE_CALCULATIONS = new HashMap<>();

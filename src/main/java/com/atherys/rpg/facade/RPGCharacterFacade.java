@@ -1,5 +1,7 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.core.utils.MathUtils;
+import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -229,40 +231,56 @@ public class RPGCharacterFacade {
 
     private void onDirectDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
         Entity source = rootSource.getSource();
+        Entity target = event.getTargetEntity();
 
-        // #15 - If damage source type is CUSTOM, skip additional damage calculations
-        if (rootSource.getType() != DamageTypes.CUSTOM) {
-            Entity target = event.getTargetEntity();
+        ItemType weaponType = ItemTypes.NONE;
 
-            ItemType weaponType = ItemTypes.NONE;
+        if (source instanceof Equipable) {
+            weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
+                    .map(ItemStack::getType)
+                    .orElse(ItemTypes.NONE);
+        }
 
-            if (source instanceof Equipable) {
-                weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
-                        .map(ItemStack::getType)
-                        .orElse(ItemTypes.NONE);
-            }
+        // #15 - If damage source type is CUSTOM, skip additional damage calculations // "Pure" Damage
+        if (rootSource.getType() == DamageTypes.CUSTOM) {
+            return;
+        }
 
-            Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        if (rootSource.getType() == DamageTypes.MAGIC) {
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-            event.setBaseDamage(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType));
+            event.setBaseDamage(Math.max(event.getBaseDamage() - damageService.getMagicalDamageMitigation(targetAttributes), 0.0f));
+            return;
         }
+
+        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+        event.setBaseDamage(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType));
     }
 
     private void onIndirectDamage(DamageEntityEvent event, IndirectEntityDamageSource rootSource) {
         Entity source = rootSource.getIndirectSource();
+        Entity target = event.getTargetEntity();
 
-        // #15 - If damage source type is CUSTOM, skip additional damage calculations
-        if (rootSource.getType() != DamageTypes.CUSTOM) {
-            Entity target = event.getTargetEntity();
+        EntityType projectileType = rootSource.getSource().getType();
 
-            Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        // #15 - If damage source type is CUSTOM, skip additional damage calculations // "Pure" Damage
+        if (rootSource.getType() == DamageTypes.CUSTOM) {
+            return;
+        }
+
+        if (rootSource.getType() == DamageTypes.MAGIC) {
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-            EntityType projectileType = rootSource.getSource().getType();
-
-            event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
+            event.setBaseDamage(Math.max(event.getBaseDamage() - damageService.getMagicalDamageMitigation(targetAttributes), 0.0f));
+            return;
         }
+
+        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
     }
 
 // Healing is currently not implementable as such due to Sponge
