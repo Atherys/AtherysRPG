@@ -212,11 +212,7 @@ public class RPGCharacterFacade {
     }
 
     public void onResourceRegen(ResourceRegenEvent event, Player player) {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-
-        // TODO: Account for items
-
-        double amount = characterService.calcResourceRegen(pc.getBaseAttributes());
+        double amount = characterService.calcResourceRegen(attributeFacade.getAllAttributes(player));
         event.setRegenAmount(amount);
     }
 
