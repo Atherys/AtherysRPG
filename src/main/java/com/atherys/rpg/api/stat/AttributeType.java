@@ -2,9 +2,11 @@ package com.atherys.rpg.api.stat;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.text.format.TextColor;
+import org.spongepowered.api.util.annotation.CatalogedBy;
 
 import java.util.Objects;
 
+@CatalogedBy(AttributeTypes.class)
 public class AttributeType implements CatalogType {
 
     private String id;

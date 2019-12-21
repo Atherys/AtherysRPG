@@ -155,10 +155,25 @@ public class AttributeFacade {
 
             double total = base + buff + item;
 
+            Text baseAttribute = Text.builder()
+                    .onHover(TextActions.showText(Text.of("Base")))
+                    .append(Text.of(TextColors.RED, base, TextColors.RESET))
+                    .build();
+
+            Text buffAttribute = Text.builder()
+                    .onHover(TextActions.showText(Text.of("From Buffs")))
+                    .append(Text.of(TextColors.GREEN, buff, TextColors.RESET))
+                    .build();
+
+            Text itemAttribute = Text.builder()
+                    .onHover(TextActions.showText(Text.of("From Equipment")))
+                    .append(Text.of(TextColors.BLUE, item, TextColors.RESET))
+                    .build();
+
             Text attribute = Text.builder()
                     .append(getAddAttributeButton(pc, type, value))
                     .append(Text.of(" "))
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, total, " ( ", TextColors.RED, base, TextColors.RESET, " + ", TextColors.GREEN, buff, TextColors.RESET, " + ", TextColors.BLUE, item, TextColors.RESET, " )"))
+                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, total, " ( ", baseAttribute , " + ", itemAttribute, " + ", buffAttribute, " )"))
                     .append(Text.NEW_LINE)
                     .build();
 
