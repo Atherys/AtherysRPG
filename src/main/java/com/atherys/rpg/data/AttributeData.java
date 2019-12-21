@@ -15,12 +15,10 @@ import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.data.value.mutable.Value;
 
-import javax.annotation.Generated;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-03-02T15:51:24.723Z")
 public class AttributeData extends AbstractData<AttributeData, AttributeData.Immutable> {
 
     private Double dexterity = 0.0d;
@@ -37,11 +35,15 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     private Double physicalResistance = 0.0d;
 
+    private Double baseArmor = 0.0d;
+
+    private Double baseDamage = 0.0d;
+
     public AttributeData() {
         registerGettersAndSetters();
     }
 
-    AttributeData(Double dexterity, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance) {
+    AttributeData(Double dexterity, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance, Double baseArmor, Double baseDamage) {
         this.dexterity = dexterity;
         this.constitution = constitution;
         this.intelligence = intelligence;
@@ -49,6 +51,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         this.wisdom = wisdom;
         this.physicalResistance = physicalResistance;
         this.magicalResistance = magicalResistance;
+        this.baseArmor = baseArmor;
+        this.baseDamage = baseDamage;
         registerGettersAndSetters();
     }
 
@@ -81,6 +85,14 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         registerFieldGetter(AttributeKeys.PHYSICAL_RESISTANCE, this::getPhysicalResistance);
         registerFieldSetter(AttributeKeys.PHYSICAL_RESISTANCE, this::setPhysicalResistance);
         registerKeyValue(AttributeKeys.PHYSICAL_RESISTANCE, this::physicalResistance);
+
+        registerFieldGetter(AttributeKeys.BASE_ARMOR, this::getBaseArmor);
+        registerFieldSetter(AttributeKeys.BASE_ARMOR, this::setBaseArmor);
+        registerKeyValue(AttributeKeys.BASE_ARMOR, this::baseArmor);
+
+        registerFieldGetter(AttributeKeys.BASE_DAMAGE, this::getBaseDamage);
+        registerFieldSetter(AttributeKeys.BASE_DAMAGE, this::setBaseDamage);
+        registerKeyValue(AttributeKeys.BASE_DAMAGE, this::baseDamage);
     }
 
     public Double getDexterity() {
@@ -167,6 +179,30 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.WISDOM, wisdom);
     }
 
+    public Double getBaseArmor() {
+        return baseArmor;
+    }
+
+    public void setBaseArmor(Double baseArmor) {
+        this.baseArmor = baseArmor;
+    }
+
+    public Value<Double> baseArmor() {
+        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_ARMOR, baseArmor);
+    }
+
+    public Double getBaseDamage() {
+        return baseDamage;
+    }
+
+    public void setBaseDamage(Double baseDamage) {
+        this.baseDamage = baseDamage;
+    }
+
+    public Value<Double> baseDamage() {
+        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_DAMAGE, baseDamage);
+    }
+
     public Double getAttribute(AttributeType type) {
         switch (type.getId()) {
             case "dex":
@@ -183,6 +219,10 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
                 return getMagicalResistance();
             case "physres":
                 return getPhysicalResistance();
+            case "armor":
+                return getBaseArmor();
+            case "dmg":
+                return getBaseDamage();
             default:
                 return 0.0d;
         }
@@ -211,6 +251,10 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
             case "physres":
                 setPhysicalResistance(value);
                 break;
+            case "armor":
+                setBaseArmor(value);
+            case "dmg":
+                setBaseDamage(value);
         }
     }
 
@@ -222,6 +266,10 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         map.put(AttributeTypes.INTELLIGENCE, intelligence);
         map.put(AttributeTypes.STRENGTH, strength);
         map.put(AttributeTypes.WISDOM, wisdom);
+        map.put(AttributeTypes.MAGICAL_RESISTANCE, magicalResistance);
+        map.put(AttributeTypes.PHYSICAL_RESISTANCE, physicalResistance);
+        map.put(AttributeTypes.BASE_ARMOR, baseArmor);
+        map.put(AttributeTypes.BASE_DAMAGE, baseDamage);
 
         return map;
     }
@@ -237,6 +285,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
             this.wisdom = data.wisdom;
             this.magicalResistance = data.magicalResistance;
             this.physicalResistance = data.physicalResistance;
+            this.baseArmor = data.baseArmor;
+            this.baseDamage = data.baseDamage;
         });
         return Optional.of(this);
     }
@@ -254,17 +304,19 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         container.getDouble(AttributeKeys.WISDOM.getQuery()).ifPresent(v -> wisdom = v);
         container.getDouble(AttributeKeys.MAGICAL_RESISTANCE.getQuery()).ifPresent(v -> magicalResistance = v);
         container.getDouble(AttributeKeys.PHYSICAL_RESISTANCE.getQuery()).ifPresent(v -> physicalResistance = v);
+        container.getDouble(AttributeKeys.BASE_ARMOR.getQuery()).ifPresent(v -> baseArmor = v);
+        container.getDouble(AttributeKeys.BASE_DAMAGE.getQuery()).ifPresent(v -> baseDamage = v);
         return Optional.of(this);
     }
 
     @Override
     public AttributeData copy() {
-        return new AttributeData(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
+        return new AttributeData(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance, baseArmor, baseDamage);
     }
 
     @Override
     public Immutable asImmutable() {
-        return new Immutable(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
+        return new Immutable(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance, baseArmor, baseDamage);
     }
 
     @Override
@@ -281,10 +333,11 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
                 .set(AttributeKeys.STRENGTH.getQuery(), strength)
                 .set(AttributeKeys.WISDOM.getQuery(), wisdom)
                 .set(AttributeKeys.MAGICAL_RESISTANCE.getQuery(), magicalResistance)
-                .set(AttributeKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance);
+                .set(AttributeKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance)
+                .set(AttributeKeys.BASE_ARMOR.getQuery(), baseArmor)
+                .set(AttributeKeys.BASE_DAMAGE.getQuery(), baseDamage);
     }
 
-    @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-03-02T15:51:24.795Z")
     public static class Immutable extends AbstractImmutableData<Immutable, AttributeData> {
 
         private Double dexterity = 0.0d;
@@ -301,11 +354,15 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
         private Double physicalResistance = 0.0d;
 
+        private Double baseArmor = 0.0d;
+
+        private Double baseDamage = 0.0d;
+
         Immutable() {
             registerGetters();
         }
 
-        Immutable(Double dexterity, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance) {
+        Immutable(Double dexterity, Double constitution, Double intelligence, Double strength, Double wisdom, Double magicalResistance, Double physicalResistance, Double baseArmor, Double baseDamage) {
             this.dexterity = dexterity;
             this.constitution = constitution;
             this.intelligence = intelligence;
@@ -313,6 +370,8 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
             this.wisdom = wisdom;
             this.magicalResistance = magicalResistance;
             this.physicalResistance = physicalResistance;
+            this.baseArmor = baseArmor;
+            this.baseDamage = baseDamage;
             registerGetters();
         }
 
@@ -338,6 +397,18 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
             registerFieldGetter(AttributeKeys.WISDOM, this::getWisdom);
             registerKeyValue(AttributeKeys.WISDOM, this::wisdom);
+
+            registerFieldGetter(AttributeKeys.MAGICAL_RESISTANCE, this::getMagicalResistance);
+            registerKeyValue(AttributeKeys.MAGICAL_RESISTANCE, this::magicalResistance);
+
+            registerFieldGetter(AttributeKeys.PHYSICAL_RESISTANCE, this::getPhysicalResistance);
+            registerKeyValue(AttributeKeys.PHYSICAL_RESISTANCE, this::physicalResistance);
+
+            registerFieldGetter(AttributeKeys.BASE_ARMOR, this::getBaseArmor);
+            registerKeyValue(AttributeKeys.BASE_ARMOR, this::baseArmor);
+
+            registerFieldGetter(AttributeKeys.BASE_DAMAGE, this::getBaseDamage);
+            registerKeyValue(AttributeKeys.BASE_DAMAGE, this::baseDamage);
         }
 
         public Double getDexterity() {
@@ -396,9 +467,25 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
             return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.PHYSICAL_RESISTANCE, physicalResistance).asImmutable();
         }
 
+        public Double getBaseArmor() {
+            return baseArmor;
+        }
+
+        public ImmutableValue<Double> baseArmor() {
+            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_ARMOR, baseArmor).asImmutable();
+        }
+
+        public Double getBaseDamage() {
+            return baseDamage;
+        }
+
+        public ImmutableValue<Double> baseDamage() {
+            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_DAMAGE, baseDamage).asImmutable();
+        }
+
         @Override
         public AttributeData asMutable() {
-            return new AttributeData(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance);
+            return new AttributeData(dexterity, constitution, intelligence, strength, wisdom, magicalResistance, physicalResistance, baseArmor, baseDamage);
         }
 
         @Override
@@ -415,12 +502,13 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
                     .set(AttributeKeys.STRENGTH.getQuery(), strength)
                     .set(AttributeKeys.WISDOM.getQuery(), wisdom)
                     .set(AttributeKeys.MAGICAL_RESISTANCE.getQuery(), magicalResistance)
-                    .set(AttributeKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance);
+                    .set(AttributeKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance)
+                    .set(AttributeKeys.BASE_ARMOR.getQuery(), baseArmor)
+                    .set(AttributeKeys.BASE_DAMAGE.getQuery(), baseDamage);
         }
 
     }
 
-    @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-03-02T15:51:24.811Z")
     public static class Builder extends AbstractDataBuilder<AttributeData> implements DataManipulatorBuilder<AttributeData, Immutable> {
 
         public Builder() {

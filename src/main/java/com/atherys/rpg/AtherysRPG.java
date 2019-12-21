@@ -7,6 +7,7 @@ import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
+import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
@@ -140,56 +141,31 @@ public class AtherysRPG {
 
     @Listener
     public void onKeyRegistration(GameRegistryEvent.Register<Key<?>> event) {
-        final TypeToken<Value<Double>> doubleToken = new TypeToken<Value<Double>>() {
-        };
+        AttributeKeys.DEXTERITY= createKey(AttributeTypes.DEXTERITY, "Dexterity");
 
-        AttributeKeys.DEXTERITY= Key.builder()
-                .id("dex")
-                .name("Dexterity")
-                .query(DataQuery.of("Dexterity"))
-                .type(doubleToken)
-                .build();
+        AttributeKeys.CONSTITUTION = createKey(AttributeTypes.CONSTITUTION, "Constitution");
 
-        AttributeKeys.CONSTITUTION = Key.builder()
-                .id("con")
-                .name("Constitution")
-                .query(DataQuery.of("Constitution"))
-                .type(doubleToken)
-                .build();
+        AttributeKeys.INTELLIGENCE = createKey(AttributeTypes.INTELLIGENCE, "Intelligence");
 
-        AttributeKeys.INTELLIGENCE = Key.builder()
-                .id("int")
-                .name("Intelligence")
-                .query(DataQuery.of("Intelligence"))
-                .type(doubleToken)
-                .build();
+        AttributeKeys.STRENGTH = createKey(AttributeTypes.STRENGTH, "Strength");
 
-        AttributeKeys.STRENGTH = Key.builder()
-                .id("str")
-                .name("Strength")
-                .query(DataQuery.of("Strength"))
-                .type(doubleToken)
-                .build();
+        AttributeKeys.WISDOM = createKey(AttributeTypes.WISDOM, "Wisdom");
 
-        AttributeKeys.WISDOM = Key.builder()
-                .id("wis")
-                .name("Wisdom")
-                .query(DataQuery.of("Wisdom"))
-                .type(doubleToken)
-                .build();
+        AttributeKeys.MAGICAL_RESISTANCE = createKey(AttributeTypes.MAGICAL_RESISTANCE, "Magical_Resistance");
 
-        AttributeKeys.MAGICAL_RESISTANCE = Key.builder()
-                .id("magicres")
-                .name("Magical Resistance")
-                .query(DataQuery.of("Magical_Resistance"))
-                .type(doubleToken)
-                .build();
+        AttributeKeys.PHYSICAL_RESISTANCE = createKey(AttributeTypes.PHYSICAL_RESISTANCE, "Physical_Resistance");
 
-        AttributeKeys.PHYSICAL_RESISTANCE = Key.builder()
-                .id("physres")
-                .name("Physical Resistance")
-                .query(DataQuery.of("Physical_Resistance"))
-                .type(doubleToken)
+        AttributeKeys.BASE_ARMOR = createKey(AttributeTypes.BASE_ARMOR, "Base_Armor");
+
+        AttributeKeys.BASE_DAMAGE = createKey(AttributeTypes.BASE_DAMAGE, "Base_Damage");
+    }
+
+    private static Key<Value<Double>> createKey(AttributeType attributeType, String dataQuery) {
+        return Key.builder()
+                .id(attributeType.getId())
+                .name(attributeType.getName())
+                .query(DataQuery.of(dataQuery))
+                .type(new TypeToken<Value<Double>>() {})
                 .build();
     }
 

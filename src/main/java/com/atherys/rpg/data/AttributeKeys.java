@@ -12,6 +12,8 @@ public class AttributeKeys {
     public static Key<Value<Double>> WISDOM;
     public static Key<Value<Double>> MAGICAL_RESISTANCE;
     public static Key<Value<Double>> PHYSICAL_RESISTANCE;
+    public static Key<Value<Double>> BASE_ARMOR;
+    public static Key<Value<Double>> BASE_DAMAGE;
 
     private AttributeKeys() {
     }

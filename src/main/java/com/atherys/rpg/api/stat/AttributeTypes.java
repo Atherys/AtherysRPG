@@ -17,4 +17,8 @@ public final class AttributeTypes {
     public static final AttributeType MAGICAL_RESISTANCE = new AttributeType("atherys:magic_resistance", "magicres", "Magical Resistance", TextColors.DARK_RED);
 
     public static final AttributeType PHYSICAL_RESISTANCE = new AttributeType("atherys:physical_resistance", "physres", "Physical Resistance", TextColors.GOLD);
+
+    public static final AttributeType BASE_ARMOR = new AttributeType("atherys:base_armor", "armor", "Base Armor", TextColors.DARK_AQUA);
+
+    public static final AttributeType BASE_DAMAGE = new AttributeType("atherys:base_damage", "dmg", "Base Damage", TextColors.DARK_RED);
 }
