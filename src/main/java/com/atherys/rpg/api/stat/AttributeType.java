@@ -17,7 +17,7 @@ public class AttributeType implements CatalogType {
 
     private TextColor color;
 
-    AttributeType(String id, String name, String shortName, TextColor color) {
+    AttributeType(String id, String shortName, String name, TextColor color) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;

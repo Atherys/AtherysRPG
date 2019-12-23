@@ -249,7 +249,7 @@ public class RPGCharacterFacade {
         if (rootSource.getType() == DamageTypes.MAGIC) {
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-            event.setBaseDamage(Math.max(event.getBaseDamage() - damageService.getMagicalDamageMitigation(targetAttributes), 0.0f));
+            event.setBaseDamage(Math.max(damageService.getMagicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
             return;
         }
 
@@ -273,7 +273,7 @@ public class RPGCharacterFacade {
         if (rootSource.getType() == DamageTypes.MAGIC) {
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-            event.setBaseDamage(Math.max(event.getBaseDamage() - damageService.getMagicalDamageMitigation(targetAttributes), 0.0f));
+            event.setBaseDamage(Math.max(damageService.getMagicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
             return;
         }
 
