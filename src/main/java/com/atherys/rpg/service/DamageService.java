@@ -64,7 +64,7 @@ public class DamageService {
     public double getPhysicalDamageMitigation(Map<AttributeType, Double> targetAttributes, double producedDamage) {
         Expression mitigatedDamageExpression = expressionService.getExpression(config.PHYSICAL_DAMAGE_MITIGATION_CALCULATION);
 
-        expressionService.populateAttributes(mitigatedDamageExpression, targetAttributes, "source");
+        expressionService.populateAttributes(mitigatedDamageExpression, targetAttributes, "target");
 
         return mitigatedDamageExpression.setVariable(INCOMING, new BigDecimal(producedDamage)).eval().doubleValue();
     }
@@ -72,7 +72,7 @@ public class DamageService {
     public double getMagicalDamageMitigation(Map<AttributeType, Double> targetAttributes, double producedDamage) {
         Expression mitigatedDamageExpression = expressionService.getExpression(config.MAGICAL_DAMAGE_MITIGATION_CALCULATION);
 
-        expressionService.populateAttributes(mitigatedDamageExpression, targetAttributes, "source");
+        expressionService.populateAttributes(mitigatedDamageExpression, targetAttributes, "target");
 
         return mitigatedDamageExpression.setVariable(INCOMING, new BigDecimal(producedDamage)).eval().doubleValue();
     }
