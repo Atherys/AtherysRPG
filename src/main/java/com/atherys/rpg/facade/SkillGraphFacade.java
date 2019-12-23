@@ -1,10 +1,8 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.util.Graph;
-import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.config.SkillNodeConfig;
 import com.google.inject.Inject;

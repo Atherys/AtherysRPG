@@ -288,7 +288,11 @@ public class Graph<T> {
      */
     public Set<Link<T>> getLinksWhereParent(T object) {
         Preconditions.checkNotNull(object, "Object cannot be null.");
-        return links.stream().filter(link -> link.getParent().getData().equals(object) || link.getType().equals(LinkType.BIDIRECTIONAL)).collect(Collectors.toSet());
+        return links.stream().filter(link -> {
+            boolean isParent = link.getParent().getData().equals(object);
+            boolean isSibling = link.getType().equals(LinkType.BIDIRECTIONAL) && link.getChild().getData().equals(object);
+            return isParent || isSibling;
+        }).collect(Collectors.toSet());
     }
 
     /**
@@ -299,7 +303,11 @@ public class Graph<T> {
      */
     public Set<Link<T>> getLinksWhereChild(T object) {
         Preconditions.checkNotNull(object, "Object cannot be null.");
-        return links.stream().filter(link -> link.getChild().getData().equals(object) || link.getType().equals(LinkType.BIDIRECTIONAL)).collect(Collectors.toSet());
+        return links.stream().filter(link -> {
+            boolean isChild = link.getChild().getData().equals(object);
+            boolean isSibling = link.getType().equals(LinkType.BIDIRECTIONAL) && link.getParent().getData().equals(object);
+            return isChild || isSibling;
+        }).collect(Collectors.toSet());
     }
 
     /**

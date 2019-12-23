@@ -1,7 +1,5 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.core.utils.MathUtils;
-import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
