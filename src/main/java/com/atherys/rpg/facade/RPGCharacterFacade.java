@@ -241,11 +241,12 @@ public class RPGCharacterFacade {
                     .orElse(ItemTypes.NONE);
         }
 
-        // #15 - If damage source type is CUSTOM, skip additional damage calculations // "Pure" Damage
-        if (rootSource.getType() == DamageTypes.CUSTOM) {
+        // #15 - If damage source type is VOID, skip additional damage calculations // "Pure" Damage
+        if (rootSource.getType() == DamageTypes.VOID) {
             return;
         }
 
+        // If the damage source type is MAGIC, we do magic mitigation
         if (rootSource.getType() == DamageTypes.MAGIC) {
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
@@ -253,6 +254,15 @@ public class RPGCharacterFacade {
             return;
         }
 
+        // If the damage source type is CUSTOM, we do physical mitigation
+        if (rootSource.getType() == DamageTypes.CUSTOM) {
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getPhysicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
+            return;
+        }
+
+        // Otherwise, treat as basic attack
         Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
         Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
@@ -266,7 +276,7 @@ public class RPGCharacterFacade {
         EntityType projectileType = rootSource.getSource().getType();
 
         // #15 - If damage source type is CUSTOM, skip additional damage calculations // "Pure" Damage
-        if (rootSource.getType() == DamageTypes.CUSTOM) {
+        if (rootSource.getType() == DamageTypes.VOID) {
             return;
         }
 
@@ -274,6 +284,13 @@ public class RPGCharacterFacade {
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
             event.setBaseDamage(Math.max(damageService.getMagicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
+            return;
+        }
+
+        if (rootSource.getType() == DamageTypes.CUSTOM) {
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getPhysicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
             return;
         }
 
