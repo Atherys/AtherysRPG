@@ -58,41 +58,41 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
     @Override
     protected void registerGettersAndSetters() {
-        registerFieldGetter(AttributeKeys.DEXTERITY, this::getDexterity);
-        registerFieldSetter(AttributeKeys.DEXTERITY, this::setDexterity);
-        registerKeyValue(AttributeKeys.DEXTERITY, this::dexterity);
+        registerFieldGetter(RPGKeys.DEXTERITY, this::getDexterity);
+        registerFieldSetter(RPGKeys.DEXTERITY, this::setDexterity);
+        registerKeyValue(RPGKeys.DEXTERITY, this::dexterity);
 
-        registerFieldGetter(AttributeKeys.CONSTITUTION, this::getConstitution);
-        registerFieldSetter(AttributeKeys.CONSTITUTION, this::setConstitution);
-        registerKeyValue(AttributeKeys.CONSTITUTION, this::constitution);
+        registerFieldGetter(RPGKeys.CONSTITUTION, this::getConstitution);
+        registerFieldSetter(RPGKeys.CONSTITUTION, this::setConstitution);
+        registerKeyValue(RPGKeys.CONSTITUTION, this::constitution);
 
-        registerFieldGetter(AttributeKeys.INTELLIGENCE, this::getIntelligence);
-        registerFieldSetter(AttributeKeys.INTELLIGENCE, this::setIntelligence);
-        registerKeyValue(AttributeKeys.INTELLIGENCE, this::intelligence);
+        registerFieldGetter(RPGKeys.INTELLIGENCE, this::getIntelligence);
+        registerFieldSetter(RPGKeys.INTELLIGENCE, this::setIntelligence);
+        registerKeyValue(RPGKeys.INTELLIGENCE, this::intelligence);
 
-        registerFieldGetter(AttributeKeys.STRENGTH, this::getStrength);
-        registerFieldSetter(AttributeKeys.STRENGTH, this::setStrength);
-        registerKeyValue(AttributeKeys.STRENGTH, this::strength);
+        registerFieldGetter(RPGKeys.STRENGTH, this::getStrength);
+        registerFieldSetter(RPGKeys.STRENGTH, this::setStrength);
+        registerKeyValue(RPGKeys.STRENGTH, this::strength);
 
-        registerFieldGetter(AttributeKeys.WISDOM, this::getWisdom);
-        registerFieldSetter(AttributeKeys.WISDOM, this::setWisdom);
-        registerKeyValue(AttributeKeys.WISDOM, this::wisdom);
+        registerFieldGetter(RPGKeys.WISDOM, this::getWisdom);
+        registerFieldSetter(RPGKeys.WISDOM, this::setWisdom);
+        registerKeyValue(RPGKeys.WISDOM, this::wisdom);
 
-        registerFieldGetter(AttributeKeys.MAGICAL_RESISTANCE, this::getMagicalResistance);
-        registerFieldSetter(AttributeKeys.MAGICAL_RESISTANCE, this::setMagicalResistance);
-        registerKeyValue(AttributeKeys.MAGICAL_RESISTANCE, this::magicalResistance);
+        registerFieldGetter(RPGKeys.MAGICAL_RESISTANCE, this::getMagicalResistance);
+        registerFieldSetter(RPGKeys.MAGICAL_RESISTANCE, this::setMagicalResistance);
+        registerKeyValue(RPGKeys.MAGICAL_RESISTANCE, this::magicalResistance);
 
-        registerFieldGetter(AttributeKeys.PHYSICAL_RESISTANCE, this::getPhysicalResistance);
-        registerFieldSetter(AttributeKeys.PHYSICAL_RESISTANCE, this::setPhysicalResistance);
-        registerKeyValue(AttributeKeys.PHYSICAL_RESISTANCE, this::physicalResistance);
+        registerFieldGetter(RPGKeys.PHYSICAL_RESISTANCE, this::getPhysicalResistance);
+        registerFieldSetter(RPGKeys.PHYSICAL_RESISTANCE, this::setPhysicalResistance);
+        registerKeyValue(RPGKeys.PHYSICAL_RESISTANCE, this::physicalResistance);
 
-        registerFieldGetter(AttributeKeys.BASE_ARMOR, this::getBaseArmor);
-        registerFieldSetter(AttributeKeys.BASE_ARMOR, this::setBaseArmor);
-        registerKeyValue(AttributeKeys.BASE_ARMOR, this::baseArmor);
+        registerFieldGetter(RPGKeys.BASE_ARMOR, this::getBaseArmor);
+        registerFieldSetter(RPGKeys.BASE_ARMOR, this::setBaseArmor);
+        registerKeyValue(RPGKeys.BASE_ARMOR, this::baseArmor);
 
-        registerFieldGetter(AttributeKeys.BASE_DAMAGE, this::getBaseDamage);
-        registerFieldSetter(AttributeKeys.BASE_DAMAGE, this::setBaseDamage);
-        registerKeyValue(AttributeKeys.BASE_DAMAGE, this::baseDamage);
+        registerFieldGetter(RPGKeys.BASE_DAMAGE, this::getBaseDamage);
+        registerFieldSetter(RPGKeys.BASE_DAMAGE, this::setBaseDamage);
+        registerKeyValue(RPGKeys.BASE_DAMAGE, this::baseDamage);
     }
 
     public Double getDexterity() {
@@ -104,7 +104,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> dexterity() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.DEXTERITY, dexterity);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.DEXTERITY, dexterity);
     }
 
     public Double getConstitution() {
@@ -116,7 +116,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> constitution() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.CONSTITUTION, constitution);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.CONSTITUTION, constitution);
     }
 
     public Double getIntelligence() {
@@ -128,7 +128,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> intelligence() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.INTELLIGENCE, intelligence);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.INTELLIGENCE, intelligence);
     }
 
     public Double getStrength() {
@@ -140,7 +140,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> strength() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.STRENGTH, strength);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.STRENGTH, strength);
     }
 
     public Double getMagicalResistance() {
@@ -152,7 +152,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> magicalResistance() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.MAGICAL_RESISTANCE, magicalResistance);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.MAGICAL_RESISTANCE, magicalResistance);
     }
 
     public Double getPhysicalResistance() {
@@ -164,7 +164,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> physicalResistance() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.PHYSICAL_RESISTANCE, physicalResistance);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.PHYSICAL_RESISTANCE, physicalResistance);
     }
 
     public Double getWisdom() {
@@ -176,7 +176,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> wisdom() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.WISDOM, wisdom);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.WISDOM, wisdom);
     }
 
     public Double getBaseArmor() {
@@ -188,7 +188,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> baseArmor() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_ARMOR, baseArmor);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.BASE_ARMOR, baseArmor);
     }
 
     public Double getBaseDamage() {
@@ -200,7 +200,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Value<Double> baseDamage() {
-        return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_DAMAGE, baseDamage);
+        return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.BASE_DAMAGE, baseDamage);
     }
 
     public Double getAttribute(AttributeType type) {
@@ -297,15 +297,15 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Optional<AttributeData> from(DataView container) {
-        container.getDouble(AttributeKeys.DEXTERITY.getQuery()).ifPresent(v -> dexterity = v);
-        container.getDouble(AttributeKeys.CONSTITUTION.getQuery()).ifPresent(v -> constitution = v);
-        container.getDouble(AttributeKeys.INTELLIGENCE.getQuery()).ifPresent(v -> intelligence = v);
-        container.getDouble(AttributeKeys.STRENGTH.getQuery()).ifPresent(v -> strength = v);
-        container.getDouble(AttributeKeys.WISDOM.getQuery()).ifPresent(v -> wisdom = v);
-        container.getDouble(AttributeKeys.MAGICAL_RESISTANCE.getQuery()).ifPresent(v -> magicalResistance = v);
-        container.getDouble(AttributeKeys.PHYSICAL_RESISTANCE.getQuery()).ifPresent(v -> physicalResistance = v);
-        container.getDouble(AttributeKeys.BASE_ARMOR.getQuery()).ifPresent(v -> baseArmor = v);
-        container.getDouble(AttributeKeys.BASE_DAMAGE.getQuery()).ifPresent(v -> baseDamage = v);
+        container.getDouble(RPGKeys.DEXTERITY.getQuery()).ifPresent(v -> dexterity = v);
+        container.getDouble(RPGKeys.CONSTITUTION.getQuery()).ifPresent(v -> constitution = v);
+        container.getDouble(RPGKeys.INTELLIGENCE.getQuery()).ifPresent(v -> intelligence = v);
+        container.getDouble(RPGKeys.STRENGTH.getQuery()).ifPresent(v -> strength = v);
+        container.getDouble(RPGKeys.WISDOM.getQuery()).ifPresent(v -> wisdom = v);
+        container.getDouble(RPGKeys.MAGICAL_RESISTANCE.getQuery()).ifPresent(v -> magicalResistance = v);
+        container.getDouble(RPGKeys.PHYSICAL_RESISTANCE.getQuery()).ifPresent(v -> physicalResistance = v);
+        container.getDouble(RPGKeys.BASE_ARMOR.getQuery()).ifPresent(v -> baseArmor = v);
+        container.getDouble(RPGKeys.BASE_DAMAGE.getQuery()).ifPresent(v -> baseDamage = v);
         return Optional.of(this);
     }
 
@@ -327,15 +327,15 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     @Override
     public DataContainer toContainer() {
         return super.toContainer()
-                .set(AttributeKeys.DEXTERITY.getQuery(), dexterity)
-                .set(AttributeKeys.CONSTITUTION.getQuery(), constitution)
-                .set(AttributeKeys.INTELLIGENCE.getQuery(), intelligence)
-                .set(AttributeKeys.STRENGTH.getQuery(), strength)
-                .set(AttributeKeys.WISDOM.getQuery(), wisdom)
-                .set(AttributeKeys.MAGICAL_RESISTANCE.getQuery(), magicalResistance)
-                .set(AttributeKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance)
-                .set(AttributeKeys.BASE_ARMOR.getQuery(), baseArmor)
-                .set(AttributeKeys.BASE_DAMAGE.getQuery(), baseDamage);
+                .set(RPGKeys.DEXTERITY.getQuery(), dexterity)
+                .set(RPGKeys.CONSTITUTION.getQuery(), constitution)
+                .set(RPGKeys.INTELLIGENCE.getQuery(), intelligence)
+                .set(RPGKeys.STRENGTH.getQuery(), strength)
+                .set(RPGKeys.WISDOM.getQuery(), wisdom)
+                .set(RPGKeys.MAGICAL_RESISTANCE.getQuery(), magicalResistance)
+                .set(RPGKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance)
+                .set(RPGKeys.BASE_ARMOR.getQuery(), baseArmor)
+                .set(RPGKeys.BASE_DAMAGE.getQuery(), baseDamage);
     }
 
     public static class Immutable extends AbstractImmutableData<Immutable, AttributeData> {
@@ -377,38 +377,38 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
 
         @Override
         protected void registerGetters() {
-            registerFieldGetter(AttributeKeys.DEXTERITY, this::getDexterity);
-            registerKeyValue(AttributeKeys.DEXTERITY, this::dexterity);
+            registerFieldGetter(RPGKeys.DEXTERITY, this::getDexterity);
+            registerKeyValue(RPGKeys.DEXTERITY, this::dexterity);
 
-            registerFieldGetter(AttributeKeys.CONSTITUTION, this::getConstitution);
-            registerKeyValue(AttributeKeys.CONSTITUTION, this::constitution);
+            registerFieldGetter(RPGKeys.CONSTITUTION, this::getConstitution);
+            registerKeyValue(RPGKeys.CONSTITUTION, this::constitution);
 
-            registerFieldGetter(AttributeKeys.INTELLIGENCE, this::getIntelligence);
-            registerKeyValue(AttributeKeys.INTELLIGENCE, this::intelligence);
+            registerFieldGetter(RPGKeys.INTELLIGENCE, this::getIntelligence);
+            registerKeyValue(RPGKeys.INTELLIGENCE, this::intelligence);
 
-            registerFieldGetter(AttributeKeys.STRENGTH, this::getStrength);
-            registerKeyValue(AttributeKeys.STRENGTH, this::strength);
+            registerFieldGetter(RPGKeys.STRENGTH, this::getStrength);
+            registerKeyValue(RPGKeys.STRENGTH, this::strength);
 
-            registerFieldGetter(AttributeKeys.WISDOM, this::getWisdom);
-            registerKeyValue(AttributeKeys.WISDOM, this::wisdom);
+            registerFieldGetter(RPGKeys.WISDOM, this::getWisdom);
+            registerKeyValue(RPGKeys.WISDOM, this::wisdom);
 
-            registerFieldGetter(AttributeKeys.WISDOM, this::getWisdom);
-            registerKeyValue(AttributeKeys.WISDOM, this::wisdom);
+            registerFieldGetter(RPGKeys.WISDOM, this::getWisdom);
+            registerKeyValue(RPGKeys.WISDOM, this::wisdom);
 
-            registerFieldGetter(AttributeKeys.WISDOM, this::getWisdom);
-            registerKeyValue(AttributeKeys.WISDOM, this::wisdom);
+            registerFieldGetter(RPGKeys.WISDOM, this::getWisdom);
+            registerKeyValue(RPGKeys.WISDOM, this::wisdom);
 
-            registerFieldGetter(AttributeKeys.MAGICAL_RESISTANCE, this::getMagicalResistance);
-            registerKeyValue(AttributeKeys.MAGICAL_RESISTANCE, this::magicalResistance);
+            registerFieldGetter(RPGKeys.MAGICAL_RESISTANCE, this::getMagicalResistance);
+            registerKeyValue(RPGKeys.MAGICAL_RESISTANCE, this::magicalResistance);
 
-            registerFieldGetter(AttributeKeys.PHYSICAL_RESISTANCE, this::getPhysicalResistance);
-            registerKeyValue(AttributeKeys.PHYSICAL_RESISTANCE, this::physicalResistance);
+            registerFieldGetter(RPGKeys.PHYSICAL_RESISTANCE, this::getPhysicalResistance);
+            registerKeyValue(RPGKeys.PHYSICAL_RESISTANCE, this::physicalResistance);
 
-            registerFieldGetter(AttributeKeys.BASE_ARMOR, this::getBaseArmor);
-            registerKeyValue(AttributeKeys.BASE_ARMOR, this::baseArmor);
+            registerFieldGetter(RPGKeys.BASE_ARMOR, this::getBaseArmor);
+            registerKeyValue(RPGKeys.BASE_ARMOR, this::baseArmor);
 
-            registerFieldGetter(AttributeKeys.BASE_DAMAGE, this::getBaseDamage);
-            registerKeyValue(AttributeKeys.BASE_DAMAGE, this::baseDamage);
+            registerFieldGetter(RPGKeys.BASE_DAMAGE, this::getBaseDamage);
+            registerKeyValue(RPGKeys.BASE_DAMAGE, this::baseDamage);
         }
 
         public Double getDexterity() {
@@ -416,7 +416,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> dexterity() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.DEXTERITY, dexterity).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.DEXTERITY, dexterity).asImmutable();
         }
 
         public Double getConstitution() {
@@ -424,7 +424,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> constitution() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.CONSTITUTION, constitution).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.CONSTITUTION, constitution).asImmutable();
         }
 
         public Double getIntelligence() {
@@ -432,7 +432,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> intelligence() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.INTELLIGENCE, intelligence).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.INTELLIGENCE, intelligence).asImmutable();
         }
 
         public Double getStrength() {
@@ -440,7 +440,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> strength() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.STRENGTH, strength).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.STRENGTH, strength).asImmutable();
         }
 
         public Double getWisdom() {
@@ -448,7 +448,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> wisdom() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.WISDOM, wisdom).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.WISDOM, wisdom).asImmutable();
         }
 
         public Double getMagicalResistance() {
@@ -456,7 +456,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> magicalResistance() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.MAGICAL_RESISTANCE, magicalResistance).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.MAGICAL_RESISTANCE, magicalResistance).asImmutable();
         }
 
         public Double getPhysicalResistance() {
@@ -464,7 +464,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> physicalResistance() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.PHYSICAL_RESISTANCE, physicalResistance).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.PHYSICAL_RESISTANCE, physicalResistance).asImmutable();
         }
 
         public Double getBaseArmor() {
@@ -472,7 +472,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> baseArmor() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_ARMOR, baseArmor).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.BASE_ARMOR, baseArmor).asImmutable();
         }
 
         public Double getBaseDamage() {
@@ -480,7 +480,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         }
 
         public ImmutableValue<Double> baseDamage() {
-            return Sponge.getRegistry().getValueFactory().createValue(AttributeKeys.BASE_DAMAGE, baseDamage).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(RPGKeys.BASE_DAMAGE, baseDamage).asImmutable();
         }
 
         @Override
@@ -496,15 +496,15 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
         @Override
         public DataContainer toContainer() {
             return super.toContainer()
-                    .set(AttributeKeys.DEXTERITY.getQuery(), dexterity)
-                    .set(AttributeKeys.CONSTITUTION.getQuery(), constitution)
-                    .set(AttributeKeys.INTELLIGENCE.getQuery(), intelligence)
-                    .set(AttributeKeys.STRENGTH.getQuery(), strength)
-                    .set(AttributeKeys.WISDOM.getQuery(), wisdom)
-                    .set(AttributeKeys.MAGICAL_RESISTANCE.getQuery(), magicalResistance)
-                    .set(AttributeKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance)
-                    .set(AttributeKeys.BASE_ARMOR.getQuery(), baseArmor)
-                    .set(AttributeKeys.BASE_DAMAGE.getQuery(), baseDamage);
+                    .set(RPGKeys.DEXTERITY.getQuery(), dexterity)
+                    .set(RPGKeys.CONSTITUTION.getQuery(), constitution)
+                    .set(RPGKeys.INTELLIGENCE.getQuery(), intelligence)
+                    .set(RPGKeys.STRENGTH.getQuery(), strength)
+                    .set(RPGKeys.WISDOM.getQuery(), wisdom)
+                    .set(RPGKeys.MAGICAL_RESISTANCE.getQuery(), magicalResistance)
+                    .set(RPGKeys.PHYSICAL_RESISTANCE.getQuery(), physicalResistance)
+                    .set(RPGKeys.BASE_ARMOR.getQuery(), baseArmor)
+                    .set(RPGKeys.BASE_DAMAGE.getQuery(), baseDamage);
         }
 
     }

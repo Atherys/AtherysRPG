@@ -15,7 +15,8 @@ import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.data.AttributeData;
-import com.atherys.rpg.data.AttributeKeys;
+import com.atherys.rpg.data.DamageExpressionData;
+import com.atherys.rpg.data.RPGKeys;
 import com.atherys.rpg.facade.*;
 import com.atherys.rpg.listener.EntityListener;
 import com.atherys.rpg.listener.SkillsListener;
@@ -141,23 +142,30 @@ public class AtherysRPG {
 
     @Listener
     public void onKeyRegistration(GameRegistryEvent.Register<Key<?>> event) {
-        AttributeKeys.DEXTERITY= createKey(AttributeTypes.DEXTERITY, "Dexterity");
+        RPGKeys.DAMAGE_EXPRESSION = Key.builder()
+                .id("atherys:damage_expression")
+                .name("Damage Expression")
+                .query(DataQuery.of("Damage_Expression"))
+                .type(new TypeToken<Value<String>>() {})
+                .build();
 
-        AttributeKeys.CONSTITUTION = createKey(AttributeTypes.CONSTITUTION, "Constitution");
+        RPGKeys.DEXTERITY= createKey(AttributeTypes.DEXTERITY, "Dexterity");
 
-        AttributeKeys.INTELLIGENCE = createKey(AttributeTypes.INTELLIGENCE, "Intelligence");
+        RPGKeys.CONSTITUTION = createKey(AttributeTypes.CONSTITUTION, "Constitution");
 
-        AttributeKeys.STRENGTH = createKey(AttributeTypes.STRENGTH, "Strength");
+        RPGKeys.INTELLIGENCE = createKey(AttributeTypes.INTELLIGENCE, "Intelligence");
 
-        AttributeKeys.WISDOM = createKey(AttributeTypes.WISDOM, "Wisdom");
+        RPGKeys.STRENGTH = createKey(AttributeTypes.STRENGTH, "Strength");
 
-        AttributeKeys.MAGICAL_RESISTANCE = createKey(AttributeTypes.MAGICAL_RESISTANCE, "Magical_Resistance");
+        RPGKeys.WISDOM = createKey(AttributeTypes.WISDOM, "Wisdom");
 
-        AttributeKeys.PHYSICAL_RESISTANCE = createKey(AttributeTypes.PHYSICAL_RESISTANCE, "Physical_Resistance");
+        RPGKeys.MAGICAL_RESISTANCE = createKey(AttributeTypes.MAGICAL_RESISTANCE, "Magical_Resistance");
 
-        AttributeKeys.BASE_ARMOR = createKey(AttributeTypes.BASE_ARMOR, "Base_Armor");
+        RPGKeys.PHYSICAL_RESISTANCE = createKey(AttributeTypes.PHYSICAL_RESISTANCE, "Physical_Resistance");
 
-        AttributeKeys.BASE_DAMAGE = createKey(AttributeTypes.BASE_DAMAGE, "Base_Damage");
+        RPGKeys.BASE_ARMOR = createKey(AttributeTypes.BASE_ARMOR, "Base_Armor");
+
+        RPGKeys.BASE_DAMAGE = createKey(AttributeTypes.BASE_DAMAGE, "Base_Damage");
     }
 
     private static Key<Value<Double>> createKey(AttributeType attributeType, String dataQuery) {
@@ -172,6 +180,14 @@ public class AtherysRPG {
     @Listener
     public void onDataRegistration(GameRegistryEvent.Register<DataRegistration<?, ?>> event) {
         // Register custom data
+        DataRegistration.builder()
+                .dataClass(DamageExpressionData.class)
+                .immutableClass(DamageExpressionData.Immutable.class)
+                .builder(new DamageExpressionData.Builder())
+                .dataName("DamageExpression")
+                .manipulatorId("damageExpression")
+                .buildAndRegister(container);
+
         DataRegistration.builder()
                 .dataClass(AttributeData.class)
                 .immutableClass(AttributeData.Immutable.class)
