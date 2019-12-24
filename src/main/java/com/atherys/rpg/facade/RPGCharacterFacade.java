@@ -5,6 +5,7 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.HealingService;
@@ -32,6 +33,7 @@ import org.spongepowered.api.util.Tristate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
 import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
@@ -239,6 +241,15 @@ public class RPGCharacterFacade {
                     .orElse(ItemTypes.NONE);
         }
 
+        Optional<DamageExpressionData> damageExpressionData = source.get(DamageExpressionData.class);
+        if (damageExpressionData.isPresent()) {
+            Map<AttributeType, Double> sourceAttributes = attributeFacade.getAllAttributes(source);
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getDamageFromExpression(sourceAttributes, targetAttributes, damageExpressionData.get().getDamageExpression()), 0.0d));
+            return;
+        }
+
         // #15 - If damage source type is VOID, skip additional damage calculations // "Pure" Damage
         if (rootSource.getType() == DamageTypes.VOID) {
             return;
@@ -264,7 +275,7 @@ public class RPGCharacterFacade {
         Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
         Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-        event.setBaseDamage(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType));
+        event.setBaseDamage(Math.max(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType), 0.0d));
     }
 
     private void onIndirectDamage(DamageEntityEvent event, IndirectEntityDamageSource rootSource) {
@@ -272,6 +283,15 @@ public class RPGCharacterFacade {
         Entity target = event.getTargetEntity();
 
         EntityType projectileType = rootSource.getSource().getType();
+
+        Optional<DamageExpressionData> damageExpressionData = rootSource.getSource().get(DamageExpressionData.class);
+        if (damageExpressionData.isPresent()) {
+            Map<AttributeType, Double> sourceAttributes = attributeFacade.getAllAttributes(source);
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getDamageFromExpression(sourceAttributes, targetAttributes, damageExpressionData.get().getDamageExpression()), 0.0d));
+            return;
+        }
 
         // #15 - If damage source type is CUSTOM, skip additional damage calculations // "Pure" Damage
         if (rootSource.getType() == DamageTypes.VOID) {

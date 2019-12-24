@@ -77,6 +77,15 @@ public class DamageService {
         return mitigatedDamageExpression.setVariable(INCOMING, new BigDecimal(producedDamage)).eval().doubleValue();
     }
 
+    public double getDamageFromExpression(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, String damageExpression) {
+        Expression customExpression = expressionService.getExpression(damageExpression);
+
+        expressionService.populateAttributes(customExpression, attackerAttributes, "source");
+        expressionService.populateAttributes(customExpression, targetAttributes, "target");
+
+        return customExpression.eval().doubleValue();
+    }
+
     private AtherysDamageType getMeleeDamageType(ItemType itemType) {
         return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED);
     }
