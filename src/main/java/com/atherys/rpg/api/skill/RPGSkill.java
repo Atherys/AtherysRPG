@@ -53,6 +53,14 @@ public abstract class RPGSkill implements Castable {
         return AtherysRPG.getInstance().getExpressionService().evalExpression(source, target, exp).doubleValue();
     }
 
+    protected static int asInt(Living source, String exp) {
+        return AtherysRPG.getInstance().getExpressionService().evalExpression(source, exp).intValue();
+    }
+
+    protected static int asInt(Living source, Living target, String exp) {
+        return AtherysRPG.getInstance().getExpressionService().evalExpression(source, target, exp).intValue();
+    }
+
     @Override
     public String getId() {
         return id;

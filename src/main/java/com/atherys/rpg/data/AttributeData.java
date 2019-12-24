@@ -204,7 +204,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public Double getAttribute(AttributeType type) {
-        switch (type.getId()) {
+        switch (type.getShortName()) {
             case "dex":
                 return getDexterity();
             case "con":
@@ -229,7 +229,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public void setAttribute(AttributeType type, Double value) {
-        switch (type.getId()) {
+        switch (type.getShortName()) {
             case "dex":
                 setDexterity(value);
                 break;
