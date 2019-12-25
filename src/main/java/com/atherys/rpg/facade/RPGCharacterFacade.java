@@ -74,15 +74,16 @@ public class RPGCharacterFacade {
         rpgMsg.info(player, Text.of(DARK_GREEN, "Your current experience: ", GOLD, pc.getExperience()));
     }
 
-    public void addPlayerExperience(Player player, double amount) throws RPGCommandException {
+    public void addPlayerExperience(Player player, double amount) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         if (validateExperience(pc.getExperience() + amount)) {
             characterService.addExperience(pc, amount);
+            rpgMsg.info(player, "Gained ", GOLD, amount, DARK_GREEN, " experience.");
         }
     }
 
-    public void removePlayerExperience(Player player, double amount) throws RPGCommandException {
+    public void removePlayerExperience(Player player, double amount) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         if (validateExperience(pc.getExperience() - amount)) {
@@ -192,13 +193,13 @@ public class RPGCharacterFacade {
         });
     }
 
-    private boolean validateExperience(double experience) throws RPGCommandException {
+    private boolean validateExperience(double experience) {
         if (experience < config.EXPERIENCE_MIN) {
-            throw new RPGCommandException("A player cannot have experience less than ", config.EXPERIENCE_MIN);
+            return false;
         }
 
         if (experience > config.EXPERIENCE_MAX) {
-            throw new RPGCommandException("A player cannot have experience bigger than ", config.EXPERIENCE_MAX);
+            return false;
         }
 
         return true;

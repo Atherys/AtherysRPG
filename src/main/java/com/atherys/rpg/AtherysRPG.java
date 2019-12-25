@@ -13,6 +13,7 @@ import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.MobsConfig;
 import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.data.DamageExpressionData;
@@ -83,6 +84,7 @@ public class AtherysRPG {
         // Initialize the config
         getConfig().init();
         getGraphConfig().init();
+        getMobsConfig().init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
@@ -209,6 +211,10 @@ public class AtherysRPG {
         return components.skillGraphConfig;
     }
 
+    public MobsConfig getMobsConfig() {
+        return components.mobsConfig;
+    }
+
     public PlayerCharacterRepository getPlayerCharacterRepository() {
         return components.playerCharacterRepository;
     }
@@ -255,6 +261,9 @@ public class AtherysRPG {
 
         @Inject
         SkillGraphConfig skillGraphConfig;
+
+        @Inject
+        MobsConfig mobsConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;
