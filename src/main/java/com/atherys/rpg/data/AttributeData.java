@@ -160,7 +160,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
     }
 
     public void setPhysicalResistance(Double physicalResistance) {
-        this.wisdom = wisdom;
+        this.physicalResistance = physicalResistance;
     }
 
     public Value<Double> physicalResistance() {
@@ -253,6 +253,7 @@ public class AttributeData extends AbstractData<AttributeData, AttributeData.Imm
                 break;
             case "armor":
                 setBaseArmor(value);
+                break;
             case "dmg":
                 setBaseDamage(value);
         }
