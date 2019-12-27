@@ -5,6 +5,7 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.HealingService;
@@ -16,8 +17,11 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.entity.damage.DamageType;
+import org.spongepowered.api.event.cause.entity.damage.DamageFunction;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifier;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifierTypes;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -33,6 +37,7 @@ import org.spongepowered.api.util.Tristate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
 import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
@@ -73,15 +78,16 @@ public class RPGCharacterFacade {
         rpgMsg.info(player, Text.of(DARK_GREEN, "Your current experience: ", GOLD, pc.getExperience()));
     }
 
-    public void addPlayerExperience(Player player, double amount) throws RPGCommandException {
+    public void addPlayerExperience(Player player, double amount) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         if (validateExperience(pc.getExperience() + amount)) {
             characterService.addExperience(pc, amount);
+            rpgMsg.info(player, "Gained ", GOLD, amount, DARK_GREEN, " experience.");
         }
     }
 
-    public void removePlayerExperience(Player player, double amount) throws RPGCommandException {
+    public void removePlayerExperience(Player player, double amount) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         if (validateExperience(pc.getExperience() - amount)) {
@@ -191,13 +197,13 @@ public class RPGCharacterFacade {
         });
     }
 
-    private boolean validateExperience(double experience) throws RPGCommandException {
+    private boolean validateExperience(double experience) {
         if (experience < config.EXPERIENCE_MIN) {
-            throw new RPGCommandException("A player cannot have experience less than ", config.EXPERIENCE_MIN);
+            return false;
         }
 
         if (experience > config.EXPERIENCE_MAX) {
-            throw new RPGCommandException("A player cannot have experience bigger than ", config.EXPERIENCE_MAX);
+            return false;
         }
 
         return true;
@@ -230,40 +236,101 @@ public class RPGCharacterFacade {
 
     private void onDirectDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
         Entity source = rootSource.getSource();
+        Entity target = event.getTargetEntity();
 
-        // #15 - If damage source type is CUSTOM, skip additional damage calculations
-        if (rootSource.getType() != DamageTypes.CUSTOM) {
-            Entity target = event.getTargetEntity();
+        ItemType weaponType = ItemTypes.NONE;
 
-            ItemType weaponType = ItemTypes.NONE;
+        if (source instanceof Equipable) {
+            weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
+                    .map(ItemStack::getType)
+                    .orElse(ItemTypes.NONE);
+        }
 
-            if (source instanceof Equipable) {
-                weaponType = ((Equipable) source).getEquipped(EquipmentTypes.MAIN_HAND)
-                        .map(ItemStack::getType)
-                        .orElse(ItemTypes.NONE);
-            }
+        // Remove all damage modifiers
+        event.getModifiers().forEach(damageFunction -> {
+            event.setDamage(damageFunction.getModifier(), (base) -> 0);
+        });
 
-            Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        Optional<DamageExpressionData> damageExpressionData = source.get(DamageExpressionData.class);
+        if (damageExpressionData.isPresent()) {
+            Map<AttributeType, Double> sourceAttributes = attributeFacade.getAllAttributes(source);
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-            event.setBaseDamage(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType));
+            event.setBaseDamage(Math.max(damageService.getDamageFromExpression(sourceAttributes, targetAttributes, damageExpressionData.get().getDamageExpression()), 0.0d));
+            return;
         }
+
+        // #15 - If damage source type is VOID, skip additional damage calculations // "Pure" Damage
+        if (rootSource.getType() == DamageTypes.VOID) {
+            return;
+        }
+
+        // If the damage source type is MAGIC, we do magic mitigation
+        if (rootSource.getType() == DamageTypes.MAGIC) {
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getMagicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
+            return;
+        }
+
+        // If the damage source type is CUSTOM, we do physical mitigation
+        if (rootSource.getType() == DamageTypes.CUSTOM) {
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getPhysicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
+            return;
+        }
+
+        // Otherwise, treat as basic attack
+        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+        event.setBaseDamage(Math.max(damageService.getMeleeDamage(attackerAttributes, targetAttributes, weaponType), 0.0d));
     }
 
     private void onIndirectDamage(DamageEntityEvent event, IndirectEntityDamageSource rootSource) {
         Entity source = rootSource.getIndirectSource();
+        Entity target = event.getTargetEntity();
 
-        // #15 - If damage source type is CUSTOM, skip additional damage calculations
-        if (rootSource.getType() != DamageTypes.CUSTOM) {
-            Entity target = event.getTargetEntity();
+        EntityType projectileType = rootSource.getSource().getType();
 
-            Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        // Remove all damage modifiers
+        event.getModifiers().forEach(damageFunction -> {
+            event.setDamage(damageFunction.getModifier(), (base) -> 0);
+        });
+
+        Optional<DamageExpressionData> damageExpressionData = rootSource.getSource().get(DamageExpressionData.class);
+        if (damageExpressionData.isPresent()) {
+            Map<AttributeType, Double> sourceAttributes = attributeFacade.getAllAttributes(source);
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-            EntityType projectileType = rootSource.getSource().getType();
-
-            event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
+            event.setBaseDamage(Math.max(damageService.getDamageFromExpression(sourceAttributes, targetAttributes, damageExpressionData.get().getDamageExpression()), 0.0d));
+            return;
         }
+
+        // #15 - If damage source type is CUSTOM, skip additional damage calculations // "Pure" Damage
+        if (rootSource.getType() == DamageTypes.VOID) {
+            return;
+        }
+
+        if (rootSource.getType() == DamageTypes.MAGIC) {
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getMagicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
+            return;
+        }
+
+        if (rootSource.getType() == DamageTypes.CUSTOM) {
+            Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+            event.setBaseDamage(Math.max(damageService.getPhysicalDamageMitigation(targetAttributes, event.getBaseDamage()), 0.0f));
+            return;
+        }
+
+        Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
+        Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
+
+        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
     }
 
 // Healing is currently not implementable as such due to Sponge

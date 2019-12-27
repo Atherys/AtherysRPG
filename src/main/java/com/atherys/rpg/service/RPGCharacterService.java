@@ -56,7 +56,7 @@ public class RPGCharacterService {
         });
     }
 
-    public RPGCharacter<? extends Living> getOrCreateCharacter(Living living) {
+    public RPGCharacter<? extends Living> getOrCreateCharacter(Living living, Map<AttributeType, Double> attributes) {
         if (living instanceof Player) {
             return getOrCreateCharacter((Player) living);
         }
@@ -65,9 +65,9 @@ public class RPGCharacterService {
 
         if (npc == null) {
             if (living instanceof ArmorEquipable) {
-                npc = new ArmorEquipableCharacter(living, attributeService.getDefaultAttributes());
+                npc = new ArmorEquipableCharacter(living, attributes);
             } else {
-                npc = new SimpleCharacter(living, attributeService.getDefaultAttributes());
+                npc = new SimpleCharacter(living, attributes);
             }
 
             nonPlayerCharacters.put(living.getUniqueId(), npc);
@@ -78,7 +78,7 @@ public class RPGCharacterService {
 
     public <T extends Entity> RPGCharacter<?> getOrCreateCharacter(T entity) {
         if (entity instanceof Living) {
-            return getOrCreateCharacter((Living) entity);
+            return getOrCreateCharacter((Living) entity, attributeService.getDefaultAttributes());
         } else {
             throw new IllegalArgumentException("Entity must be some sort of Living.");
         }

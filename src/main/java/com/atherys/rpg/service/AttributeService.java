@@ -30,10 +30,15 @@ public class AttributeService {
     }
 
     public Map<AttributeType, Double> getDefaultAttributes() {
-        Map<AttributeType, Double> attributes = new HashMap<>(config.DEFAULT_ATTRIBUTES);
+        Map<AttributeType, Double> attributes = fillInAttributes(new HashMap<>(config.DEFAULT_ATTRIBUTES));
+        return attributes;
+    }
+
+    public Map<AttributeType, Double> fillInAttributes(Map<AttributeType, Double> attributes) {
         for (AttributeType type : Sponge.getRegistry().getAllOf(AttributeType.class)) {
             attributes.putIfAbsent(type, 0.0);
         }
+
         return attributes;
     }
 

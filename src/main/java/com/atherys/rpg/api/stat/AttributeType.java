@@ -13,11 +13,14 @@ public class AttributeType implements CatalogType {
 
     private String name;
 
+    private String shortName;
+
     private TextColor color;
 
-    AttributeType(String id, String name, TextColor color) {
+    AttributeType(String id, String shortName, String name, TextColor color) {
         this.id = id;
         this.name = name;
+        this.shortName = shortName;
         this.color = color;
     }
 
@@ -29,6 +32,10 @@ public class AttributeType implements CatalogType {
     @Override
     public String getName() {
         return name;
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 
     public TextColor getColor() {

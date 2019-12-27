@@ -3,10 +3,12 @@ package com.atherys.rpg.config;
 import com.atherys.core.utils.PluginConfig;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class SkillGraphConfig extends PluginConfig {

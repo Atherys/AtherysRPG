@@ -1,4 +1,4 @@
-package com.atherys.rpg.skill;
+package com.example.skill;
 
 import com.atherys.rpg.api.skill.DescriptionArguments;
 import com.atherys.rpg.api.skill.SkillSpec;
