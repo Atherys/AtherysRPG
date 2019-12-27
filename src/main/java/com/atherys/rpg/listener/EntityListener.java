@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
@@ -41,7 +42,7 @@ public class EntityListener {
         });
     }
 
-    @Listener
+    @Listener(order = Order.LAST)
     public void onEntitySpawn(SpawnEntityEvent event) {
         mobFacade.onMobSpawn(event);
     }

@@ -17,7 +17,11 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.entity.damage.DamageFunction;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifier;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifierTypes;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -242,6 +246,11 @@ public class RPGCharacterFacade {
                     .orElse(ItemTypes.NONE);
         }
 
+        // Remove all damage modifiers
+        event.getModifiers().forEach(damageFunction -> {
+            event.setDamage(damageFunction.getModifier(), (base) -> 0);
+        });
+
         Optional<DamageExpressionData> damageExpressionData = source.get(DamageExpressionData.class);
         if (damageExpressionData.isPresent()) {
             Map<AttributeType, Double> sourceAttributes = attributeFacade.getAllAttributes(source);
@@ -284,6 +293,11 @@ public class RPGCharacterFacade {
         Entity target = event.getTargetEntity();
 
         EntityType projectileType = rootSource.getSource().getType();
+
+        // Remove all damage modifiers
+        event.getModifiers().forEach(damageFunction -> {
+            event.setDamage(damageFunction.getModifier(), (base) -> 0);
+        });
 
         Optional<DamageExpressionData> damageExpressionData = rootSource.getSource().get(DamageExpressionData.class);
         if (damageExpressionData.isPresent()) {

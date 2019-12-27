@@ -14,7 +14,7 @@ public final class AttributeTypes {
 
     public static final AttributeType WISDOM = new AttributeType("atherys:wisdom", "wis", "Wisdom", TextColors.LIGHT_PURPLE);
 
-    public static final AttributeType MAGICAL_RESISTANCE = new AttributeType("atherys:magic_resistance", "magicres", "Magical Resistance", TextColors.DARK_RED);
+    public static final AttributeType MAGICAL_RESISTANCE = new AttributeType("atherys:magical_resistance", "magicres", "Magical Resistance", TextColors.DARK_RED);
 
     public static final AttributeType PHYSICAL_RESISTANCE = new AttributeType("atherys:physical_resistance", "physres", "Physical Resistance", TextColors.GOLD);
 
