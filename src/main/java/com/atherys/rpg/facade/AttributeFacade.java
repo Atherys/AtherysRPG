@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -148,6 +149,7 @@ public class AttributeFacade {
         Map<AttributeType, Double> itemAttributes = attributeService.getEquipmentAttributes(player);
 
         baseAttributes.forEach((type, value) -> {
+            if (config.HIDDEN_ATTRIBUTES.contains(type)) return;
 
             double base = value;
             double buff = buffAttributes.getOrDefault(type, 0.0d);

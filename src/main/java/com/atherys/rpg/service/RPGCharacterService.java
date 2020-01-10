@@ -1,6 +1,7 @@
 package com.atherys.rpg.service;
 
 import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -90,26 +91,26 @@ public class RPGCharacterService {
         repository.saveOne(pc);
     }
 
-    public void addSkill(PlayerCharacter pc, String skill) {
-        pc.addSkill(skill);
-        setSkillPermission(pc, skill, true);
+    public void addSkill(PlayerCharacter pc, RPGSkill skill) {
+        pc.addSkill(skill.getId());
+        setSkillPermission(pc, skill.getPermission(), true);
         repository.saveOne(pc);
     }
 
-    public void removeSkill(PlayerCharacter pc, String skill) {
-        pc.removeSkill(skill);
-        setSkillPermission(pc, skill, false);
+    public void removeSkill(PlayerCharacter pc, RPGSkill skill) {
+        pc.removeSkill(skill.getId());
+        setSkillPermission(pc, skill.getPermission(), false);
         repository.saveOne(pc);
     }
 
-    private void setSkillPermission(PlayerCharacter pc, String skill, boolean value) {
+    private void setSkillPermission(PlayerCharacter pc, String skillPermission, boolean value) {
         getUser(pc).ifPresent(user -> {
-            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skill, value ? Tristate.TRUE : Tristate.UNDEFINED);
+            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillPermission, value ? Tristate.TRUE : Tristate.UNDEFINED);
         });
     }
 
     private Optional<User> getUser(PlayerCharacter pc) {
-        return Sponge.getServiceManager().provide(UserStorageService.class).get().get(pc.getUniqueId());
+        return Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(pc.getUniqueId());
     }
 
     public void addExperience(PlayerCharacter pc, double amount) {
