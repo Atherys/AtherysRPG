@@ -72,6 +72,9 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("hidden-attributes")
     public Set<AttributeType> HIDDEN_ATTRIBUTES = new HashSet<>();
 
+    @Setting("skill-message-distance")
+    public double SKILL_MESSAGE_DISTANCE = 25;
+
     {
         // Wood
         ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_HOE, AtherysDamageTypes.BLUNT);

@@ -8,6 +8,6 @@ import org.spongepowered.api.text.format.TextColors;
 public class RPGCommandException extends CommandException {
 
     public RPGCommandException(Object... message) {
-        super(AtherysRPG.getInstance().getRPGMessagingFacade().format(TextColors.RED, Text.of(message)));
+        super(AtherysRPG.getInstance().getRPGMessagingFacade().formatError(TextColors.RED, Text.of(message)));
     }
 }
