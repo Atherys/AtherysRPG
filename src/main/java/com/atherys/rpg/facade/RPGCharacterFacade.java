@@ -13,9 +13,12 @@ import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.skills.api.event.ResourceRegenEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.spongepowered.api.data.DataTransactionResult;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.entity.damage.DamageFunction;
 import org.spongepowered.api.event.cause.entity.damage.DamageModifier;
@@ -331,6 +334,20 @@ public class RPGCharacterFacade {
         Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
         event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
+    }
+
+    public void onPlayerSpawn(Player player) {
+        assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION);
+    }
+
+    public void assignEntityHealthLimit(Living living, String healthLimitExpression) {
+        double maxHP = expressionService.evalExpression(living, healthLimitExpression).doubleValue();
+
+        living.offer(Keys.MAX_HEALTH, maxHP);
+
+        if (living.supports(Keys.HEALTH_SCALE)) {
+            living.offer(Keys.HEALTH_SCALE, 20.0d);
+        }
     }
 
 // Healing is currently not implementable as such due to Sponge

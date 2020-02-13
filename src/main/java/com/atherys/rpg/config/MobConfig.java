@@ -15,6 +15,9 @@ public class MobConfig {
     @Setting("damage-expression")
     public String DAMAGE_EXPRESSION = "5.0";
 
+    @Setting("health-limit-expression")
+    public String HEALTH_LIMIT_EXPRESSION = "100.0 * SOURCE_INT";
+
     @Setting("experience")
     public Double EXPERIENCE = 10.0;
 }

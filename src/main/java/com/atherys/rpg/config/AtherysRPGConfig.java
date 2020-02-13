@@ -43,6 +43,9 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("resource-regen-calculation")
     public String RESOURCE_REGEN_CALCULATION = "1.33 * SOURCE_INT";
 
+    @Setting("health-limit-calculation")
+    public String HEALTH_LIMIT_CALCULATION = "100.0 * SOURCE_INT";
+
     @Setting("default-attributes")
     public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
 
