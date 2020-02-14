@@ -344,6 +344,7 @@ public class RPGCharacterFacade {
         double maxHP = expressionService.evalExpression(living, healthLimitExpression).doubleValue();
 
         living.offer(Keys.MAX_HEALTH, maxHP);
+        living.offer(Keys.HEALTH, maxHP);
 
         if (living.supports(Keys.HEALTH_SCALE)) {
             living.offer(Keys.HEALTH_SCALE, 20.0d);
