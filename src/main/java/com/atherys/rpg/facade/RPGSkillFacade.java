@@ -4,6 +4,7 @@ import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.skills.AtherysSkills;
+import com.atherys.skills.api.util.MathUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
@@ -26,14 +27,11 @@ public class RPGSkillFacade {
     @Inject
     private ExpressionService expressionService;
 
-    @Inject
-    private AttributeFacade attributeFacade;
-
     public Text renderSkill(RPGSkill skill, Player source) {
         Text.Builder skillText = Text.builder().append(Text.of(TextColors.GOLD, skill.getName()));
         skillText.append(Text.of(" - ", skill.getDescription(source)));
         skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", DurationFormatUtils.formatDuration(skill.getCooldown(source), "HH'h' mm'm' ss's'")));
-        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", skill.getResourceCost(source)));
+        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", (int) skill.getResourceCost(source)));
 
         return skillText.build();
     }
