@@ -10,6 +10,7 @@ import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.EventContextKeys;
@@ -21,6 +22,8 @@ import org.spongepowered.api.text.Text;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Singleton
 public class MobFacade {
@@ -37,17 +40,28 @@ public class MobFacade {
     private RPGCharacterFacade characterFacade;
 
     public void onMobSpawn(SpawnEntityEvent event) {
-        event.getEntities().stream()
+        Set<Living> npcs = event.getEntities().stream()
                 .filter(entity -> entity instanceof Living && !(entity instanceof Player))
                 .map(entity -> (Living) entity)
-                .forEach(living -> {
-                    getMobConfigFromLiving(living).ifPresent(mobConfig -> {
-                        Map<AttributeType, Double> attributes = attributeService.fillInAttributes(new HashMap<>(mobConfig.DEFAULT_ATTRIBUTES));
+                .collect(Collectors.toSet());
 
-                        characterService.getOrCreateCharacter(living, attributes);
-                        living.offer(new DamageExpressionData(mobConfig.DAMAGE_EXPRESSION));
-                    });
-                });
+        Set<Player> players = event.getEntities().stream()
+                .filter(entity -> entity instanceof Player)
+                .map(entity -> (Player) entity)
+                .collect(Collectors.toSet());
+
+        // For all npcs, set their damage expression and max health
+        npcs.forEach(living -> {
+            getMobConfigFromLiving(living).ifPresent(mobConfig -> {
+                assignEntityDamageExpression(living, new HashMap<>(mobConfig.DEFAULT_ATTRIBUTES), mobConfig.DAMAGE_EXPRESSION);
+                characterFacade.assignEntityHealthLimit(living, mobConfig.HEALTH_LIMIT_EXPRESSION);
+            });
+        });
+
+        // For all players, redirect to RPGCharacterFacade
+        players.forEach(player -> {
+            characterFacade.onPlayerSpawn(player);
+        });
     }
 
     public void onMobDeath(Player killer, Living target) {
@@ -59,5 +73,12 @@ public class MobFacade {
     public Optional<MobConfig> getMobConfigFromLiving(Living entity) {
         String name = entity.get(Keys.DISPLAY_NAME).orElse(Text.of(entity.getType().getId())).toPlain();
         return Optional.ofNullable(mobsConfig.MOBS.get(name));
+    }
+
+    private void assignEntityDamageExpression(Living entity, HashMap<AttributeType, Double> mobAttributes, String damageExpression) {
+        Map<AttributeType, Double> attributes = attributeService.fillInAttributes(mobAttributes);
+
+        characterService.getOrCreateCharacter(entity, attributes);
+        entity.offer(new DamageExpressionData(damageExpression));
     }
 }

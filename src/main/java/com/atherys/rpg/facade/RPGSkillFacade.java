@@ -10,12 +10,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.data.key.Keys;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.TextTemplate;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tuple;
 
 import java.util.HashMap;
@@ -61,8 +61,8 @@ public class RPGSkillFacade {
     public Text renderSkill(RPGSkill skill, Player source) {
         Text.Builder skillText = Text.builder().append(Text.of(GOLD, skill.getName()));
         skillText.append(Text.of(" - ", skill.getDescription(source)));
-        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", skill.getCooldown(source)));
-        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", skill.getResourceCost(source)));
+        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", DurationFormatUtils.formatDuration(skill.getCooldown(source), "HH'h' mm'm' ss.S's'")));
+        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", (int) skill.getResourceCost(source)));
 
         return skillText.build();
     }
