@@ -3,12 +3,11 @@ package com.atherys.rpg.facade;
 import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.service.ExpressionService;
+import com.atherys.rpg.util.TextUtils;
 import com.atherys.skills.AtherysSkills;
-import com.atherys.skills.api.util.MathUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -30,7 +29,7 @@ public class RPGSkillFacade {
     public Text renderSkill(RPGSkill skill, Player source) {
         Text.Builder skillText = Text.builder().append(Text.of(TextColors.GOLD, skill.getName()));
         skillText.append(Text.of(" - ", skill.getDescription(source)));
-        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", DurationFormatUtils.formatDuration(skill.getCooldown(source), "HH'h' mm'm' ss.S's'")));
+        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", TextUtils.formatDuration(skill.getCooldown(source))));
         skillText.append(Text.of(Text.NEW_LINE, "Cost: ", (int) skill.getResourceCost(source)));
 
         return skillText.build();
