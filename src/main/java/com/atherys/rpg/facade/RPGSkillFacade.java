@@ -4,6 +4,7 @@ import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.service.ExpressionService;
+import com.atherys.rpg.util.TextUtils;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.SkillCastEvent;
 import com.google.inject.Inject;
@@ -15,7 +16,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.TextTemplate;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Tuple;
 
 import java.util.HashMap;
@@ -61,8 +61,8 @@ public class RPGSkillFacade {
     public Text renderSkill(RPGSkill skill, Player source) {
         Text.Builder skillText = Text.builder().append(Text.of(GOLD, skill.getName()));
         skillText.append(Text.of(" - ", skill.getDescription(source)));
-        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", skill.getCooldown(source)));
-        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", skill.getResourceCost(source)));
+        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", TextUtils.formatDuration(skill.getCooldown(source))));
+        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", (int) skill.getResourceCost(source)));
 
         return skillText.build();
     }

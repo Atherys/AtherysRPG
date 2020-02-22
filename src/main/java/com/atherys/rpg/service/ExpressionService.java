@@ -59,9 +59,9 @@ public class ExpressionService {
     }
 
     public BigDecimal evalExpression(Living source, Expression expression) {
-        AtherysRPG.getInstance().getExpressionService().populateAttributes(
+        populateAttributes(
                 expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source),
+                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source), // TODO: Should not be calling Facade from Service!!
                 "source"
         );
 
@@ -69,15 +69,15 @@ public class ExpressionService {
     }
 
     public BigDecimal evalExpression(Living source, Living target, Expression expression) {
-        AtherysRPG.getInstance().getExpressionService().populateAttributes(
+        populateAttributes(
                 expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source),
+                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source), // TODO: Should not be calling Facade from Service!!
                 "source"
         );
 
-        AtherysRPG.getInstance().getExpressionService().populateAttributes(
+        populateAttributes(
                 expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(target),
+                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(target), // TODO: Should not be calling Facade from Service!!
                 "target"
         );
 
