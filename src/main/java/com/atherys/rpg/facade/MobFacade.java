@@ -1,26 +1,32 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.core.AtherysCore;
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
-import com.atherys.rpg.config.MobConfig;
-import com.atherys.rpg.config.MobsConfig;
+import com.atherys.rpg.command.exception.RPGCommandException;
+import com.atherys.rpg.config.*;
 import com.atherys.rpg.data.DamageExpressionData;
+import com.atherys.rpg.data.RPGKeys;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.apache.commons.lang3.RandomUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
-import org.spongepowered.api.event.filter.Getter;
-import org.spongepowered.api.service.economy.Currency;
+import org.spongepowered.api.item.enchantment.Enchantment;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializer;
+import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,6 +35,9 @@ import java.util.stream.Collectors;
 public class MobFacade {
     @Inject
     private MobsConfig mobsConfig;
+
+    @Inject
+    private AttributeFacade attributeFacade;
 
     @Inject
     private RPGCharacterService characterService;
@@ -76,19 +85,75 @@ public class MobFacade {
 
             // If there is currency loot, calculate it and award to player
             if (loot.CURRENCY != null) {
-                // TODO
+                awardPlayerCurrencyLoot(killer, loot.CURRENCY);
             }
 
             // If there is item loot, create the item and drop it at the location of the mob
-            if (loot.ITEMS != null) {
-                // TODO
+            if (loot.ITEM != null) {
+                dropItemLoot(mob.getLocation(), loot.ITEM);
             }
 
             // If there is experience loot, calculate it and award to player
             if (loot.EXPERIENCE != null) {
-                // TODO
+                awardPlayerExperienceLoot(killer, loot.EXPERIENCE);
             }
         }));
+    }
+
+    private void awardPlayerCurrencyLoot(Player player, CurrencyLootConfig config) {
+        // TODO
+    }
+
+    private void dropItemLoot(Location<World> dropLocation, ItemLootConfig config) {
+        Optional<ItemStackSnapshot> itemStack = createItemStackFromItemConfig(config);
+
+        if (!itemStack.isPresent()) {
+            throw new RuntimeException("Could not create an item stack from the item configuration \"" + config + "\"");
+        } else {
+            Entity groundItem = dropLocation.getExtent().createEntity(EntityTypes.ITEM, dropLocation.getPosition());
+            groundItem.offer(Keys.REPRESENTED_ITEM, itemStack.get());
+            dropLocation.getExtent().spawnEntity(groundItem);
+        }
+    }
+
+    private void awardPlayerExperienceLoot(Player player, ExperienceLootConfig config) {
+        characterFacade.addPlayerExperience(player, RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM));
+    }
+
+    private Optional<ItemStackSnapshot> createItemStackFromItemConfig(ItemLootConfig item) {
+        ItemStack itemStack = ItemStack.builder()
+                .itemType(item.ITEM_TYPE)
+                .quantity(RandomUtils.nextInt(item.MINIMUM_QUANTITY, item.MAXIMUM_QUANTITY + 1))
+                .build();
+
+        // Convert and apply item display name
+        Text displayName = TextSerializers.FORMATTING_CODE.deserialize(item.ITEM_NAME);
+        itemStack.offer(Keys.DISPLAY_NAME, displayName);
+
+        // Hide item attributes
+        itemStack.offer(Keys.HIDE_ATTRIBUTES, item.HIDE_FLAGS);
+
+        // Convert and apply enchantments
+        List<Enchantment> enchantments = new ArrayList<>();
+        item.ENCHANTMENTS.forEach((e, a) -> enchantments.add(Enchantment.of(e, a)));
+        itemStack.offer(Keys.ITEM_ENCHANTMENTS, enchantments);
+
+        // Apply RPG attributes
+        item.ATTRIBUTES.forEach((t, a) -> {
+            try {
+                attributeFacade.setItemAttributeValue(itemStack, t, a);
+            } catch (RPGCommandException e) {
+                e.printStackTrace();
+            }
+        });
+
+        // Convert and apply item lore
+        List<Text> convertedLore = item.LORE.stream()
+                .map(TextSerializers.FORMATTING_CODE::deserialize)
+                .collect(Collectors.toList());
+        itemStack.offer(Keys.ITEM_LORE, convertedLore);
+
+        return Optional.of(itemStack.createSnapshot());
     }
 
     public Optional<MobConfig> getMobConfigFromLiving(Living entity) {
