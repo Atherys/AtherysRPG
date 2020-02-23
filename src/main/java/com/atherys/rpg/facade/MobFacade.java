@@ -11,6 +11,7 @@ import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.text.FormattableUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
@@ -30,6 +31,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,8 @@ public class MobFacade {
 
     @Inject
     private RPGCharacterFacade characterFacade;
+
+    private DecimalFormat decimalFormat = new DecimalFormat();
 
     private Random random = new Random();
 
@@ -109,7 +113,10 @@ public class MobFacade {
     }
 
     private void awardPlayerExperienceLoot(Player player, ExperienceLootConfig config) {
-        characterFacade.addPlayerExperience(player, RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM));
+        characterFacade.addPlayerExperience(
+                player,
+                Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100 ) / 100
+        );
     }
 
     private Optional<ItemStackSnapshot> createItemStackFromItemConfig(ItemLootConfig item) {
@@ -119,7 +126,7 @@ public class MobFacade {
                 .build();
 
         // Convert and apply item display name
-        Text displayName = TextSerializers.FORMATTING_CODE.deserialize(item.ITEM_NAME);
+        Text displayName = TextSerializers.formattingCode('&').deserialize(item.ITEM_NAME);
         itemStack.offer(Keys.DISPLAY_NAME, displayName);
 
         // Hide item attributes
