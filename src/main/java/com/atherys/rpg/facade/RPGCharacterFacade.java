@@ -39,8 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
-import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
-import static org.spongepowered.api.text.format.TextColors.GOLD;
+import static org.spongepowered.api.text.format.TextColors.*;
 
 @Singleton
 public class RPGCharacterFacade {
@@ -99,12 +98,14 @@ public class RPGCharacterFacade {
 
         List<String> skills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
 
-        Text.Builder skillsText = Text.builder().append(Text.of("Your Skills", NEW_LINE));
+        Text.Builder skillsText = Text.builder().append(Text.of(
+                DARK_GRAY, "[]=[ ", GOLD, "Your Skills", DARK_GRAY, " ]=[]", NEW_LINE
+        ));
         skills.forEach(s -> {
             RPGSkill skill = skillFacade.getSkillById(s).get();
             skillsText.append(
                     Text.builder()
-                    .append(Text.of(skill.getName(), NEW_LINE))
+                    .append(Text.of(DARK_GREEN, "- ", GOLD, skill.getName(), NEW_LINE))
                     .onHover(TextActions.showText(skillFacade.renderSkill(skill, player)))
                     .build()
             );
@@ -113,14 +114,16 @@ public class RPGCharacterFacade {
         player.sendMessage(skillsText.build());
     }
 
-    public void getAvailableSkills(Player player) throws RPGCommandException {
+    public void displayAvailableSkills(Player player) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        Text.Builder skills = Text.builder().append(Text.of("Available Skills", NEW_LINE));
+        Text.Builder skills = Text.builder().append(Text.of(
+                DARK_GRAY, "[]=[ ", GOLD, "Available Skills", DARK_GRAY, " ]=[]", NEW_LINE
+        ));
         skillGraphFacade.getLinkedSkills(pc.getSkills()).forEach(s -> {
 
             Text skillText = Text.builder()
-                    .append(Text.of(s.getName()))
+                    .append(Text.of(DARK_GREEN, "- ", GOLD, s.getName()))
                     .onClick(TextActions.executeCallback(source -> {
                         chooseSkillWithoutThrowing(player, s.getId());
                     }))
