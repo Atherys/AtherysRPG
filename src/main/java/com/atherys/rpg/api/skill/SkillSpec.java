@@ -66,7 +66,7 @@ public class SkillSpec {
 
     public SkillSpec id(String id) {
         this.id = id;
-        permission = id;
+        permission = "atherysrpg.rpgskills." + id;
         return this;
     }
 

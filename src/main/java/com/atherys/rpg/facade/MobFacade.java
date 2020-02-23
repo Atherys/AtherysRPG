@@ -22,6 +22,8 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializer;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -56,22 +58,12 @@ public class MobFacade {
                 .map(entity -> (Living) entity)
                 .collect(Collectors.toSet());
 
-        Set<Player> players = event.getEntities().stream()
-                .filter(entity -> entity instanceof Player)
-                .map(entity -> (Player) entity)
-                .collect(Collectors.toSet());
-
         // For all npcs, set their damage expression and max health
         npcs.forEach(living -> {
             getMobConfigFromLiving(living).ifPresent(mobConfig -> {
                 assignEntityDamageExpression(living, new HashMap<>(mobConfig.DEFAULT_ATTRIBUTES), mobConfig.DAMAGE_EXPRESSION);
                 characterFacade.assignEntityHealthLimit(living, mobConfig.HEALTH_LIMIT_EXPRESSION);
             });
-        });
-
-        // For all players, redirect to RPGCharacterFacade
-        players.forEach(player -> {
-            characterFacade.onPlayerSpawn(player);
         });
     }
 

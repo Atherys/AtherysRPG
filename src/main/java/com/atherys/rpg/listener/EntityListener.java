@@ -14,6 +14,7 @@ import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
@@ -31,6 +32,7 @@ public class EntityListener {
     @Listener
     public void onJoin(ClientConnectionEvent.Join event) {
         characterFacade.checkTreeOnLogin(event.getTargetEntity());
+        characterFacade.setPlayerHealth(event.getTargetEntity());
     }
 
     @Listener
@@ -46,5 +48,10 @@ public class EntityListener {
     @Listener(order = Order.LAST)
     public void onEntitySpawn(SpawnEntityEvent event) {
         mobFacade.onMobSpawn(event);
+    }
+
+    @Listener(order = Order.LAST)
+    public void onPlayerRespawn(RespawnPlayerEvent event) {
+        characterFacade.setPlayerHealth(event.getTargetEntity());
     }
 }

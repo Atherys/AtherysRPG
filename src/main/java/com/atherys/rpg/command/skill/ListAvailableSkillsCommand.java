@@ -19,7 +19,7 @@ public class ListAvailableSkillsCommand implements PlayerCommand {
     @Nonnull
     @Override
     public CommandResult execute(@Nonnull Player source, @Nonnull CommandContext args) throws CommandException {
-        AtherysRPG.getInstance().getRPGCharacterFacade().getAvailableSkills(source);
+        AtherysRPG.getInstance().getRPGCharacterFacade().displayAvailableSkills(source);
         return CommandResult.success();
     }
 }
