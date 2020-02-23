@@ -1,5 +1,6 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.event.GainSkillEvent;
 import com.atherys.rpg.api.event.LoseSkillEvent;
 import com.atherys.rpg.api.skill.RPGSkill;
@@ -345,7 +346,7 @@ public class RPGCharacterFacade {
         event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
     }
 
-    public void onPlayerSpawn(Player player) {
+    public void setPlayerHealth(Player player) {
         assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION);
     }
 
