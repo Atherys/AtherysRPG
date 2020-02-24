@@ -1,5 +1,7 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.core.AtherysCore;
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.*;
@@ -19,21 +21,27 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.service.economy.Currency;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializer;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
+import static org.spongepowered.api.text.format.TextColors.GOLD;
 
 @Singleton
 public class MobFacade {
@@ -51,6 +59,9 @@ public class MobFacade {
 
     @Inject
     private RPGCharacterFacade characterFacade;
+
+    @Inject
+    private RPGMessagingFacade msg;
 
     private DecimalFormat decimalFormat = new DecimalFormat();
 
@@ -97,7 +108,22 @@ public class MobFacade {
     }
 
     private void awardPlayerCurrencyLoot(Player player, CurrencyLootConfig config) {
-        // TODO
+        AtherysCore.getEconomyService().flatMap(economyService -> economyService.getOrCreateAccount(player.getUniqueId())).ifPresent(playerAccount -> {
+            Optional<Currency> currencyAward = Sponge.getRegistry().getType(Currency.class, config.CURRENCY);
+            if (!currencyAward.isPresent()) {
+                throw new RuntimeException("Could not find currency corresponding to id \"" + config.CURRENCY + "\"");
+            } else {
+                double amount = Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100) / 100;
+
+                playerAccount.deposit(
+                        currencyAward.get(),
+                        BigDecimal.valueOf(amount),
+                        Cause.builder().append(AtherysRPG.getInstance()).build(Sponge.getCauseStackManager().getCurrentContext())
+                );
+
+                msg.info(player, "Gained ", GOLD, amount, DARK_GREEN, " ", currencyAward.get().getPluralDisplayName());
+            }
+        });
     }
 
     private void dropItemLoot(Location<World> dropLocation, ItemLootConfig config) {
