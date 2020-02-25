@@ -1,6 +1,5 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.MobConfig;
 import com.atherys.rpg.config.MobsConfig;
@@ -10,14 +9,9 @@ import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
-import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
-import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.text.Text;
 
 import java.util.HashMap;

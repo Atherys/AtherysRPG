@@ -1,5 +1,6 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.config.AtherysRPGConfig;
@@ -59,10 +60,10 @@ public class RPGSkillFacade {
     }
 
     public Text renderSkill(RPGSkill skill, Player source) {
-        Text.Builder skillText = Text.builder().append(Text.of(GOLD, skill.getName()));
-        skillText.append(Text.of(" - ", skill.getDescription(source)));
-        skillText.append(Text.of(Text.NEW_LINE, "Cooldown: ", TextUtils.formatDuration(skill.getCooldown(source))));
-        skillText.append(Text.of(Text.NEW_LINE, "Cost: ", (int) skill.getResourceCost(source)));
+        Text.Builder skillText = Text.builder().append(Text.of(GOLD, skill.getName(), Text.NEW_LINE));
+        skillText.append(Text.of(skill.getDescription(source), Text.NEW_LINE));
+        skillText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
+        skillText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
 
         return skillText.build();
     }
@@ -92,9 +93,11 @@ public class RPGSkillFacade {
             // put the rendered argument into the map
             renderedArguments.put(argument.getFirst(), value);
         }
+        Text description = descriptionTemplate.apply(renderedArguments).build();
+        AtherysRPG.getInstance().getLogger().info(descriptionTemplate.toString());
 
         // Apply all rendered arguments to the template and convert to text
-        return descriptionTemplate.apply(renderedArguments).toText();
+        return description;
     }
 
     public long getSkillCooldown(Living living, String cooldownExpression) {

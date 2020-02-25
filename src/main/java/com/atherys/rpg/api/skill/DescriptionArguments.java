@@ -1,8 +1,8 @@
 package com.atherys.rpg.api.skill;
 
-import com.atherys.rpg.skill.description.TimeDescriptionArgument;
 import com.atherys.rpg.skill.description.ExpressionDescriptionArgument;
 import com.atherys.rpg.skill.description.PropertyDescriptionArgument;
+import com.atherys.rpg.skill.description.TimeDescriptionArgument;
 
 public final class DescriptionArguments {
 
