@@ -122,7 +122,7 @@ public class AttributeFacade {
         AttributeData data = item.get(AttributeData.class).orElseGet(AttributeData::new);
         data.setAttribute(attributeType, amount);
         if (!item.offer(data).isSuccessful()) {
-            throw new RPGCommandException("Failed to set data on item.");
+            throw new RPGCommandException("Failed to set attribute " + attributeType.getId() + " on item.");
         }
     }
 
