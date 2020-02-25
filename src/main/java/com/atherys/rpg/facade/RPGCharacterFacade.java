@@ -1,6 +1,5 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.event.GainSkillEvent;
 import com.atherys.rpg.api.event.LoseSkillEvent;
 import com.atherys.rpg.api.skill.RPGSkill;

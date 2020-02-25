@@ -32,7 +32,11 @@ public final class TextUtils {
             format = "H'h' m'm' s.S's'";
         }
 
-        return Text.of(DurationFormatUtils.formatDuration(duration, format, false));
+        String formatted = DurationFormatUtils.formatDuration(duration, format, false);
+        // Remove the third digit after the decimal
+        formatted = new StringBuilder(formatted).deleteCharAt(formatted.length() - 2).toString();
+
+        return Text.of(formatted);
     }
 
 }
