@@ -122,7 +122,7 @@ public class AttributeFacade {
         AttributeData data = item.get(AttributeData.class).orElseGet(AttributeData::new);
         data.setAttribute(attributeType, amount);
         if (!item.offer(data).isSuccessful()) {
-            throw new RPGCommandException("Failed to set data on item.");
+            throw new RPGCommandException("Failed to set attribute " + attributeType.getId() + " on item.");
         }
     }
 
@@ -148,6 +148,7 @@ public class AttributeFacade {
         Map<AttributeType, Double> itemAttributes = attributeService.getEquipmentAttributes(player);
 
         baseAttributes.forEach((type, value) -> {
+            if (config.HIDDEN_ATTRIBUTES.contains(type)) return;
 
             double base = value;
             double buff = buffAttributes.getOrDefault(type, 0.0d);
@@ -170,8 +171,16 @@ public class AttributeFacade {
                     .append(Text.of(TextColors.BLUE, item, TextColors.RESET))
                     .build();
 
+            Text upgradeButton;
+
+            if (type.isUpgradable()) {
+                upgradeButton = getAddAttributeButton(pc, type, value);
+            } else {
+                upgradeButton = Text.of("[   ]");
+            }
+
             Text attribute = Text.builder()
-                    .append(getAddAttributeButton(pc, type, value))
+                    .append(upgradeButton)
                     .append(Text.of(" "))
                     .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, total, " ( ", baseAttribute , " + ", itemAttribute, " + ", buffAttribute, " )"))
                     .append(Text.NEW_LINE)
@@ -213,17 +222,6 @@ public class AttributeFacade {
 
             stack.offer(Keys.ITEM_LORE, lore);
         });
-    }
-
-    private Text getAttributeValue(PlayerCharacter pc, Player player, AttributeType type, double base) {
-        double finalAttributeValue = getFinalAttributeValue(pc, player, type);
-
-        return Text.builder()
-                .append(Text.of(finalAttributeValue))
-                .onHover(TextActions.showText(Text.of(
-                        "Base of ", base, " + ", (finalAttributeValue - base), " from equipment and buffs"
-                )))
-                .build();
     }
 
     private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double currentValue) {

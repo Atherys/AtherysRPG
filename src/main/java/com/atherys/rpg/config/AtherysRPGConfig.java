@@ -14,7 +14,9 @@ import org.spongepowered.api.item.ItemTypes;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public class AtherysRPGConfig extends PluginConfig {
@@ -66,6 +68,15 @@ public class AtherysRPGConfig extends PluginConfig {
 
     @Setting("default-experience-spending-limit")
     public double DEFAULT_EXPERIENCE_SPENDING_LIMIT = 100_000.0;
+
+    @Setting("display-root-skill")
+    public boolean DISPLAY_ROOT_SKILL = true;
+
+    @Setting("hidden-attributes")
+    public Set<AttributeType> HIDDEN_ATTRIBUTES = new HashSet<>();
+
+    @Setting("skill-message-distance")
+    public double SKILL_MESSAGE_DISTANCE = 25;
 
     {
         // Wood

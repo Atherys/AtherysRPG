@@ -1,5 +1,7 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.api.event.GainSkillEvent;
+import com.atherys.rpg.api.event.LoseSkillEvent;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -13,18 +15,14 @@ import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.skills.api.event.ResourceRegenEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.spongepowered.api.data.DataTransactionResult;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.entity.damage.DamageFunction;
-import org.spongepowered.api.event.cause.entity.damage.DamageModifier;
-import org.spongepowered.api.event.cause.entity.damage.DamageModifierTypes;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
-import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -32,10 +30,8 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
-import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.util.Tristate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
-import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
-import static org.spongepowered.api.text.format.TextColors.GOLD;
+import static org.spongepowered.api.text.format.TextColors.*;
 
 @Singleton
 public class RPGCharacterFacade {
@@ -101,32 +96,41 @@ public class RPGCharacterFacade {
     public void displaySkills(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        Text.Builder skills = Text.builder().append(Text.of("Skills", NEW_LINE));
-        pc.getSkills().forEach(s -> {
+        List<String> skills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
+
+        Text.Builder skillsText = Text.builder().append(Text.of(
+                DARK_GRAY, "[]=[ ", GOLD, "Your Skills", DARK_GRAY, " ]=[]", NEW_LINE
+        ));
+        skills.forEach(s -> {
             RPGSkill skill = skillFacade.getSkillById(s).get();
-            skills.append(skillFacade.renderSkill(skill, player), NEW_LINE, NEW_LINE);
+            skillsText.append(
+                    Text.builder()
+                    .append(Text.of(DARK_GREEN, "- ", GOLD, skill.getName(), NEW_LINE))
+                    .onHover(TextActions.showText(skillFacade.renderSkill(skill, player)))
+                    .build()
+            );
         });
 
-        player.sendMessage(skills.build());
+        player.sendMessage(skillsText.build());
     }
 
-    public void getAvailableSkills(Player player) throws RPGCommandException {
+    public void displayAvailableSkills(Player player) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        Text.Builder skills = Text.builder().append(Text.of("Available Skills", NEW_LINE));
+        Text.Builder skills = Text.builder().append(Text.of(
+                DARK_GRAY, "[]=[ ", GOLD, "Available Skills", DARK_GRAY, " ]=[]", NEW_LINE
+        ));
         skillGraphFacade.getLinkedSkills(pc.getSkills()).forEach(s -> {
 
             Text skillText = Text.builder()
-                    .append(skillFacade.renderSkill(s, player))
+                    .append(Text.of(DARK_GREEN, "- ", GOLD, s.getName()))
                     .onClick(TextActions.executeCallback(source -> {
                         chooseSkillWithoutThrowing(player, s.getId());
                     }))
-                    .onHover(TextActions.showText(Text.of(
-                            "Click to pick up skill."
-                    )))
+                    .onHover(TextActions.showText(skillFacade.renderSkill(s, player)))
                     .build();
 
-            skills.append(skillText, NEW_LINE, NEW_LINE);
+            skills.append(skillText, NEW_LINE);
         });
 
         player.sendMessage(skills.build());
@@ -137,7 +141,7 @@ public class RPGCharacterFacade {
 
         if (!skillGraphFacade.isPathValid(pc.getSkills())) {
             characterService.resetCharacter(pc);
-            characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot().getId());
+            characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot());
             rpgMsg.info(player, "The server's skill tree has changed. Your attributes and skill tree have been reset.");
         }
     }
@@ -163,9 +167,11 @@ public class RPGCharacterFacade {
         });
 
         if (pc.getExperience() >= cost)  {
-            characterService.addSkill(pc, skillId);
+            characterService.addSkill(pc, skill);
             characterService.removeExperience(pc, cost);
-            player.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillId, Tristate.TRUE);
+
+            Sponge.getEventManager().post(new GainSkillEvent(player, skill));
+
             rpgMsg.info(player, "You have unlocked the skill ", GOLD, skill.getName(), ".");
         } else {
             throw new RPGCommandException("You do not have enough experience to unlock that skill.");
@@ -184,10 +190,13 @@ public class RPGCharacterFacade {
         skillsCopy.remove(skillId);
 
         if (skillGraphFacade.isPathValid(skillsCopy)) {
-            characterService.removeSkill(pc, skillId);
+            characterService.removeSkill(pc, skill);
             skillGraphFacade.getCostForSkill(skill, skillsCopy).ifPresent(cost -> {
                 characterService.addExperience(pc, cost);
             });
+
+            Sponge.getEventManager().post(new LoseSkillEvent(player, skill));
+
             rpgMsg.info(player, "You have removed the skill ", GOLD, skill.getName(), DARK_GREEN, ".");
         } else {
             throw new RPGCommandException("You cannot remove that skill.");
@@ -336,7 +345,7 @@ public class RPGCharacterFacade {
         event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
     }
 
-    public void onPlayerSpawn(Player player) {
+    public void setPlayerHealth(Player player) {
         assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION);
     }
 

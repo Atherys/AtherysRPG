@@ -1,7 +1,9 @@
 package com.atherys.rpg.listener;
 
 import com.atherys.rpg.facade.RPGCharacterFacade;
+import com.atherys.rpg.facade.RPGSkillFacade;
 import com.atherys.skills.api.event.ResourceRegenEvent;
+import com.atherys.skills.api.event.SkillCastEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.entity.living.player.Player;
@@ -14,9 +16,16 @@ public class SkillsListener {
     @Inject
     private RPGCharacterFacade rpgCharacterFacade;
 
+    @Inject
+    private RPGSkillFacade skillFacade;
+
     @Listener
     public void onResourceRegen(ResourceRegenEvent event, @Root Player player) {
         rpgCharacterFacade.onResourceRegen(event, player);
     }
 
+    @Listener
+    public void onSkillCast(SkillCastEvent.Post event) {
+        skillFacade.sendMessageOnSkillCast(event);
+    }
 }

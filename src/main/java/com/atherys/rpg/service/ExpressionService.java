@@ -38,18 +38,6 @@ public class ExpressionService {
         ));
     }
 
-    public double getDifference(String expression, Map<String, String> from, Map<String, String> to) {
-        Expression exp = getExpression(expression);
-
-        from.forEach(exp::setVariable);
-        double fromResult = exp.eval().doubleValue();
-
-        to.forEach(exp::setVariable);
-        double toResult = exp.eval().doubleValue();
-
-        return toResult - fromResult;
-    }
-
     public BigDecimal evalExpression(Living source, String stringExpression) {
         return evalExpression(source, getExpression(stringExpression));
     }
