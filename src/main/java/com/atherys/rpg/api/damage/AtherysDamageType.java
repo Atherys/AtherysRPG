@@ -6,6 +6,7 @@ import org.spongepowered.api.util.annotation.CatalogedBy;
 /**
  * A CatalogType extending {@link DamageType} for adding custom A'therys-related damage types.
  */
+@Deprecated
 @CatalogedBy(AtherysDamageTypes.class)
 public class AtherysDamageType implements DamageType {
 
