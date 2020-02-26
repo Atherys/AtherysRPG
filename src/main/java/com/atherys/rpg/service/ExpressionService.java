@@ -63,13 +63,13 @@ public class ExpressionService {
     public BigDecimal evalExpression(Living source, Living target, Expression expression) {
         populateAttributes(
                 expression,
-                attributeService.getAllAttributes(source), // TODO: Should not be calling Facade from Service!!
+                attributeService.getAllAttributes(source),
                 "source"
         );
 
         populateAttributes(
                 expression,
-                attributeService.getAllAttributes(target), // TODO: Should not be calling Facade from Service!!
+                attributeService.getAllAttributes(target),
                 "target"
         );
 
