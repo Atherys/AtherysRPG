@@ -1,6 +1,5 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.AtherysRPGConfig;
@@ -87,10 +86,10 @@ public class DamageService {
     }
 
     private String getMeleeDamageType(ItemType itemType) {
-        return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED.getId());
+        return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED);
     }
 
     private String getRangedDamageType(EntityType projectileType) {
-        return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, AtherysDamageTypes.PIERCE.getId());
+        return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, AtherysDamageTypes.PIERCE);
     }
 }

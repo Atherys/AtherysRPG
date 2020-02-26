@@ -3,8 +3,6 @@ package com.atherys.rpg;
 import com.atherys.core.AtherysCore;
 import com.atherys.core.command.CommandService;
 import com.atherys.core.event.AtherysHibernateConfigurationEvent;
-import com.atherys.rpg.api.damage.AtherysDamageType;
-import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeTypes;
@@ -139,7 +137,6 @@ public class AtherysRPG {
     public void onPreInit(GamePreInitializationEvent event) {
         // Register custom CatalogType registry modules
         Sponge.getRegistry().registerModule(AttributeType.class, new AttributeTypeRegistry());
-        Sponge.getRegistry().registerModule(AtherysDamageType.class, new AtherysDamageTypeRegistry());
     }
 
     @Listener

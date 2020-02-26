@@ -1,32 +1,27 @@
 package com.atherys.rpg.api.damage;
 
-import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
-
-/**
- * The Cataloguing class for {@link AtherysDamageType}
- */
 public final class AtherysDamageTypes {
 
     // Melee
-    public static final AtherysDamageType BLUNT = new AtherysDamageType("atherys:blunt", "Blunt", DamageTypes.ATTACK);
-    public static final AtherysDamageType STAB = new AtherysDamageType("atherys:stab", "Stabbing", DamageTypes.ATTACK);
-    public static final AtherysDamageType SLASH = new AtherysDamageType("atherys:slash", "Slashing", DamageTypes.ATTACK);
-    public static final AtherysDamageType UNARMED = new AtherysDamageType("atherys:unarmed", "Unarmed", DamageTypes.ATTACK);
+    public static final String BLUNT = "atherys:blunt";
+    public static final String STAB = "atherys:stab";
+    public static final String SLASH = "atherys:slash";
+    public static final String UNARMED = "atherys:unarmed";
 
     // Ranged
-    public static final AtherysDamageType PIERCE = new AtherysDamageType("atherys:pierce", "Piercing", DamageTypes.PROJECTILE);
-    public static final AtherysDamageType BALLISTIC = new AtherysDamageType("atherys:ballistic", "Ballistic", DamageTypes.PROJECTILE);
+    public static final String PIERCE = "atherys:pierce";
+    public static final String BALLISTIC = "atherys:ballistic";
 
     // Magic
-    public static final AtherysDamageType FIRE = new AtherysDamageType("atherys:fire", "Fire", DamageTypes.MAGIC);
-    public static final AtherysDamageType ICE = new AtherysDamageType("atherys:ice", "Ice", DamageTypes.MAGIC);
-    public static final AtherysDamageType ARCANE = new AtherysDamageType("atherys:arcane", "Arcane", DamageTypes.MAGIC);
-    public static final AtherysDamageType SHOCK = new AtherysDamageType("atherys:shock", "Shock", DamageTypes.MAGIC);
-    public static final AtherysDamageType NATURE = new AtherysDamageType("atherys:nature", "Nature", DamageTypes.MAGIC);
-    public static final AtherysDamageType MENTAL = new AtherysDamageType("atherys:mental", "Mental", DamageTypes.MAGIC);
-    public static final AtherysDamageType RADIANT = new AtherysDamageType("atherys:radiant", "Radiant", DamageTypes.MAGIC);
-    public static final AtherysDamageType NECROTIC = new AtherysDamageType("atherys:necrotic", "Necrotic", DamageTypes.MAGIC);
-    public static final AtherysDamageType BLOOD = new AtherysDamageType("atherys:blood", "Blood", DamageTypes.MAGIC);
+    public static final String FIRE = "atherys:fire";
+    public static final String ICE = "atherys:ice";
+    public static final String ARCANE = "atherys:arcane";
+    public static final String SHOCK = "atherys:shock";
+    public static final String NATURE = "atherys:nature";
+    public static final String MENTAL = "atherys:mental";
+    public static final String RADIANT = "atherys:radiant";
+    public static final String NECROTIC = "atherys:necrotic";
+    public static final String BLOOD = "atherys:blood";
 
     private AtherysDamageTypes() {
     }
