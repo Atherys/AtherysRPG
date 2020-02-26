@@ -35,7 +35,7 @@ public class DamageService {
             Map<AttributeType, Double> targetAttributes,
             ItemType weaponType
     ) {
-        AtherysDamageType damageType = getMeleeDamageType(weaponType);
+        String damageType = getMeleeDamageType(weaponType);
 
         // Calculate and return the damage
         return calcDamage(attackerAttributes, targetAttributes, damageType);
@@ -46,13 +46,13 @@ public class DamageService {
             Map<AttributeType, Double> targetAttributes,
             EntityType projectileType
     ) {
-        AtherysDamageType damageType = getRangedDamageType(projectileType);
+        String damageType = getRangedDamageType(projectileType);
 
         // Calculate and return the damage
         return calcDamage(attackerAttributes, targetAttributes, damageType);
     }
 
-    public double calcDamage(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, AtherysDamageType type) {
+    public double calcDamage(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, String type) {
         Expression producedDamageExpression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
 
         expressionService.populateAttributes(producedDamageExpression, attackerAttributes, "source");
@@ -86,11 +86,11 @@ public class DamageService {
         return customExpression.eval().doubleValue();
     }
 
-    private AtherysDamageType getMeleeDamageType(ItemType itemType) {
-        return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED);
+    private String getMeleeDamageType(ItemType itemType) {
+        return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED.getId());
     }
 
-    private AtherysDamageType getRangedDamageType(EntityType projectileType) {
-        return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, AtherysDamageTypes.PIERCE);
+    private String getRangedDamageType(EntityType projectileType) {
+        return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, AtherysDamageTypes.PIERCE.getId());
     }
 }
