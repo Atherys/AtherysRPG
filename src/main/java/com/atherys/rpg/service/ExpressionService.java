@@ -3,6 +3,7 @@ package com.atherys.rpg.service;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.expression.ClampFunction;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.entity.living.Living;
@@ -13,6 +14,9 @@ import java.util.Map;
 
 @Singleton
 public class ExpressionService {
+
+    @Inject
+    private AttributeService attributeService;
 
     private Map<String, Expression> cachedExpressions = new HashMap<>();
 
@@ -49,7 +53,7 @@ public class ExpressionService {
     public BigDecimal evalExpression(Living source, Expression expression) {
         populateAttributes(
                 expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source), // TODO: Should not be calling Facade from Service!!
+                attributeService.getAllAttributes(source),
                 "source"
         );
 
@@ -59,13 +63,13 @@ public class ExpressionService {
     public BigDecimal evalExpression(Living source, Living target, Expression expression) {
         populateAttributes(
                 expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(source), // TODO: Should not be calling Facade from Service!!
+                attributeService.getAllAttributes(source), // TODO: Should not be calling Facade from Service!!
                 "source"
         );
 
         populateAttributes(
                 expression,
-                AtherysRPG.getInstance().getAttributeFacade().getAllAttributes(target), // TODO: Should not be calling Facade from Service!!
+                attributeService.getAllAttributes(target), // TODO: Should not be calling Facade from Service!!
                 "target"
         );
 
