@@ -99,16 +99,12 @@ public class RPGCharacterFacade {
         List<String> skills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
 
         Text.Builder skillsText = Text.builder().append(Text.of(
-                DARK_GRAY, "[]=[ ", GOLD, "Your Skills", DARK_GRAY, " ]=[]", NEW_LINE
+                DARK_GRAY, "[]=[ ", GOLD, "Your Skills", DARK_GRAY, " ]=[]"
         ));
         skills.forEach(s -> {
             RPGSkill skill = skillFacade.getSkillById(s).get();
-            skillsText.append(
-                    Text.builder()
-                    .append(Text.of(DARK_GREEN, "- ", GOLD, skill.getName(), NEW_LINE))
-                    .onHover(TextActions.showText(skillFacade.renderSkill(skill, player)))
-                    .build()
-            );
+            Text skillText = Text.of(DARK_GREEN, "- ", skillFacade.renderSkill(skill, player));
+            skillsText.append(NEW_LINE, skillText);
         });
 
         player.sendMessage(skillsText.build());
@@ -118,19 +114,18 @@ public class RPGCharacterFacade {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         Text.Builder skills = Text.builder().append(Text.of(
-                DARK_GRAY, "[]=[ ", GOLD, "Available Skills", DARK_GRAY, " ]=[]", NEW_LINE
+                DARK_GRAY, "[]=[ ", GOLD, "Available Skills", DARK_GRAY, " ]=[]"
         ));
         skillGraphFacade.getLinkedSkills(pc.getSkills()).forEach(s -> {
 
             Text skillText = Text.builder()
-                    .append(Text.of(DARK_GREEN, "- ", GOLD, s.getName()))
+                    .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(s, player)))
                     .onClick(TextActions.executeCallback(source -> {
                         chooseSkillWithoutThrowing(player, s.getId());
                     }))
-                    .onHover(TextActions.showText(skillFacade.renderSkill(s, player)))
                     .build();
 
-            skills.append(skillText, NEW_LINE);
+            skills.append(Text.NEW_LINE, skillText);
         });
 
         player.sendMessage(skills.build());
