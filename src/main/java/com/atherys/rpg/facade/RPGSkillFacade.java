@@ -8,6 +8,7 @@ import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.util.TextUtils;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.SkillCastEvent;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
@@ -17,12 +18,15 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.TextTemplate;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.util.Tuple;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.spongepowered.api.text.Text.NEW_LINE;
 import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
 import static org.spongepowered.api.text.format.TextColors.GOLD;
 
@@ -34,6 +38,9 @@ public class RPGSkillFacade {
 
     @Inject
     private AttributeFacade attributeFacade;
+
+    @Inject
+    private SkillGraphFacade graphFacade;
 
     @Inject
     private AtherysRPGConfig config;
@@ -59,13 +66,45 @@ public class RPGSkillFacade {
         });
     }
 
-    public Text renderSkill(RPGSkill skill, Player source) {
-        Text.Builder skillText = Text.builder().append(Text.of(GOLD, skill.getName(), Text.NEW_LINE));
-        skillText.append(Text.of(skill.getDescription(source), Text.NEW_LINE));
-        skillText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
-        skillText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
+    public Text renderAvailableSkill(RPGSkill skill, Player source) {
+        Text.Builder skillText = renderSkill(skill, source).toBuilder();
+
+        Set<RPGSkill> linkedSkills = graphFacade.getLinkedSkills(Sets.newHashSet(skill));
+
+        if (linkedSkills.isEmpty()) {
+            return skillText.build();
+        }
+
+        Text.Builder hoverText = skillText.getHoverAction()
+                .map(hoverAction -> (Text) hoverAction.getResult()).get()
+                .toBuilder();
+
+        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Unlocks: "));
+
+        int i = 0;
+        for (RPGSkill linkedSkill : linkedSkills) {
+            i++;
+            hoverText.append(renderSkill(linkedSkill, source));
+            if (i < linkedSkills.size()) {
+                hoverText.append(Text.of(GOLD, ", "));
+            }
+        }
+        skillText.onHover(TextActions.showText(hoverText.build()));
 
         return skillText.build();
+    }
+
+    public Text renderSkill(RPGSkill skill, Player source) {
+        Text.Builder hoverText = Text.builder().append(Text.of(GOLD, skill.getName(), Text.NEW_LINE));
+
+        hoverText.append(Text.of(skill.getDescription(source), Text.NEW_LINE));
+        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
+        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
+
+        return Text.builder()
+                .append(Text.of(GOLD, skill.getName()))
+                .onHover(TextActions.showText(hoverText.build()))
+                .build();
     }
 
     @SafeVarargs
@@ -93,11 +132,9 @@ public class RPGSkillFacade {
             // put the rendered argument into the map
             renderedArguments.put(argument.getFirst(), value);
         }
-        Text description = descriptionTemplate.apply(renderedArguments).build();
-        AtherysRPG.getInstance().getLogger().info(descriptionTemplate.toString());
 
         // Apply all rendered arguments to the template and convert to text
-        return description;
+        return descriptionTemplate.apply(renderedArguments).build();
     }
 
     public long getSkillCooldown(Living living, String cooldownExpression) {

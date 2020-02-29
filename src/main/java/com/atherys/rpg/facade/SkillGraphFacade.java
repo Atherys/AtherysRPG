@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class SkillGraphFacade {
@@ -127,11 +128,19 @@ public class SkillGraphFacade {
     }
 
     public Set<RPGSkill> getLinkedSkills(List<String> skillIds) {
+        Set<RPGSkill> skills = skillIds.stream()
+                .map(skillId -> skillFacade.getSkillById(skillId).get())
+                .collect(Collectors.toSet());
+
+        return getLinkedSkills(skills);
+    }
+
+    public Set<RPGSkill> getLinkedSkills(Set<RPGSkill> skills) {
         Set<RPGSkill> linked = new HashSet<>();
 
-        skillIds.forEach(s -> {
-            getSkillGraph().getLinksWhereParent(skillFacade.getSkillById(s).get()).forEach(link -> {
-                if (!skillIds.contains(link.getChild().getData().getId())) {
+        skills.forEach(s -> {
+            getSkillGraph().getLinksWhereParent(s).forEach(link -> {
+                if (!skills.contains(link.getChild().getData())) {
                     linked.add(link.getChild().getData());
                 }
             });
@@ -139,7 +148,6 @@ public class SkillGraphFacade {
 
         return linked;
     }
-
 
     public Optional<Graph.Link<RPGSkill>> getLinkBetween(RPGSkill skill, List<String> skillIds) {
         for (String skillId : skillIds) {

@@ -11,6 +11,7 @@ import java.util.Optional;
 /**
  * The {@link CatalogRegistryModule} for {@link AtherysDamageType}
  */
+@Deprecated
 public final class AtherysDamageTypeRegistry implements CatalogRegistryModule<AtherysDamageType> {
 
     protected Map<String, AtherysDamageType> damageTypes = new HashMap<>();
