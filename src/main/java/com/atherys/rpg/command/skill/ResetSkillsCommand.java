@@ -2,7 +2,6 @@ package com.atherys.rpg.command.skill;
 
 import com.atherys.core.command.PlayerCommand;
 import com.atherys.core.command.annotation.Aliases;
-import com.atherys.core.command.annotation.Children;
 import com.atherys.core.command.annotation.Description;
 import com.atherys.core.command.annotation.Permission;
 import com.atherys.rpg.AtherysRPG;
@@ -13,20 +12,14 @@ import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
 
-@Aliases("skills")
-@Description("Base skills command.")
-@Children({
-        ListAvailableSkillsCommand.class,
-        PickSkillCommand.class,
-        RemoveSkillCommand.class,
-        ResetSkillsCommand.class
-})
-@Permission("atherysrpg.skills")
-public class SkillsCommand implements PlayerCommand {
+@Aliases("reset")
+@Permission("atherysrpg.skills.reset")
+@Description("Resets your skills and returns the spent experience.")
+public class ResetSkillsCommand implements PlayerCommand {
     @Nonnull
     @Override
     public CommandResult execute(@Nonnull Player source, @Nonnull CommandContext args) throws CommandException {
-        AtherysRPG.getInstance().getRPGCharacterFacade().displaySkills(source);
+        AtherysRPG.getInstance().getRPGCharacterFacade().resetSkills(source);
         return CommandResult.success();
     }
 }

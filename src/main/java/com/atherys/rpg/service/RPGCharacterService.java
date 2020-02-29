@@ -143,6 +143,18 @@ public class RPGCharacterService {
         repository.saveOne(pc);
     }
 
+    public void addSpentSkillExperience(PlayerCharacter pc, double amount) {
+        pc.setSpentExperience(pc.getSpentExperience() + amount);
+        pc.setSpentSkillExperience(pc.getSpentSkillExperience() + amount);
+        repository.saveOne(pc);
+    }
+
+    public void addSpentAttributeExperience(PlayerCharacter pc, double amount) {
+        pc.setSpentExperience(pc.getSpentExperience() + amount);
+        pc.setSpentAttributeExperience(pc.getSpentAttributeExperience() + amount);
+        repository.saveOne(pc);
+    }
+
     public double calcResourceRegen(Map<AttributeType, Double> attributes) {
         Expression expression = expressionService.getExpression(config.RESOURCE_REGEN_CALCULATION);
 
@@ -151,22 +163,37 @@ public class RPGCharacterService {
         return expression.eval().doubleValue();
     }
 
-    /**
-     * Resets the characters attributes and skills, and gives back used experience.
-     */
-    public void resetCharacter(PlayerCharacter pc) {
-        pc.setBaseAttributes(attributeService.getDefaultAttributes());
+    public void resetCharacterSkills(PlayerCharacter pc) {
+        double spentOnSkills = pc.getSpentSkillExperience();
 
-        // Remove old permissions
         pc.getSkills().forEach(s -> {
             setSkillPermission(pc, s, false);
         });
         pc.setSkills(new ArrayList<>());
 
-        double spent = pc.getSpentExperience();
-        pc.setSpentExperience(0);
-        pc.setExperience(pc.getExperience() + spent);
+        pc.setSpentSkillExperience(0);
+        pc.setSpentExperience(pc.getSpentExperience() - spentOnSkills);
+        pc.setExperience(pc.getExperience() + spentOnSkills);
 
         repository.saveOne(pc);
+    }
+
+    public void resetCharacterAttributes(PlayerCharacter pc) {
+        double spentOnAttributes = pc.getSpentAttributeExperience();
+
+        pc.setBaseAttributes(attributeService.getDefaultAttributes());
+        pc.setSpentAttributeExperience(0);
+        pc.setSpentExperience(pc.getSpentExperience() - spentOnAttributes);
+        pc.setExperience(pc.getExperience() + spentOnAttributes);
+
+        repository.saveOne(pc);
+    }
+
+    /**
+     * Resets the characters attributes and skills, and gives back used experience.
+     */
+    public void resetCharacter(PlayerCharacter pc) {
+        resetCharacterSkills(pc);
+        resetCharacterAttributes(pc);
     }
 }

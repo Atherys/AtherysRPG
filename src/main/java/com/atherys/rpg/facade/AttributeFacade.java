@@ -96,7 +96,7 @@ public class AttributeFacade {
 
             characterService.addAttribute(pc, type, amount);
             characterService.removeExperience(pc, expCost);
-            characterService.addSpentExperience(pc, expCost);
+            characterService.addSpentAttributeExperience(pc, expCost);
 
             rpgMsg.info(player,
                     "You have added ", 1.0, " ",
@@ -105,6 +105,11 @@ public class AttributeFacade {
                     " experience."
             );
         }
+    }
+
+    public void resetPlayerAttributes(Player source) {
+        characterService.resetCharacterAttributes(characterService.getOrCreateCharacter(source));
+        rpgMsg.info(source, "Your attributes have been reset.");
     }
 
     public void enchantPlayerHeldItem(Player source, AttributeType attributeType, Double amount) throws RPGCommandException {

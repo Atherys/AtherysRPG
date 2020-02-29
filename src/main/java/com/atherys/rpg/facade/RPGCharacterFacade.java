@@ -12,7 +12,8 @@ import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.HealingService;
 import com.atherys.rpg.service.RPGCharacterService;
-import com.atherys.skills.api.event.ResourceRegenEvent;
+import com.atherys.skills.api.event.ResourceEvent;
+import com.atherys.skills.api.event.ResourceEvent.Regen;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
@@ -169,6 +170,7 @@ public class RPGCharacterFacade {
         if (pc.getExperience() >= cost)  {
             characterService.addSkill(pc, skill);
             characterService.removeExperience(pc, cost);
+            characterService.addSpentSkillExperience(pc, cost);
 
             Sponge.getEventManager().post(new GainSkillEvent(player, skill));
 
@@ -203,6 +205,11 @@ public class RPGCharacterFacade {
         }
     }
 
+    public void resetSkills(Player player) {
+        characterService.resetCharacterSkills(characterService.getOrCreateCharacter(player));
+        rpgMsg.info(player, "Your skills have been reset.");
+    }
+
     private RPGSkill getSkillById(String skillId) throws RPGCommandException {
         return skillFacade.getSkillById(skillId).orElseThrow(() -> {
             return new RPGCommandException("No skill with ID ", skillId, " found.");
@@ -231,7 +238,7 @@ public class RPGCharacterFacade {
         rpgMsg.info(player, "Skills and attributes reset. Your experience has been returned to you.");
     }
 
-    public void onResourceRegen(ResourceRegenEvent event, Player player) {
+    public void onResourceRegen(ResourceEvent.Regen event, Player player) {
         double amount = characterService.calcResourceRegen(attributeFacade.getAllAttributes(player));
         event.setRegenAmount(amount);
     }
