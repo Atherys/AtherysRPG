@@ -72,26 +72,30 @@ public class AttributeFacade {
         return true;
     }
 
-    public void purchaseAttribute(Player player, AttributeType type, double amount) {
+    public void purchaseAttribute(Player player, AttributeType type, double amount) throws RPGCommandException{
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
 
         // If the player has already reached their experience spending limit, cancel
         if (pc.getSpentExperience() + expCost > pc.getExperienceSpendingLimit()) {
-            rpgMsg.error(player, "You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
+            throw new RPGCommandException("You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
         } else {
 
             if (pc.getExperience() - expCost < config.EXPERIENCE_MIN) {
-                rpgMsg.error(player, "You do not have enough experience to increase this attribute.");
-                return;
+                throw new RPGCommandException("You do not have enough experience to increase this attribute.");
+            }
+
+            if (pc.getSpentAttributeExperience() + expCost > config.ATTRIBUTE_SPENDING_LIMIT) {
+                throw new RPGCommandException(
+                        "You cannot go over the attribute spending limit of ", config.ATTRIBUTE_SPENDING_LIMIT, "."
+                );
             }
 
             double afterPurchase = pc.getBaseAttributes().getOrDefault(type, config.ATTRIBUTE_MIN) + amount;
 
             if (afterPurchase > config.ATTRIBUTE_MAX) {
-                rpgMsg.error(player, "You cannot have more than a base of ", config.ATTRIBUTE_MAX, " in this attribute.");
-                return;
+                throw new RPGCommandException("You cannot have more than a base of ", config.ATTRIBUTE_MAX, " in this attribute.");
             }
 
             characterService.addAttribute(pc, type, amount);
@@ -233,7 +237,11 @@ public class AttributeFacade {
 
         Consumer<CommandSource> onClick = source -> {
             if (source instanceof Player) {
-                purchaseAttribute((Player) source, type, 1.0);
+                try {
+                    purchaseAttribute((Player) source, type, 1.0);
+                } catch (RPGCommandException e) {
+                    source.sendMessage(e.getText());
+                }
             }
         };
 

@@ -69,6 +69,12 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("default-experience-spending-limit")
     public double DEFAULT_EXPERIENCE_SPENDING_LIMIT = 100_000.0;
 
+    @Setting("attribute-spending-limit")
+    public double ATTRIBUTE_SPENDING_LIMIT = 100_000.0;
+
+    @Setting("skill-spending-limit")
+    public double SKILL_SPENDING_LIMIT = 100_000.0;
+
     @Setting("display-root-skill")
     public boolean DISPLAY_ROOT_SKILL = true;
 

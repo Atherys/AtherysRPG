@@ -163,6 +163,10 @@ public class RPGCharacterFacade {
         });
 
         if (pc.getExperience() >= cost)  {
+            if (pc.getSpentSkillExperience() + cost > config.SKILL_SPENDING_LIMIT) {
+                throw new RPGCommandException("You cannot go over the skill spending limit of ", config.SKILL_SPENDING_LIMIT, ".")
+            }
+
             characterService.addSkill(pc, skill);
             characterService.removeExperience(pc, cost);
             characterService.addSpentSkillExperience(pc, cost);
@@ -180,7 +184,7 @@ public class RPGCharacterFacade {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         if (!pc.getSkills().contains(skillId)) {
-            throw new RPGCommandException("You do not have the skill ", skillId);
+            throw new RPGCommandException("You do not have the skill ", skillId, ".");
         }
 
         List<String> skillsCopy = new ArrayList<>(pc.getSkills());
@@ -190,6 +194,7 @@ public class RPGCharacterFacade {
             characterService.removeSkill(pc, skill);
             skillGraphFacade.getCostForSkill(skill, skillsCopy).ifPresent(cost -> {
                 characterService.addExperience(pc, cost);
+                characterService.addSpentSkillExperience(pc, -cost);
             });
 
             Sponge.getEventManager().post(new LoseSkillEvent(player, skill));
