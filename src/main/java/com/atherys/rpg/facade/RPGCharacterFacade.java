@@ -12,8 +12,8 @@ import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.HealingService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.ResourceEvent;
-import com.atherys.skills.api.event.ResourceEvent.Regen;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
@@ -164,7 +164,7 @@ public class RPGCharacterFacade {
 
         if (pc.getExperience() >= cost)  {
             if (pc.getSpentSkillExperience() + cost > config.SKILL_SPENDING_LIMIT) {
-                throw new RPGCommandException("You cannot go over the skill spending limit of ", config.SKILL_SPENDING_LIMIT, ".")
+                throw new RPGCommandException("You cannot go over the skill spending limit of ", config.SKILL_SPENDING_LIMIT, ".");
             }
 
             characterService.addSkill(pc, skill);
@@ -240,6 +240,8 @@ public class RPGCharacterFacade {
 
     public void onResourceRegen(ResourceEvent.Regen event, Player player) {
         double amount = characterService.calcResourceRegen(attributeFacade.getAllAttributes(player));
+
+
         event.setRegenAmount(amount);
     }
 
@@ -354,6 +356,11 @@ public class RPGCharacterFacade {
 
     public void setPlayerHealth(Player player) {
         assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION);
+    }
+
+    public void setPlayerResourceLimit(Player player) {
+        double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
+        AtherysSkills.getInstance().getResourceService().getOrCreateUser(player).setMax(max);
     }
 
     public void assignEntityHealthLimit(Living living, String healthLimitExpression) {
