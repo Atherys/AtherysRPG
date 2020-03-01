@@ -81,8 +81,8 @@ public class RPGSkillFacade {
                 .toBuilder();
 
         List<String> skills = characterService.getOrCreateCharacter(source).getSkills();
-        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Unlock Cost: ", graphFacade.getCostForSkill(skill, skills).get()));
-        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Unlocks: "));
+        hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "Unlock Cost: ", GOLD, graphFacade.getCostForSkill(skill, skills).get()));
+        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Unlocks: "));
 
         int i = 0;
         for (RPGSkill linkedSkill : linkedSkills) {
@@ -101,8 +101,8 @@ public class RPGSkillFacade {
         Text.Builder hoverText = Text.builder().append(Text.of(GOLD, skill.getName(), Text.NEW_LINE));
 
         hoverText.append(Text.of(skill.getDescription(source), Text.NEW_LINE));
-        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
-        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
+        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
+        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
 
         return Text.builder()
                 .append(Text.of(GOLD, skill.getName()))

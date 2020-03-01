@@ -9,6 +9,7 @@ import com.atherys.rpg.character.SimpleCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
+import com.atherys.skills.AtherysSkills;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
@@ -164,6 +165,7 @@ public class RPGCharacterService {
             setSkillPermission(pc, s, false);
         });
         pc.setSkills(new ArrayList<>());
+        pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
 
         pc.setSpentSkillExperience(0);
         pc.setSpentExperience(pc.getSpentExperience() - spentOnSkills);
