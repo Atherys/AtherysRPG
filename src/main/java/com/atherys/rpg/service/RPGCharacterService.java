@@ -49,7 +49,6 @@ public class RPGCharacterService {
             PlayerCharacter pc = new PlayerCharacter(player.getUniqueId());
             pc.setEntity(player);
             pc.setBaseAttributes(attributeService.getDefaultAttributes());
-            pc.setExperienceSpendingLimit(config.DEFAULT_EXPERIENCE_SPENDING_LIMIT);
             pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
             repository.saveOne(pc);
 
@@ -130,11 +129,6 @@ public class RPGCharacterService {
 
     public void removeAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
         pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
-        repository.saveOne(pc);
-    }
-
-    public void setCharacterExperienceSpendingLimit(PlayerCharacter pc, Double amount) {
-        pc.setExperienceSpendingLimit(amount);
         repository.saveOne(pc);
     }
 

@@ -163,6 +163,10 @@ public class RPGCharacterFacade {
         });
 
         if (pc.getExperience() >= cost)  {
+            if (pc.getSpentExperience() + cost > config.EXPERIENCE_SPENDING_LIMIT) {
+                throw new RPGCommandException("You cannot go over the experience spending limit of ", config.EXPERIENCE_SPENDING_LIMIT, ".");
+            }
+
             if (pc.getSpentSkillExperience() + cost > config.SKILL_SPENDING_LIMIT) {
                 throw new RPGCommandException("You cannot go over the skill spending limit of ", config.SKILL_SPENDING_LIMIT, ".");
             }
@@ -226,11 +230,6 @@ public class RPGCharacterFacade {
         }
 
         return true;
-    }
-
-    public void setPlayerExperienceSpendingLimit(Player player, Double amount) {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-        characterService.setCharacterExperienceSpendingLimit(pc, amount);
     }
 
     public void resetPlayerCharacter(Player player) {

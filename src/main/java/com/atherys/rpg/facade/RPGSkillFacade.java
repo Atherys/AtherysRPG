@@ -1,10 +1,11 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
+import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.service.ExpressionService;
+import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.rpg.util.TextUtils;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.SkillCastEvent;
@@ -21,10 +22,7 @@ import org.spongepowered.api.text.TextTemplate;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.util.Tuple;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
 import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
@@ -35,6 +33,9 @@ public class RPGSkillFacade {
 
     @Inject
     private ExpressionService expressionService;
+
+    @Inject
+    private RPGCharacterService characterService;
 
     @Inject
     private AttributeFacade attributeFacade;
@@ -79,6 +80,8 @@ public class RPGSkillFacade {
                 .map(hoverAction -> (Text) hoverAction.getResult()).get()
                 .toBuilder();
 
+        List<String> skills = characterService.getOrCreateCharacter(source).getSkills();
+        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Unlock Cost: ", graphFacade.getCostForSkill(skill, skills).get()));
         hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Unlocks: "));
 
         int i = 0;

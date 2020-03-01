@@ -78,8 +78,8 @@ public class AttributeFacade {
         double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
 
         // If the player has already reached their experience spending limit, cancel
-        if (pc.getSpentExperience() + expCost > pc.getExperienceSpendingLimit()) {
-            throw new RPGCommandException("You cannot go over your experience spending limit of ", pc.getExperienceSpendingLimit());
+        if (pc.getSpentExperience() + expCost > config.EXPERIENCE_SPENDING_LIMIT) {
+            throw new RPGCommandException("You cannot go over the experience spending limit of ", config.EXPERIENCE_SPENDING_LIMIT, ".");
         } else {
 
             if (pc.getExperience() - expCost < config.EXPERIENCE_MIN) {

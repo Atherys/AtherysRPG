@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 @Children({
         AddExperienceCommand.class,
         RemoveExperienceCommand.class,
-        SetExperienceSpendingLimitCommand.class
 })
 public class ExperienceCommand implements PlayerCommand {
     @Nonnull
