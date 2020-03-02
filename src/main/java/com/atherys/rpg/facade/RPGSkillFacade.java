@@ -2,7 +2,6 @@ package com.atherys.rpg.facade;
 
 import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
-import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;

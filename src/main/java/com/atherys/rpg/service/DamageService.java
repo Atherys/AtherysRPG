@@ -1,6 +1,5 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.AtherysRPGConfig;

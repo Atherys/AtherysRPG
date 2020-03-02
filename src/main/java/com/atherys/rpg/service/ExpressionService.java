@@ -1,6 +1,5 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.expression.ClampFunction;
 import com.google.inject.Inject;

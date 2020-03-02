@@ -140,6 +140,12 @@ public class SkillGraphFacade {
 
         skills.forEach(s -> {
             getSkillGraph().getLinksWhereParent(s).forEach(link -> {
+                // If the link is bidirectional we have to check if the other node is the "parent"
+                if (link.getType() == Graph.LinkType.BIDIRECTIONAL) {
+                    if (!skills.contains(link.getParent().getData())) {
+                        linked.add(link.getParent().getData());
+                    }
+                }
                 if (!skills.contains(link.getChild().getData())) {
                     linked.add(link.getChild().getData());
                 }
