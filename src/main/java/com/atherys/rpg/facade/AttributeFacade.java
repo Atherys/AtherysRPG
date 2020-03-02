@@ -19,12 +19,17 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static org.spongepowered.api.text.Text.NEW_LINE;
+import static org.spongepowered.api.text.format.TextColors.*;
+import static org.spongepowered.api.text.format.TextStyles.BOLD;
 
 @Singleton
 public class AttributeFacade {
@@ -103,9 +108,9 @@ public class AttributeFacade {
             characterService.addSpentAttributeExperience(pc, expCost);
 
             rpgMsg.info(player,
-                    "You have added ", 1.0, " ",
-                    type.getColor(), type.getName(), TextColors.RESET,
-                    " for ", TextColors.GOLD, config.ATTRIBUTE_UPGRADE_COST, TextColors.RESET,
+                    "You have added ", type.getColor(), 1, " ",
+                    type.getName(), DARK_GREEN,
+                    " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN,
                     " experience."
             );
         }
@@ -150,49 +155,44 @@ public class AttributeFacade {
     public void showPlayerAttributes(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        Text.Builder attributeText = Text.builder();
+        Text.Builder attributeText = Text.builder().append(Text.of(
+                DARK_GRAY, "[]==[ ", GOLD, "Your Attributes", DARK_GRAY, " ]==[]"
+        ));
 
         Map<AttributeType, Double> baseAttributes = pc.getBaseAttributes();
         Map<AttributeType, Double> buffAttributes = pc.getBuffAttributes();
         Map<AttributeType, Double> itemAttributes = attributeService.getEquipmentAttributes(player);
 
-        baseAttributes.forEach((type, value) -> {
-            if (config.HIDDEN_ATTRIBUTES.contains(type)) return;
-
-            double base = value;
+        config.ATTRIBUTE_ORDER.forEach(type -> {
+            double base = baseAttributes.get(type);
             double buff = buffAttributes.getOrDefault(type, 0.0d);
             double item = itemAttributes.getOrDefault(type, 0.0d);
 
-            double total = base + buff + item;
+            int total = (int) Math.round(base + buff + item);
 
-            Text baseAttribute = Text.builder()
-                    .onHover(TextActions.showText(Text.of("Base")))
-                    .append(Text.of(TextColors.RED, base, TextColors.RESET))
-                    .build();
+            Text hoverText = Text.of(
+                    RED, BOLD, base, TextStyles.RESET, " base", Text.NEW_LINE,
+                    BLUE, BOLD, item, TextStyles.RESET, " from equipment", Text.NEW_LINE,
+                    GREEN, BOLD, buff, TextStyles.RESET, " from effects"
+            );
 
-            Text buffAttribute = Text.builder()
-                    .onHover(TextActions.showText(Text.of("From Buffs")))
-                    .append(Text.of(TextColors.GREEN, buff, TextColors.RESET))
-                    .build();
-
-            Text itemAttribute = Text.builder()
-                    .onHover(TextActions.showText(Text.of("From Equipment")))
-                    .append(Text.of(TextColors.BLUE, item, TextColors.RESET))
+            Text textTotal = Text.builder()
+                    .append(Text.of(type.getColor(), BOLD, total))
+                    .onHover(TextActions.showText(hoverText))
                     .build();
 
             Text upgradeButton;
 
             if (type.isUpgradable()) {
-                upgradeButton = getAddAttributeButton(pc, type, value);
+                upgradeButton = getAddAttributeButton(pc, type, base);
             } else {
-                upgradeButton = Text.of("[   ]");
+                upgradeButton = Text.EMPTY;
             }
 
             Text attribute = Text.builder()
+                    .append(NEW_LINE)
                     .append(upgradeButton)
-                    .append(Text.of(" "))
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, total, " ( ", baseAttribute , " + ", itemAttribute, " + ", buffAttribute, " )"))
-                    .append(Text.NEW_LINE)
+                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, textTotal))
                     .build();
 
             attributeText.append(attribute);
@@ -246,19 +246,19 @@ public class AttributeFacade {
         };
 
         Text hoverText = Text.builder()
-                .append(Text.of("Click to add 1 ", type.getColor(), type.getName(), TextColors.RESET, " for ", config.ATTRIBUTE_UPGRADE_COST, " experience.", Text.NEW_LINE))
+                .append(Text.of(DARK_GREEN, "Click to add 1 ", type.getColor(), type.getName(), DARK_GREEN, " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN, " experience"))
                 .append(getEffectsOfIncreasingAttribute(pc, type, currentValue))
                 .build();
 
         return Text.builder()
-                .append(Text.of(TextColors.RESET, "[ ", TextColors.DARK_GREEN, "+", TextColors.RESET, " ]"))
+                .append(Text.of(DARK_GRAY, "[", GOLD, "+", DARK_GRAY, "] "))
                 .onHover(TextActions.showText(hoverText))
                 .onClick(TextActions.executeCallback(onClick))
                 .build();
     }
 
     private Text getEffectsOfIncreasingAttribute(PlayerCharacter pc, AttributeType type, double currentValue) {
-        return Text.of("<Placeholder for effects>");
+        return config.ATTRIBUTE_DESCRIPTIONS.containsKey(type) ? Text.of(Text.NEW_LINE, config.ATTRIBUTE_DESCRIPTIONS.get(type)) : Text.EMPTY;
     }
 
     private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {

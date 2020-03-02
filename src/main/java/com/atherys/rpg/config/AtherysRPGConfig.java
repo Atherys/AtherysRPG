@@ -10,12 +10,10 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Singleton
 public class AtherysRPGConfig extends PluginConfig {
@@ -80,11 +78,30 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("display-root-skill")
     public boolean DISPLAY_ROOT_SKILL = true;
 
-    @Setting("hidden-attributes")
-    public Set<AttributeType> HIDDEN_ATTRIBUTES = new HashSet<>();
+    @Setting("attribute-order")
+    public List<AttributeType> ATTRIBUTE_ORDER = new ArrayList<>();
+
+    @Setting("attribute-descriptions")
+    public Map<AttributeType, Text> ATTRIBUTE_DESCRIPTIONS = new HashMap<>();
 
     @Setting("skill-message-distance")
     public double SKILL_MESSAGE_DISTANCE = 25;
+
+    {
+        ATTRIBUTE_ORDER.addAll(Arrays.asList(
+                AttributeTypes.STRENGTH,
+                AttributeTypes.CONSTITUTION,
+                AttributeTypes.DEXTERITY,
+                AttributeTypes.INTELLIGENCE,
+                AttributeTypes.WISDOM,
+                AttributeTypes.PHYSICAL_RESISTANCE,
+                AttributeTypes.MAGICAL_RESISTANCE,
+                AttributeTypes.BASE_ARMOR,
+                AttributeTypes.BASE_DAMAGE
+        ));
+
+        ATTRIBUTE_DESCRIPTIONS.put(AttributeTypes.STRENGTH, Text.of("Increases weapon damage"));
+    }
 
     {
         // Wood
