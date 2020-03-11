@@ -192,13 +192,40 @@ public class AttributeFacade {
             Text attribute = Text.builder()
                     .append(NEW_LINE)
                     .append(upgradeButton)
-                    .append(Text.of(type.getColor(), type.getName(), ": ", TextColors.RESET, textTotal))
+                    .append(Text.of(TextActions.showText(getAttributeDescription(type)), type.getColor(), type.getName(), ": ", TextColors.RESET, textTotal))
                     .build();
 
             attributeText.append(attribute);
         });
 
         player.sendMessage(attributeText.build());
+    }
+
+    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double currentValue) {
+
+        Consumer<CommandSource> onClick = source -> {
+            if (source instanceof Player) {
+                try {
+                    purchaseAttribute((Player) source, type, 1.0);
+                } catch (RPGCommandException e) {
+                    source.sendMessage(e.getText());
+                }
+            }
+        };
+
+        Text hoverText = Text.builder()
+                .append(Text.of(DARK_GREEN, "Click to add 1 ", type.getColor(), type.getName(), DARK_GREEN, " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN, " experience"))
+                .build();
+
+        return Text.builder()
+                .append(Text.of(DARK_GRAY, "[", GOLD, "+", DARK_GRAY, "] "))
+                .onHover(TextActions.showText(hoverText))
+                .onClick(TextActions.executeCallback(onClick))
+                .build();
+    }
+
+    private Text getAttributeDescription(AttributeType type) {
+        return config.ATTRIBUTE_DESCRIPTIONS.containsKey(type) ? Text.of(Text.NEW_LINE, config.ATTRIBUTE_DESCRIPTIONS.get(type)) : Text.EMPTY;
     }
 
     /**
@@ -231,34 +258,6 @@ public class AttributeFacade {
 
             stack.offer(Keys.ITEM_LORE, lore);
         });
-    }
-
-    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double currentValue) {
-
-        Consumer<CommandSource> onClick = source -> {
-            if (source instanceof Player) {
-                try {
-                    purchaseAttribute((Player) source, type, 1.0);
-                } catch (RPGCommandException e) {
-                    source.sendMessage(e.getText());
-                }
-            }
-        };
-
-        Text hoverText = Text.builder()
-                .append(Text.of(DARK_GREEN, "Click to add 1 ", type.getColor(), type.getName(), DARK_GREEN, " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN, " experience"))
-                .append(getEffectsOfIncreasingAttribute(pc, type, currentValue))
-                .build();
-
-        return Text.builder()
-                .append(Text.of(DARK_GRAY, "[", GOLD, "+", DARK_GRAY, "] "))
-                .onHover(TextActions.showText(hoverText))
-                .onClick(TextActions.executeCallback(onClick))
-                .build();
-    }
-
-    private Text getEffectsOfIncreasingAttribute(PlayerCharacter pc, AttributeType type, double currentValue) {
-        return config.ATTRIBUTE_DESCRIPTIONS.containsKey(type) ? Text.of(Text.NEW_LINE, config.ATTRIBUTE_DESCRIPTIONS.get(type)) : Text.EMPTY;
     }
 
     private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {
