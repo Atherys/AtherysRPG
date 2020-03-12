@@ -1,8 +1,7 @@
 package com.atherys.rpg.command.attribute;
 
 import com.atherys.core.command.PlayerCommand;
-import com.atherys.core.command.annotation.Aliases;
-import com.atherys.core.command.annotation.Children;
+import com.atherys.core.command.annotation.*;
 import com.atherys.rpg.AtherysRPG;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -18,6 +17,9 @@ import javax.annotation.Nonnull;
         AddAttributeToItemCommand.class,
         ResetAttributesCommand.class
 })
+@Permission("atherysrpg.attributes.base")
+@HelpCommand(title = "Attributes Help", command = "help")
+@Description("Displays your attributes and allows you to increase them.")
 public class AttributesCommand implements PlayerCommand {
     @Nonnull
     @Override

@@ -2,6 +2,7 @@ package com.atherys.rpg.command.attribute;
 
 import com.atherys.core.command.ParameterizedCommand;
 import com.atherys.core.command.annotation.Aliases;
+import com.atherys.core.command.annotation.Description;
 import com.atherys.core.command.annotation.Permission;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
@@ -15,7 +16,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 @Aliases("add")
-@Permission("atherysrpg.attribute.add")
+@Permission("atherysrpg.attributes.add")
+@Description("Adds the given attribute and amount to the player.")
 public class AddAttributeCommand implements ParameterizedCommand {
 
     @Override

@@ -13,8 +13,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import javax.annotation.Nonnull;
 
 @Aliases("next")
-@Description("Lists the skills that you can choose.")
 @Permission("atherysrpg.skills.list")
+@Description("Lists the skills that you are currently able to unlock.")
 public class ListAvailableSkillsCommand implements PlayerCommand {
     @Nonnull
     @Override

@@ -17,8 +17,8 @@ import org.spongepowered.api.text.Text;
 import javax.annotation.Nonnull;
 
 @Aliases("pick")
-@Description("Unlocks a new skill.")
 @Permission("atherysrpg.skills.pick")
+@Description("Unlocks a new skill, if you have a link to it and enough experience.")
 public class PickSkillCommand implements ParameterizedCommand, PlayerCommand {
     @Override
     public CommandElement[] getArguments() {
