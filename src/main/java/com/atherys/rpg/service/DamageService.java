@@ -1,7 +1,5 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.AtherysRPG;
-import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.google.inject.Inject;
@@ -55,7 +53,6 @@ public class DamageService {
     public double calcDamage(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, String type) {
         Expression producedDamageExpression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
 
-        AtherysRPG.getInstance().getLogger().info(type);
         expressionService.populateAttributes(producedDamageExpression, attackerAttributes, "source");
         double producedDamage = producedDamageExpression.eval().doubleValue();
 

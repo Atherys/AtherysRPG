@@ -30,7 +30,7 @@ public class EntityListener {
     public void onJoin(ClientConnectionEvent.Join event) {
         characterFacade.checkTreeOnLogin(event.getTargetEntity());
         characterFacade.setPlayerHealth(event.getTargetEntity());
-        characterFacade.setPlayerResourceLimit(event.getTargetEntity());
+        characterFacade.setPlayerResourceLimit(event.getTargetEntity(), true);
     }
 
     @Listener
@@ -51,6 +51,6 @@ public class EntityListener {
     @Listener(order = Order.LAST)
     public void onPlayerRespawn(RespawnPlayerEvent event) {
         characterFacade.setPlayerHealth(event.getTargetEntity());
-        characterFacade.setPlayerResourceLimit(event.getTargetEntity());
+        characterFacade.setPlayerResourceLimit(event.getTargetEntity(), true);
     }
 }

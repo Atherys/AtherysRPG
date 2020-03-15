@@ -14,6 +14,7 @@ import com.atherys.rpg.service.HealingService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.ResourceEvent;
+import com.atherys.skills.api.resource.ResourceUser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
@@ -357,9 +358,11 @@ public class RPGCharacterFacade {
         assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION);
     }
 
-    public void setPlayerResourceLimit(Player player) {
+    public void setPlayerResourceLimit(Player player, boolean fill) {
         double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
-        AtherysSkills.getInstance().getResourceService().getOrCreateUser(player).setMax(max);
+        ResourceUser user = AtherysSkills.getInstance().getResourceService().getOrCreateUser(player);
+        user.setMax(max);
+        if (fill) user.fill();
     }
 
     public void assignEntityHealthLimit(Living living, String healthLimitExpression) {
