@@ -13,7 +13,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import javax.annotation.Nonnull;
 
 @Aliases("next")
-@Permission("atherysrpg.skills.list")
+@Permission("atherysrpg.skills.next")
 @Description("Lists the skills that you are currently able to unlock.")
 public class ListAvailableSkillsCommand implements PlayerCommand {
     @Nonnull

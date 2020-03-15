@@ -9,6 +9,7 @@ import com.atherys.rpg.character.SimpleCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
+import com.atherys.skills.AtherysSkills;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
@@ -104,7 +105,7 @@ public class RPGCharacterService {
 
     private void setSkillPermission(PlayerCharacter pc, String skillPermission, boolean value) {
         getUser(pc).ifPresent(user -> {
-            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillPermission, value ? Tristate.TRUE : Tristate.UNDEFINED);
+            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillPermission, value ? Tristate.TRUE : Tristate.FALSE);
         });
     }
 
@@ -161,10 +162,11 @@ public class RPGCharacterService {
         double spentOnSkills = pc.getSpentSkillExperience();
 
         pc.getSkills().forEach(s -> {
-            setSkillPermission(pc, s, false);
+            setSkillPermission(pc, AtherysSkills.getInstance().getSkillService().getSkillById(s).get().getPermission(), false);
         });
         pc.setSkills(new ArrayList<>());
         pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
+        setSkillPermission(pc, skillGraphFacade.getSkillGraphRoot().getPermission(), true);
 
         pc.setSpentSkillExperience(0);
         pc.setSpentExperience(pc.getSpentExperience() - spentOnSkills);

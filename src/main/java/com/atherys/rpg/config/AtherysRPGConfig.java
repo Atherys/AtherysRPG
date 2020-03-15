@@ -33,6 +33,12 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("damage-production-calculations")
     public Map<String, String> DAMAGE_CALCULATIONS = new HashMap<>();
 
+    @Setting("default-melee-damage-type")
+    public String DEFAULT_MELEE_TYPE = AtherysDamageTypes.UNARMED.getId();
+
+    @Setting("default-ranged-damage-type")
+    public String DEFAULT_RANGED_TYPE = AtherysDamageTypes.PIERCE.getId();
+
     @Setting("health-regen-calculation")
     public String HEALTH_REGEN_CALCULATION = "1.33 * SOURCE_CON";
 
