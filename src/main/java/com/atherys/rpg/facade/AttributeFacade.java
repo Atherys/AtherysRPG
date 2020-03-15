@@ -225,7 +225,7 @@ public class AttributeFacade {
     }
 
     private Text getAttributeDescription(AttributeType type) {
-        return config.ATTRIBUTE_DESCRIPTIONS.containsKey(type) ? Text.of(Text.NEW_LINE, config.ATTRIBUTE_DESCRIPTIONS.get(type)) : Text.EMPTY;
+        return Text.of(type.getColor(), type.getName(), NEW_LINE, DARK_GREEN, config.ATTRIBUTE_DESCRIPTIONS.getOrDefault(type, Text.EMPTY));
     }
 
     /**

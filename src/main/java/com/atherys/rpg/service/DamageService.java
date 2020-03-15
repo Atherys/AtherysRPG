@@ -42,12 +42,28 @@ public class DamageService {
     public double getRangedDamage(
             Map<AttributeType, Double> attackerAttributes,
             Map<AttributeType, Double> targetAttributes,
-            EntityType projectileType
+            EntityType projectileType,
+            double speed
     ) {
         String damageType = getRangedDamageType(projectileType);
 
         // Calculate and return the damage
-        return calcDamage(attackerAttributes, targetAttributes, damageType);
+        return calcRangedDamage(attackerAttributes, targetAttributes, damageType, speed);
+    }
+
+    public double calcRangedDamage(
+            Map<AttributeType, Double> attackerAttributes,
+            Map<AttributeType, Double> targetAttributes,
+            String type,
+            double speed
+    ) {
+        Expression producedDamageExpression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
+
+        producedDamageExpression.setVariable("SPEED", BigDecimal.valueOf(speed));
+        expressionService.populateAttributes(producedDamageExpression, attackerAttributes, "source");
+        double producedDamage = producedDamageExpression.eval().doubleValue();
+
+        return getPhysicalDamageMitigation(targetAttributes, producedDamage);
     }
 
     public double calcDamage(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, String type) {

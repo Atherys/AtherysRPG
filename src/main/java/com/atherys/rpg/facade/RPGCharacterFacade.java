@@ -351,7 +351,9 @@ public class RPGCharacterFacade {
         Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
         Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
+        double speed = rootSource.getSource().getVelocity().lengthSquared();
+
+        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType, speed));
     }
 
     public void setPlayerHealth(Player player) {
