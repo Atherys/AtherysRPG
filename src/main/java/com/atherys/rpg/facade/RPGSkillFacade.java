@@ -2,6 +2,7 @@ package com.atherys.rpg.facade;
 
 import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
+import com.atherys.rpg.api.skill.TargetedRPGSkill;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
@@ -102,6 +103,11 @@ public class RPGSkillFacade {
         hoverText.append(Text.of(skill.getDescription(source), Text.NEW_LINE));
         hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
         hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
+
+        if (skill instanceof TargetedRPGSkill) {
+            int range = (int) ((TargetedRPGSkill) skill).getRange(source);
+            hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Range: ", GOLD, range, " blocks"));
+        }
 
         return Text.builder()
                 .append(Text.of(GOLD, skill.getName()))
