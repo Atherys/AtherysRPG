@@ -109,6 +109,7 @@ public class AtherysRPG {
     private void start() {
         getPlayerCharacterRepository().initCache();
         components.healingService.init();
+        components.itemFacade.init();
     }
 
     private void stop() {
