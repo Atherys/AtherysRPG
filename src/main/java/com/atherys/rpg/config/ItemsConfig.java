@@ -18,7 +18,7 @@ public class ItemsConfig extends PluginConfig {
         ITEMS.add(new ItemConfig());
     }
 
-    protected ItemsConfig(String directory, String filename) throws IOException {
+    protected ItemsConfig() throws IOException {
         super("config/atherysrpg", "items.conf");
     }
 }
