@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.Text;
@@ -32,6 +33,9 @@ public class AtherysRPGConfig extends PluginConfig {
 
     @Setting("damage-production-calculations")
     public Map<String, String> DAMAGE_CALCULATIONS = new HashMap<>();
+
+    @Setting("environmental-damage-calculations")
+    public Map<DamageType, String> ENVIRONMENTAL_CALCULATIONS = new HashMap<>();
 
     @Setting("default-melee-damage-type")
     public String DEFAULT_MELEE_TYPE = AtherysDamageTypes.UNARMED.getId();

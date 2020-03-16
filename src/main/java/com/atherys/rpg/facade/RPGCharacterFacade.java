@@ -17,6 +17,7 @@ import com.atherys.skills.api.event.ResourceEvent;
 import com.atherys.skills.api.resource.ResourceUser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
@@ -24,6 +25,7 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
@@ -35,6 +37,7 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -255,6 +258,25 @@ public class RPGCharacterFacade {
         }
     }
 
+    public void onEnvironmentalDamage(DamageEntityEvent event, DamageType type, Living target) {
+        //Remove damage modifiers
+        resetDamageEvent(event);
+
+        double damage;
+
+        if (type == DamageTypes.FALL) {
+            Expression expression = expressionService.getExpression(config.ENVIRONMENTAL_CALCULATIONS.get(type));
+            float blocksFallen = event.getTargetEntity().get(Keys.FALL_DISTANCE).get();
+
+            expression.setVariable("DISTANCE", BigDecimal.valueOf(blocksFallen));
+            damage = expressionService.evalExpression(target, expression).doubleValue();
+        } else {
+            damage = expressionService.evalExpression(target, config.ENVIRONMENTAL_CALCULATIONS.get(type)).doubleValue();
+        }
+
+        event.setBaseDamage(damage);
+    }
+
     private void onDirectDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
         Entity source = rootSource.getSource();
         Entity target = event.getTargetEntity();
@@ -268,9 +290,7 @@ public class RPGCharacterFacade {
         }
 
         // Remove all damage modifiers
-        event.getModifiers().forEach(damageFunction -> {
-            event.setDamage(damageFunction.getModifier(), (base) -> 0);
-        });
+        resetDamageEvent(event);
 
         Optional<DamageExpressionData> damageExpressionData = source.get(DamageExpressionData.class);
         if (damageExpressionData.isPresent()) {
@@ -316,9 +336,7 @@ public class RPGCharacterFacade {
         EntityType projectileType = rootSource.getSource().getType();
 
         // Remove all damage modifiers
-        event.getModifiers().forEach(damageFunction -> {
-            event.setDamage(damageFunction.getModifier(), (base) -> 0);
-        });
+        resetDamageEvent(event);
 
         Optional<DamageExpressionData> damageExpressionData = rootSource.getSource().get(DamageExpressionData.class);
         if (damageExpressionData.isPresent()) {
@@ -354,6 +372,12 @@ public class RPGCharacterFacade {
         double speed = rootSource.getSource().getVelocity().lengthSquared();
 
         event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType, speed));
+    }
+
+    private void resetDamageEvent(DamageEntityEvent event) {
+        event.getModifiers().forEach(damageFunction -> {
+            event.setDamage(damageFunction.getModifier(), (base) -> 0);
+        });
     }
 
     public void setPlayerHealth(Player player) {

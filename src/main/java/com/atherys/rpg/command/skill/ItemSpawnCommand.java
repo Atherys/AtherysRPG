@@ -1,7 +1,6 @@
 package com.atherys.rpg.command.skill;
 
 import com.atherys.core.command.PlayerCommand;
-import com.atherys.core.command.UserCommand;
 import com.atherys.core.command.annotation.Aliases;
 import com.atherys.rpg.AtherysRPG;
 import org.spongepowered.api.command.CommandException;
