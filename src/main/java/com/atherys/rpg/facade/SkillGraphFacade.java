@@ -3,6 +3,7 @@ package com.atherys.rpg.facade;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.util.Graph;
+import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.config.SkillNodeConfig;
 import com.google.inject.Inject;
@@ -28,6 +29,12 @@ public class SkillGraphFacade {
             return skillGraph;
         }
 
+        // Cache the skill graph for later use
+        this.skillGraph = loadSkillGraph();
+        return skillGraph;
+    }
+
+    private SkillGraph loadSkillGraph() {
         Map<String, RPGSkill> namedSkillNodes = new HashMap<>();
 
         RPGSkill rootSkill = getSkillFromConfigNode(config.ROOT);
@@ -51,9 +58,19 @@ public class SkillGraphFacade {
             newSkillGraph.add(parent, child, cost, type);
         });
 
-        // Cache the skill graph for later use
-        this.skillGraph = newSkillGraph;
-        return skillGraph;
+        return newSkillGraph;
+    }
+
+    public void resetSkillGraph() throws RPGCommandException {
+        SkillGraph resetSkillGraph = loadSkillGraph();
+
+        if (!resetSkillGraph.equals(skillGraph)) {
+            throw new RPGCommandException(
+                    "The skill tree layout was changed. Changes will not be applied. (A full restart is required to change the tree's layout.)"
+            );
+        }
+
+        this.skillGraph = resetSkillGraph;
     }
 
     private RPGSkill getSkillFromConfigNode(SkillNodeConfig node) {

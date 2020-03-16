@@ -11,6 +11,7 @@ import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
+import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.command.skill.ItemSpawnCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
@@ -36,7 +37,9 @@ import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.game.GameRegistryEvent;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
@@ -44,6 +47,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.channel.MessageReceiver;
 
 @Plugin(
         id = "atherysrpg",
@@ -112,6 +116,21 @@ public class AtherysRPG {
         components.itemFacade.init();
     }
 
+    private void reload(Cause cause) {
+        getConfig().load();
+        getGraphConfig().load();
+        getMobsConfig().load();
+        getItemsConfig().load();
+
+        try {
+            getSkillGraphFacade().resetSkillGraph();
+        } catch (RPGCommandException e) {
+            if (cause.root() instanceof MessageReceiver) {
+                ((MessageReceiver) cause.root()).sendMessage(e.getText());
+            }
+        }
+    }
+
     private void stop() {
         getPlayerCharacterRepository().flushCache();
     }
@@ -130,6 +149,13 @@ public class AtherysRPG {
     public void onStart(GameStartingServerEvent event) {
         if (init) {
             start();
+        }
+    }
+
+    @Listener
+    public void onReload(GameReloadEvent event) throws RPGCommandException {
+        if (init) {
+            reload(event.getCause());
         }
     }
 
