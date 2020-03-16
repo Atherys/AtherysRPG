@@ -6,6 +6,7 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.*;
 import com.atherys.rpg.data.DamageExpressionData;
+import com.atherys.rpg.data.RPGKeys;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
@@ -52,6 +53,9 @@ public class MobFacade {
 
     @Inject
     private RPGCharacterFacade characterFacade;
+
+    @Inject
+    private ItemFacade itemFacade;
 
     @Inject
     private RPGMessagingFacade msg;
@@ -120,13 +124,16 @@ public class MobFacade {
     }
 
     private void dropItemLoot(Location<World> dropLocation, ItemLootConfig config) {
-        Optional<ItemStackSnapshot> itemStack = createItemStackFromItemConfig(config);
+        Optional<ItemStack> itemStack = itemFacade.createItemStack(
+                config.ITEM_ID,
+                RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
+        );
 
         if (!itemStack.isPresent()) {
             throw new RuntimeException("Could not create an item stack from the item configuration \"" + config + "\"");
         } else {
             Entity groundItem = dropLocation.getExtent().createEntity(EntityTypes.ITEM, dropLocation.getPosition());
-            groundItem.offer(Keys.REPRESENTED_ITEM, itemStack.get());
+            groundItem.offer(Keys.REPRESENTED_ITEM, itemStack.get().createSnapshot());
             dropLocation.getExtent().spawnEntity(groundItem);
         }
     }
@@ -136,42 +143,6 @@ public class MobFacade {
                 player,
                 Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100 ) / 100
         );
-    }
-
-    private Optional<ItemStackSnapshot> createItemStackFromItemConfig(ItemLootConfig item) {
-        ItemStack itemStack = ItemStack.builder()
-                .itemType(item.ITEM_TYPE)
-                .quantity(RandomUtils.nextInt(item.MINIMUM_QUANTITY, item.MAXIMUM_QUANTITY + 1))
-                .build();
-
-        // Convert and apply item display name
-        Text displayName = TextSerializers.formattingCode('&').deserialize(item.ITEM_NAME);
-        itemStack.offer(Keys.DISPLAY_NAME, displayName);
-
-        // Hide item attributes
-        itemStack.offer(Keys.HIDE_ATTRIBUTES, item.HIDE_FLAGS);
-
-        // Convert and apply enchantments
-        List<Enchantment> enchantments = new ArrayList<>();
-        item.ENCHANTMENTS.forEach((e, a) -> enchantments.add(Enchantment.of(e, a)));
-        itemStack.offer(Keys.ITEM_ENCHANTMENTS, enchantments);
-
-        // Apply RPG attributes
-        item.ATTRIBUTES.forEach((t, a) -> {
-            try {
-                attributeFacade.setItemAttributeValue(itemStack, t, a);
-            } catch (RPGCommandException e) {
-                e.printStackTrace();
-            }
-        });
-
-        // Convert and apply item lore
-        List<Text> convertedLore = item.LORE.stream()
-                .map(TextSerializers.FORMATTING_CODE::deserialize)
-                .collect(Collectors.toList());
-        itemStack.offer(Keys.ITEM_LORE, convertedLore);
-
-        return Optional.of(itemStack.createSnapshot());
     }
 
     public Optional<MobConfig> getMobConfigFromLiving(Living entity) {

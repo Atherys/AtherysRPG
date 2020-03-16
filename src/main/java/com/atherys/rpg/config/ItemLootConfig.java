@@ -14,15 +14,8 @@ import java.util.Map;
 
 @ConfigSerializable
 public class ItemLootConfig {
-
-    @Setting("name")
-    public String ITEM_NAME = "Default Item Name";
-
-    @Setting("hide-flags")
-    public boolean HIDE_FLAGS = false;
-
-    @Setting("item-type")
-    public ItemType ITEM_TYPE = ItemTypes.DIRT;
+    @Setting("item-id")
+    public String ITEM_ID;
 
     @Setting("quantity-minimum")
     public int MINIMUM_QUANTITY = 1;
@@ -30,29 +23,6 @@ public class ItemLootConfig {
     @Setting("quantity-minimum")
     public int MAXIMUM_QUANTITY = 1;
 
-    @Setting("lore")
-    public List<String> LORE = new ArrayList<>();
-
-    @Setting("enchantments")
-    public Map<EnchantmentType, Integer> ENCHANTMENTS = new HashMap<>();
-
-    @Setting("attributes")
-    public Map<AttributeType, Double> ATTRIBUTES = new HashMap<>();
-
     public ItemLootConfig() {
-    }
-
-    @Override
-    public String toString() {
-        return "ItemLootConfig{" +
-                "ITEM_NAME='" + ITEM_NAME + '\'' +
-                ", HIDE_FLAGS=" + HIDE_FLAGS +
-                ", ITEM_TYPE=" + ITEM_TYPE +
-                ", MINIMUM_QUANTITY=" + MINIMUM_QUANTITY +
-                ", MAXIMUM_QUANTITY=" + MAXIMUM_QUANTITY +
-                ", LORE=" + LORE +
-                ", ENCHANTMENTS=" + ENCHANTMENTS +
-                ", ATTRIBUTES=" + ATTRIBUTES +
-                '}';
     }
 }

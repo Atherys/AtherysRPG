@@ -11,8 +11,10 @@ import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
+import com.atherys.rpg.command.skill.ItemSpawnCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.ItemsConfig;
 import com.atherys.rpg.config.MobsConfig;
 import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.data.AttributeData;
@@ -85,6 +87,7 @@ public class AtherysRPG {
         getConfig().init();
         getGraphConfig().init();
         getMobsConfig().init();
+        getItemsConfig().init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
@@ -95,6 +98,7 @@ public class AtherysRPG {
             AtherysCore.getCommandService().register(new AttributesCommand(), this);
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
             AtherysCore.getCommandService().register(new SkillsCommand(), this);
+            AtherysCore.getCommandService().register(new ItemSpawnCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }
@@ -215,6 +219,10 @@ public class AtherysRPG {
         return components.mobsConfig;
     }
 
+    public ItemsConfig getItemsConfig() {
+        return components.itemsConfig;
+    }
+
     public PlayerCharacterRepository getPlayerCharacterRepository() {
         return components.playerCharacterRepository;
     }
@@ -255,6 +263,10 @@ public class AtherysRPG {
         return components.skillGraphFacade;
     }
 
+    public ItemFacade getItemFacade() {
+        return components.itemFacade;
+    }
+
     private static class Components {
         @Inject
         AtherysRPGConfig config;
@@ -264,6 +276,9 @@ public class AtherysRPG {
 
         @Inject
         MobsConfig mobsConfig;
+
+        @Inject
+        ItemsConfig itemsConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;
@@ -297,6 +312,9 @@ public class AtherysRPG {
 
         @Inject
         AttributeFacade attributeFacade;
+
+        @Inject
+        ItemFacade itemFacade;
 
         @Inject
         EntityListener entityListener;
