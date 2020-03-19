@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 
 @Aliases("skills")
 @Children({
-        ListAvailableSkillsCommand.class,
         PickSkillCommand.class,
         RemoveSkillCommand.class,
         ResetSkillsCommand.class,
@@ -26,7 +25,7 @@ public class SkillsCommand implements PlayerCommand {
     @Nonnull
     @Override
     public CommandResult execute(@Nonnull Player source, @Nonnull CommandContext args) throws CommandException {
-        AtherysRPG.getInstance().getRPGCharacterFacade().displaySkills(source);
+        AtherysRPG.getInstance().getRPGCharacterFacade().displayAllSkills(source);
         return CommandResult.success();
     }
 }
