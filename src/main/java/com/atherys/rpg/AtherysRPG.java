@@ -122,6 +122,8 @@ public class AtherysRPG {
         getMobsConfig().load();
         getItemsConfig().load();
 
+        components.itemFacade.init();
+
         try {
             getSkillGraphFacade().resetSkillGraph();
         } catch (RPGCommandException e) {
