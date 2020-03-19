@@ -98,42 +98,30 @@ public class RPGCharacterFacade {
         }
     }
 
-    public void displaySkills(Player player) {
+    public void displayAllSkills(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        List<String> skills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
+        List<String> ownedSkills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
 
-        Text.Builder skillsText = Text.builder().append(Text.of(
-                DARK_GRAY, "[]=[ ", GOLD, "Your Skills", DARK_GRAY, " ]=[]"
-        ));
-        skills.forEach(s -> {
-            RPGSkill skill = skillFacade.getSkillById(s).get();
-            Text skillText = Text.of(DARK_GREEN, "- ", skillFacade.renderSkill(skill, player));
-            skillsText.append(NEW_LINE, skillText);
-        });
+        List<Text> messages = new ArrayList<>();
+        messages.add(Text.of(DARK_GRAY, "[]====[ ", GOLD, "Your Skills", DARK_GRAY, " ]====[]"));
 
-        player.sendMessage(skillsText.build());
-    }
+        for (String skillId : ownedSkills) {
+            RPGSkill skill = skillFacade.getSkillById(skillId).get();
+            messages.add(Text.of(DARK_GREEN, "- ", skillFacade.renderSkill(skill, player), " "));
+        }
 
-    public void displayAvailableSkills(Player player) throws RPGCommandException {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        messages.add(Text.of(DARK_GRAY, "[]==[ ", GOLD, "Available Skills", DARK_GRAY, " ]==[]"));
 
-        Text.Builder skills = Text.builder().append(Text.of(
-                DARK_GRAY, "[]=[ ", GOLD, "Available Skills", DARK_GRAY, " ]=[]"
-        ));
-        skillGraphFacade.getLinkedSkills(pc.getSkills()).forEach(s -> {
-
+        for (RPGSkill skill : skillGraphFacade.getLinkedSkills(pc.getSkills())) {
             Text skillText = Text.builder()
-                    .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(s, player)))
-                    .onClick(TextActions.executeCallback(source -> {
-                        chooseSkillWithoutThrowing(player, s.getId());
-                    }))
+                    .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(skill, player), " "))
+                    .onClick(TextActions.executeCallback(source -> chooseSkillWithoutThrowing(player, skill.getId())))
                     .build();
+            messages.add(skillText);
+        }
 
-            skills.append(Text.NEW_LINE, skillText);
-        });
-
-        player.sendMessage(skills.build());
+        messages.forEach(player::sendMessage);
     }
 
     public void checkTreeOnLogin(Player player) {
