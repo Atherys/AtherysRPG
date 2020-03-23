@@ -3,6 +3,7 @@ package com.atherys.rpg.command.skill;
 import com.atherys.core.command.ParameterizedCommand;
 import com.atherys.core.command.PlayerCommand;
 import com.atherys.core.command.annotation.Aliases;
+import com.atherys.core.command.annotation.Permission;
 import com.atherys.rpg.AtherysRPG;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -16,6 +17,7 @@ import org.spongepowered.api.text.Text;
 import javax.annotation.Nonnull;
 
 @Aliases("spawnitem")
+@Permission("atherysrpg.spawnitem")
 public class ItemSpawnCommand implements PlayerCommand, ParameterizedCommand {
     @Nonnull
     @Override
