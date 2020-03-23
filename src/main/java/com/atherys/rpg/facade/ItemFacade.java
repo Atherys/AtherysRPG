@@ -4,6 +4,7 @@ import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.ItemConfig;
 import com.atherys.rpg.config.ItemsConfig;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.data.key.Keys;
@@ -49,7 +50,7 @@ public class ItemFacade {
     }
 
     public Map<String, ItemStackSnapshot> getCachedItems() {
-        return items;
+        return ImmutableMap.copyOf(items);
     }
 
     public Optional<ItemStack> createItemStack(String itemId, int quantity) {

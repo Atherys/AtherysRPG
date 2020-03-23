@@ -125,6 +125,17 @@ public class AtherysRPG {
 
         components.itemFacade.init();
 
+        // Re-register command to update item choices
+        try {
+            Sponge.getCommandManager()
+                    .get("spawnitem")
+                    .ifPresent(Sponge.getCommandManager()::removeMapping);
+
+            AtherysCore.getCommandService().register(new ItemSpawnCommand(), this);
+        } catch (CommandService.AnnotatedCommandException e) {
+            e.printStackTrace();
+        }
+
         try {
             getSkillGraphFacade().resetSkillGraph();
         } catch (RPGCommandException e) {

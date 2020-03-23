@@ -32,7 +32,7 @@ public class ItemSpawnCommand implements PlayerCommand, ParameterizedCommand {
     @Override
     public CommandElement[] getArguments() {
         return new CommandElement[] {
-                GenericArguments.choices(Text.of("text"), AtherysRPG.getInstance().getItemFacade().getCachedItems()),
+                GenericArguments.choices(Text.of("item"), AtherysRPG.getInstance().getItemFacade().getCachedItems()),
                 GenericArguments.integer(Text.of("quantity"))
         };
     }
