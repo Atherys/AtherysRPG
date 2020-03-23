@@ -10,6 +10,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,7 @@ public class ItemSpawnCommand implements PlayerCommand, ParameterizedCommand {
     @Override
     public CommandResult execute(@Nonnull Player source, @Nonnull CommandContext args) throws CommandException {
         AtherysRPG.getInstance().getItemFacade().createAndGiveItemToPlayer(
-                args.<String>getOne("item-id").orElse(null),
+                args.<ItemStackSnapshot>getOne("item").orElse(null),
                 args.<Integer>getOne("quantity").orElse(0),
                 source
         );
@@ -31,7 +32,7 @@ public class ItemSpawnCommand implements PlayerCommand, ParameterizedCommand {
     @Override
     public CommandElement[] getArguments() {
         return new CommandElement[] {
-                GenericArguments.string(Text.of("item-id")),
+                GenericArguments.choices(Text.of("text"), AtherysRPG.getInstance().getItemFacade().getCachedItems()),
                 GenericArguments.integer(Text.of("quantity"))
         };
     }

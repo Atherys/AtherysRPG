@@ -93,6 +93,8 @@ public class AtherysRPG {
         getMobsConfig().init();
         getItemsConfig().init();
 
+        components.itemFacade.init();
+
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
         Sponge.getEventManager().registerListeners(this, components.skillsListener);
@@ -113,7 +115,6 @@ public class AtherysRPG {
     private void start() {
         getPlayerCharacterRepository().initCache();
         components.healingService.init();
-        components.itemFacade.init();
     }
 
     private void reload(Cause cause) {

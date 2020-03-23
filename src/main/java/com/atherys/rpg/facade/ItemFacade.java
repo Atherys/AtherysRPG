@@ -52,6 +52,10 @@ public class ItemFacade {
         });
     }
 
+    public Map<String, ItemStackSnapshot> getCachedItems() {
+        return items;
+    }
+
     public Optional<ItemStack> createItemStack(String itemId, int quantity) {
         ItemStackSnapshot snapshot = items.get(itemId);
 
@@ -59,32 +63,26 @@ public class ItemFacade {
             return Optional.empty();
         }
 
-        ItemStack stack = snapshot.createStack();
-        stack.setQuantity(quantity);
+        ItemStack itemStack = snapshot.createStack();
+        itemStack.setQuantity(quantity);
 
-        return Optional.of(stack);
+        return Optional.of(itemStack);
     }
 
-    public void createAndGiveItemToPlayer(String itemId, int quantity, Player player) throws RPGCommandException {
-        if (StringUtils.isEmpty(itemId)) {
-            throw new RPGCommandException("Provided item id was either null or empty.");
-        }
+    public void createAndGiveItemToPlayer(ItemStackSnapshot snapshot, int quantity, Player player) throws RPGCommandException {
 
         if (quantity < 1) {
             throw new RPGCommandException("Cannot give 0 or negative quantity of an item.");
         }
 
-        Optional<ItemStack> itemStack = createItemStack(itemId, quantity);
+        ItemStack itemStack = snapshot.createStack();
+        itemStack.setQuantity(quantity);
 
-        if (!itemStack.isPresent()) {
-            throw new RPGCommandException("No item with the provided item id could be found.");
-        }
-
-        InventoryTransactionResult inventoryTransactionResult = player.getInventory().offer(itemStack.get());
+        InventoryTransactionResult inventoryTransactionResult = player.getInventory().offer(itemStack);
 
         if (inventoryTransactionResult.getType() != InventoryTransactionResult.Type.SUCCESS) {
             Entity item = player.getWorld().createEntity(EntityTypes.ITEM, player.getPosition());
-            item.offer(Keys.REPRESENTED_ITEM, itemStack.get().createSnapshot());
+            item.offer(Keys.REPRESENTED_ITEM, itemStack.createSnapshot());
             player.getWorld().spawnEntity(item);
         }
     }
