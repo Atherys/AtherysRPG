@@ -26,4 +26,9 @@ public class PropertyDescriptionArgument implements DescriptionArgument {
         double value = AtherysRPG.getInstance().getExpressionService().evalExpression(living, expression).doubleValue();
         return Text.of(String.format("%.2f", value));
     }
+
+    public long asLong(Living living) {
+        String expression = skill.getProperty(propertyName, String.class, defaultValue);
+        return AtherysRPG.getInstance().getExpressionService().evalExpression(living, expression).longValue();
+    }
 }
