@@ -12,7 +12,7 @@ import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
-import com.atherys.rpg.command.skill.ItemSpawnCommand;
+import com.atherys.rpg.command.ItemSpawnCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.ItemsConfig;

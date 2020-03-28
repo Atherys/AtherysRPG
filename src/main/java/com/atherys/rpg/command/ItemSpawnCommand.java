@@ -1,4 +1,4 @@
-package com.atherys.rpg.command.skill;
+package com.atherys.rpg.command;
 
 import com.atherys.core.command.ParameterizedCommand;
 import com.atherys.core.command.PlayerCommand;
