@@ -1,5 +1,6 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.event.GainSkillEvent;
 import com.atherys.rpg.api.event.LoseSkillEvent;
 import com.atherys.rpg.api.skill.RPGSkill;
@@ -19,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
@@ -382,8 +384,17 @@ public class RPGCharacterFacade {
     public void assignEntityHealthLimit(Living living, String healthLimitExpression) {
         double maxHP = expressionService.evalExpression(living, healthLimitExpression).doubleValue();
 
-        living.offer(Keys.MAX_HEALTH, maxHP);
-        living.offer(Keys.HEALTH, maxHP);
+        DataTransactionResult maxHPResult = living.offer(Keys.MAX_HEALTH, maxHP);
+        DataTransactionResult hpResult = living.offer(Keys.HEALTH, maxHP);
+
+        if (!maxHPResult.isSuccessful() || !hpResult.isSuccessful()) {
+            AtherysRPG.getInstance().getLogger().warn(
+                    "Failed to set max health for entity {}, Max HP Result: {}, HP Result: {}",
+                    living,
+                    maxHPResult,
+                    hpResult
+            );
+        }
 
         if (living.supports(Keys.HEALTH_SCALE)) {
             living.offer(Keys.HEALTH_SCALE, 20.0d);
