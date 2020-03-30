@@ -3,6 +3,8 @@ package com.atherys.rpg.command;
 import com.atherys.core.command.PlayerCommand;
 import com.atherys.core.command.annotation.Aliases;
 import com.atherys.core.command.annotation.Children;
+import com.atherys.core.command.annotation.Description;
+import com.atherys.core.command.annotation.Permission;
 import com.atherys.rpg.AtherysRPG;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -15,8 +17,9 @@ import javax.annotation.Nonnull;
 @Children({
         AddExperienceCommand.class,
         RemoveExperienceCommand.class,
-        SetExperienceSpendingLimitCommand.class
 })
+@Permission("atherysrpg.experience.base")
+@Description("Displays your RPG experience.")
 public class ExperienceCommand implements PlayerCommand {
     @Nonnull
     @Override

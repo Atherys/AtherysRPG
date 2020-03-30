@@ -1,10 +1,11 @@
 package com.atherys.rpg.facade;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
+import com.atherys.rpg.api.skill.TargetedRPGSkill;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.service.ExpressionService;
+import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.rpg.util.TextUtils;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.SkillCastEvent;
@@ -21,10 +22,7 @@ import org.spongepowered.api.text.TextTemplate;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.util.Tuple;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
 import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
@@ -35,6 +33,9 @@ public class RPGSkillFacade {
 
     @Inject
     private ExpressionService expressionService;
+
+    @Inject
+    private RPGCharacterService characterService;
 
     @Inject
     private AttributeFacade attributeFacade;
@@ -79,7 +80,9 @@ public class RPGSkillFacade {
                 .map(hoverAction -> (Text) hoverAction.getResult()).get()
                 .toBuilder();
 
-        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Unlocks: "));
+        List<String> skills = characterService.getOrCreateCharacter(source).getSkills();
+        hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "Unlock Cost: ", GOLD, graphFacade.getCostForSkill(skill, skills).get()));
+        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Unlocks: "));
 
         int i = 0;
         for (RPGSkill linkedSkill : linkedSkills) {
@@ -98,8 +101,13 @@ public class RPGSkillFacade {
         Text.Builder hoverText = Text.builder().append(Text.of(GOLD, skill.getName(), Text.NEW_LINE));
 
         hoverText.append(Text.of(skill.getDescription(source), Text.NEW_LINE));
-        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
-        hoverText.append(Text.of(Text.NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
+        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Cooldown: ", GOLD, TextUtils.formatDuration(skill.getCooldown(source))));
+        hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Cost: ", GOLD, (int) skill.getResourceCost(source)));
+
+        if (skill instanceof TargetedRPGSkill) {
+            int range = (int) ((TargetedRPGSkill) skill).getRange(source);
+            hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Range: ", GOLD, range, " blocks"));
+        }
 
         return Text.builder()
                 .append(Text.of(GOLD, skill.getName()))

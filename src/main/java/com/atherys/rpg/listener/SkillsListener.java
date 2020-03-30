@@ -2,7 +2,7 @@ package com.atherys.rpg.listener;
 
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGSkillFacade;
-import com.atherys.skills.api.event.ResourceRegenEvent;
+import com.atherys.skills.api.event.ResourceEvent;
 import com.atherys.skills.api.event.SkillCastEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -20,7 +20,7 @@ public class SkillsListener {
     private RPGSkillFacade skillFacade;
 
     @Listener
-    public void onResourceRegen(ResourceRegenEvent event, @Root Player player) {
+    public void onResourceRegen(ResourceEvent.Regen event, @Root Player player) {
         rpgCharacterFacade.onResourceRegen(event, player);
     }
 

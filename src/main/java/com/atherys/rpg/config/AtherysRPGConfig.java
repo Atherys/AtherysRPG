@@ -1,7 +1,6 @@
 package com.atherys.rpg.config;
 
 import com.atherys.core.utils.PluginConfig;
-import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypes;
@@ -9,14 +8,13 @@ import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Singleton
 public class AtherysRPGConfig extends PluginConfig {
@@ -36,6 +34,15 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("damage-production-calculations")
     public Map<String, String> DAMAGE_CALCULATIONS = new HashMap<>();
 
+    @Setting("environmental-damage-calculations")
+    public Map<DamageType, String> ENVIRONMENTAL_CALCULATIONS = new HashMap<>();
+
+    @Setting("default-melee-damage-type")
+    public String DEFAULT_MELEE_TYPE = AtherysDamageTypes.UNARMED.getId();
+
+    @Setting("default-ranged-damage-type")
+    public String DEFAULT_RANGED_TYPE = AtherysDamageTypes.PIERCE.getId();
+
     @Setting("health-regen-calculation")
     public String HEALTH_REGEN_CALCULATION = "1.33 * SOURCE_CON";
 
@@ -45,8 +52,11 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("resource-regen-calculation")
     public String RESOURCE_REGEN_CALCULATION = "1.33 * SOURCE_INT";
 
+    @Setting("resource-limit-calculation")
+    public String RESOURCE_LIMIT_CALCULATION = "100.0 + SOURCE_INT * 1.5";
+
     @Setting("health-limit-calculation")
-    public String HEALTH_LIMIT_CALCULATION = "100.0 * SOURCE_INT";
+    public String HEALTH_LIMIT_CALCULATION = "100.0 + SOURCE_CON * 1.5";
 
     @Setting("default-attributes")
     public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
@@ -66,17 +76,42 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("attribute-min")
     public double ATTRIBUTE_MIN = 0.0;
 
-    @Setting("default-experience-spending-limit")
-    public double DEFAULT_EXPERIENCE_SPENDING_LIMIT = 100_000.0;
+    @Setting("experience-spending-limit")
+    public double EXPERIENCE_SPENDING_LIMIT = 100_000.0;
+
+    @Setting("attribute-spending-limit")
+    public double ATTRIBUTE_SPENDING_LIMIT = 100_000.0;
+
+    @Setting("skill-spending-limit")
+    public double SKILL_SPENDING_LIMIT = 100_000.0;
 
     @Setting("display-root-skill")
     public boolean DISPLAY_ROOT_SKILL = true;
 
-    @Setting("hidden-attributes")
-    public Set<AttributeType> HIDDEN_ATTRIBUTES = new HashSet<>();
+    @Setting("attribute-order")
+    public List<AttributeType> ATTRIBUTE_ORDER = new ArrayList<>();
+
+    @Setting("attribute-descriptions")
+    public Map<AttributeType, Text> ATTRIBUTE_DESCRIPTIONS = new HashMap<>();
 
     @Setting("skill-message-distance")
     public double SKILL_MESSAGE_DISTANCE = 25;
+
+    {
+        ATTRIBUTE_ORDER.addAll(Arrays.asList(
+                AttributeTypes.STRENGTH,
+                AttributeTypes.CONSTITUTION,
+                AttributeTypes.DEXTERITY,
+                AttributeTypes.INTELLIGENCE,
+                AttributeTypes.WISDOM,
+                AttributeTypes.PHYSICAL_RESISTANCE,
+                AttributeTypes.MAGICAL_RESISTANCE,
+                AttributeTypes.BASE_ARMOR,
+                AttributeTypes.BASE_DAMAGE
+        ));
+
+        ATTRIBUTE_DESCRIPTIONS.put(AttributeTypes.STRENGTH, Text.of("Increases weapon damage"));
+    }
 
     {
         // Wood

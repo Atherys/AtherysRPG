@@ -32,7 +32,9 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     private double spentExperience;
 
-    private double experienceSpendingLimit;
+    private double spentAttributeExperience;
+
+    private double spentSkillExperience;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> skills = new ArrayList<>();
@@ -85,14 +87,6 @@ public class PlayerCharacter implements RPGCharacter<Player> {
         this.experience = experience;
     }
 
-    public double getExperienceSpendingLimit() {
-        return experienceSpendingLimit;
-    }
-
-    public void setExperienceSpendingLimit(double experienceSpendingLimit) {
-        this.experienceSpendingLimit = experienceSpendingLimit;
-    }
-
     public double getSpentExperience() {
         return spentExperience;
     }
@@ -115,5 +109,21 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void removeSkill(String skill) {
         skills.remove(skill);
+    }
+
+    public double getSpentSkillExperience() {
+        return spentSkillExperience;
+    }
+
+    public void setSpentSkillExperience(double spentSkillsExperience) {
+        this.spentSkillExperience = spentSkillsExperience;
+    }
+
+    public double getSpentAttributeExperience() {
+        return spentAttributeExperience;
+    }
+
+    public void setSpentAttributeExperience(double spentAttributeExperience) {
+        this.spentAttributeExperience = spentAttributeExperience;
     }
 }

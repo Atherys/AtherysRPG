@@ -9,6 +9,7 @@ import com.atherys.rpg.character.SimpleCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
+import com.atherys.skills.AtherysSkills;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
@@ -49,7 +50,6 @@ public class RPGCharacterService {
             PlayerCharacter pc = new PlayerCharacter(player.getUniqueId());
             pc.setEntity(player);
             pc.setBaseAttributes(attributeService.getDefaultAttributes());
-            pc.setExperienceSpendingLimit(config.DEFAULT_EXPERIENCE_SPENDING_LIMIT);
             pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
             repository.saveOne(pc);
 
@@ -105,7 +105,7 @@ public class RPGCharacterService {
 
     private void setSkillPermission(PlayerCharacter pc, String skillPermission, boolean value) {
         getUser(pc).ifPresent(user -> {
-            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillPermission, value ? Tristate.TRUE : Tristate.UNDEFINED);
+            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillPermission, value ? Tristate.TRUE : Tristate.FALSE);
         });
     }
 
@@ -133,13 +133,20 @@ public class RPGCharacterService {
         repository.saveOne(pc);
     }
 
-    public void setCharacterExperienceSpendingLimit(PlayerCharacter pc, Double amount) {
-        pc.setExperienceSpendingLimit(amount);
+    public void addSpentExperience(PlayerCharacter pc, double amount) {
+        pc.setSpentExperience(pc.getSpentExperience() + amount);
         repository.saveOne(pc);
     }
 
-    public void addSpentExperience(PlayerCharacter pc, double amount) {
+    public void addSpentSkillExperience(PlayerCharacter pc, double amount) {
         pc.setSpentExperience(pc.getSpentExperience() + amount);
+        pc.setSpentSkillExperience(pc.getSpentSkillExperience() + amount);
+        repository.saveOne(pc);
+    }
+
+    public void addSpentAttributeExperience(PlayerCharacter pc, double amount) {
+        pc.setSpentExperience(pc.getSpentExperience() + amount);
+        pc.setSpentAttributeExperience(pc.getSpentAttributeExperience() + amount);
         repository.saveOne(pc);
     }
 
@@ -151,22 +158,39 @@ public class RPGCharacterService {
         return expression.eval().doubleValue();
     }
 
+    public void resetCharacterSkills(PlayerCharacter pc) {
+        double spentOnSkills = pc.getSpentSkillExperience();
+
+        pc.getSkills().forEach(s -> {
+            setSkillPermission(pc, AtherysSkills.getInstance().getSkillService().getSkillById(s).get().getPermission(), false);
+        });
+        pc.setSkills(new ArrayList<>());
+        pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
+        setSkillPermission(pc, skillGraphFacade.getSkillGraphRoot().getPermission(), true);
+
+        pc.setSpentSkillExperience(0);
+        pc.setSpentExperience(pc.getSpentExperience() - spentOnSkills);
+        pc.setExperience(pc.getExperience() + spentOnSkills);
+
+        repository.saveOne(pc);
+    }
+
+    public void resetCharacterAttributes(PlayerCharacter pc) {
+        double spentOnAttributes = pc.getSpentAttributeExperience();
+
+        pc.setBaseAttributes(attributeService.getDefaultAttributes());
+        pc.setSpentAttributeExperience(0);
+        pc.setSpentExperience(pc.getSpentExperience() - spentOnAttributes);
+        pc.setExperience(pc.getExperience() + spentOnAttributes);
+
+        repository.saveOne(pc);
+    }
+
     /**
      * Resets the characters attributes and skills, and gives back used experience.
      */
     public void resetCharacter(PlayerCharacter pc) {
-        pc.setBaseAttributes(attributeService.getDefaultAttributes());
-
-        // Remove old permissions
-        pc.getSkills().forEach(s -> {
-            setSkillPermission(pc, s, false);
-        });
-        pc.setSkills(new ArrayList<>());
-
-        double spent = pc.getSpentExperience();
-        pc.setSpentExperience(0);
-        pc.setExperience(pc.getExperience() + spent);
-
-        repository.saveOne(pc);
+        resetCharacterSkills(pc);
+        resetCharacterAttributes(pc);
     }
 }

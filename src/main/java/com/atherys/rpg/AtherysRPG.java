@@ -9,10 +9,13 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
-import com.atherys.rpg.command.AttributesCommand;
 import com.atherys.rpg.command.ExperienceCommand;
+import com.atherys.rpg.command.attribute.AttributesCommand;
+import com.atherys.rpg.command.exception.RPGCommandException;
+import com.atherys.rpg.command.ItemSpawnCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.ItemsConfig;
 import com.atherys.rpg.config.MobsConfig;
 import com.atherys.rpg.config.SkillGraphConfig;
 import com.atherys.rpg.data.AttributeData;
@@ -34,7 +37,9 @@ import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.game.GameRegistryEvent;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
@@ -42,6 +47,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.channel.MessageReceiver;
 
 @Plugin(
         id = "atherysrpg",
@@ -85,6 +91,9 @@ public class AtherysRPG {
         getConfig().init();
         getGraphConfig().init();
         getMobsConfig().init();
+        getItemsConfig().init();
+
+        components.itemFacade.init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
@@ -95,6 +104,7 @@ public class AtherysRPG {
             AtherysCore.getCommandService().register(new AttributesCommand(), this);
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
             AtherysCore.getCommandService().register(new SkillsCommand(), this);
+            AtherysCore.getCommandService().register(new ItemSpawnCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }
@@ -105,6 +115,34 @@ public class AtherysRPG {
     private void start() {
         getPlayerCharacterRepository().initCache();
         components.healingService.init();
+    }
+
+    private void reload(Cause cause) {
+        getConfig().load();
+        getGraphConfig().load();
+        getMobsConfig().load();
+        getItemsConfig().load();
+
+        components.itemFacade.init();
+
+        // Re-register command to update item choices
+        try {
+            Sponge.getCommandManager()
+                    .get("spawnitem")
+                    .ifPresent(Sponge.getCommandManager()::removeMapping);
+
+            AtherysCore.getCommandService().register(new ItemSpawnCommand(), this);
+        } catch (CommandService.AnnotatedCommandException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            getSkillGraphFacade().resetSkillGraph();
+        } catch (RPGCommandException e) {
+            if (cause.root() instanceof MessageReceiver) {
+                ((MessageReceiver) cause.root()).sendMessage(e.getText());
+            }
+        }
     }
 
     private void stop() {
@@ -125,6 +163,13 @@ public class AtherysRPG {
     public void onStart(GameStartingServerEvent event) {
         if (init) {
             start();
+        }
+    }
+
+    @Listener
+    public void onReload(GameReloadEvent event) throws RPGCommandException {
+        if (init) {
+            reload(event.getCause());
         }
     }
 
@@ -215,6 +260,10 @@ public class AtherysRPG {
         return components.mobsConfig;
     }
 
+    public ItemsConfig getItemsConfig() {
+        return components.itemsConfig;
+    }
+
     public PlayerCharacterRepository getPlayerCharacterRepository() {
         return components.playerCharacterRepository;
     }
@@ -255,6 +304,10 @@ public class AtherysRPG {
         return components.skillGraphFacade;
     }
 
+    public ItemFacade getItemFacade() {
+        return components.itemFacade;
+    }
+
     private static class Components {
         @Inject
         AtherysRPGConfig config;
@@ -264,6 +317,9 @@ public class AtherysRPG {
 
         @Inject
         MobsConfig mobsConfig;
+
+        @Inject
+        ItemsConfig itemsConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;
@@ -297,6 +353,9 @@ public class AtherysRPG {
 
         @Inject
         AttributeFacade attributeFacade;
+
+        @Inject
+        ItemFacade itemFacade;
 
         @Inject
         EntityListener entityListener;

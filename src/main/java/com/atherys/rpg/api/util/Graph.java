@@ -330,4 +330,20 @@ public class Graph<T> {
     public String toString() {
         return "Graph{" + links + '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Graph)) return false;
+        Graph<?> graph = (Graph<?>) o;
+        return firstAdded.equals(graph.firstAdded) &&
+                lastAdded.equals(graph.lastAdded) &&
+                nodes.equals(graph.nodes) &&
+                links.equals(graph.links);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstAdded, lastAdded, nodes, links);
+    }
 }

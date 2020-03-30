@@ -1,7 +1,5 @@
 package com.atherys.rpg.service;
 
-import com.atherys.rpg.api.damage.AtherysDamageType;
-import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.google.inject.Inject;
@@ -44,12 +42,28 @@ public class DamageService {
     public double getRangedDamage(
             Map<AttributeType, Double> attackerAttributes,
             Map<AttributeType, Double> targetAttributes,
-            EntityType projectileType
+            EntityType projectileType,
+            double speed
     ) {
         String damageType = getRangedDamageType(projectileType);
 
         // Calculate and return the damage
-        return calcDamage(attackerAttributes, targetAttributes, damageType);
+        return calcRangedDamage(attackerAttributes, targetAttributes, damageType, speed);
+    }
+
+    public double calcRangedDamage(
+            Map<AttributeType, Double> attackerAttributes,
+            Map<AttributeType, Double> targetAttributes,
+            String type,
+            double speed
+    ) {
+        Expression producedDamageExpression = expressionService.getExpression(config.DAMAGE_CALCULATIONS.get(type));
+
+        producedDamageExpression.setVariable("SPEED", BigDecimal.valueOf(speed));
+        expressionService.populateAttributes(producedDamageExpression, attackerAttributes, "source");
+        double producedDamage = producedDamageExpression.eval().doubleValue();
+
+        return getPhysicalDamageMitigation(targetAttributes, producedDamage);
     }
 
     public double calcDamage(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, String type) {
@@ -87,10 +101,10 @@ public class DamageService {
     }
 
     private String getMeleeDamageType(ItemType itemType) {
-        return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, AtherysDamageTypes.UNARMED.getId());
+        return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, config.DEFAULT_MELEE_TYPE);
     }
 
     private String getRangedDamageType(EntityType projectileType) {
-        return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, AtherysDamageTypes.PIERCE.getId());
+        return config.PROJECTILE_DAMAGE_TYPES.getOrDefault(projectileType, config.DEFAULT_RANGED_TYPE);
     }
 }

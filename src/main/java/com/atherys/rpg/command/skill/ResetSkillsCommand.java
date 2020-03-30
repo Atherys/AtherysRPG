@@ -12,14 +12,14 @@ import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
 
-@Aliases("next")
-@Description("Lists the skills that you can choose.")
-@Permission("atherysrpg.skills.list")
-public class ListAvailableSkillsCommand implements PlayerCommand {
+@Aliases("reset")
+@Permission("atherysrpg.skills.reset")
+@Description("Resets your skills and returns the spent experience.")
+public class ResetSkillsCommand implements PlayerCommand {
     @Nonnull
     @Override
     public CommandResult execute(@Nonnull Player source, @Nonnull CommandContext args) throws CommandException {
-        AtherysRPG.getInstance().getRPGCharacterFacade().displayAvailableSkills(source);
+        AtherysRPG.getInstance().getRPGCharacterFacade().resetSkills(source);
         return CommandResult.success();
     }
 }

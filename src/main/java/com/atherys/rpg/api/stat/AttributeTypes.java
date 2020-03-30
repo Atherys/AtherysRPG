@@ -6,7 +6,7 @@ public final class AttributeTypes {
 
     public static final AttributeType STRENGTH = new AttributeType("atherys:strength", "str", "Strength", true, TextColors.RED);
 
-    public static final AttributeType CONSTITUTION = new AttributeType("atherys:constitution", "con", "Constitution", true, TextColors.GOLD);
+    public static final AttributeType CONSTITUTION = new AttributeType("atherys:constitution", "con", "Constitution", true, TextColors.YELLOW);
 
     public static final AttributeType DEXTERITY = new AttributeType("atherys:dexterity", "dex", "Dexterity", true, TextColors.GREEN);
 
@@ -14,7 +14,7 @@ public final class AttributeTypes {
 
     public static final AttributeType WISDOM = new AttributeType("atherys:wisdom", "wis", "Wisdom", true, TextColors.LIGHT_PURPLE);
 
-    public static final AttributeType MAGICAL_RESISTANCE = new AttributeType("atherys:magical_resistance", "magicres", "Magical Resistance", false, TextColors.DARK_RED);
+    public static final AttributeType MAGICAL_RESISTANCE = new AttributeType("atherys:magical_resistance", "magicres", "Magical Resistance", false, TextColors.AQUA);
 
     public static final AttributeType PHYSICAL_RESISTANCE = new AttributeType("atherys:physical_resistance", "physres", "Physical Resistance", false, TextColors.GOLD);
 

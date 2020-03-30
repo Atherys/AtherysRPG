@@ -1,7 +1,8 @@
-package com.atherys.rpg.command;
+package com.atherys.rpg.command.attribute;
 
 import com.atherys.core.command.ParameterizedCommand;
 import com.atherys.core.command.annotation.Aliases;
+import com.atherys.core.command.annotation.Description;
 import com.atherys.core.command.annotation.Permission;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
@@ -14,9 +15,10 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-@Aliases("remove")
-@Permission("atherysrpg.attributes.remove")
-public class RemoveAttributeCommand implements ParameterizedCommand {
+@Aliases("add")
+@Permission("atherysrpg.attributes.add")
+@Description("Adds the given attribute and amount to the player.")
+public class AddAttributeCommand implements ParameterizedCommand {
 
     @Override
     public CommandElement[] getArguments() {
@@ -29,11 +31,12 @@ public class RemoveAttributeCommand implements ParameterizedCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        AtherysRPG.getInstance().getAttributeFacade().removePlayerAttribute(
+        AtherysRPG.getInstance().getAttributeFacade().addPlayerAttribute(
                 args.<Player>getOne("player").orElse(null),
                 args.<AttributeType>getOne("attributeType").orElse(null),
                 args.<Double>getOne("amount").orElse(0.0d)
         );
         return CommandResult.success();
     }
+
 }

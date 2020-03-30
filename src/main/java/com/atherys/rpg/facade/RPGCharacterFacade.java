@@ -1,5 +1,6 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.event.GainSkillEvent;
 import com.atherys.rpg.api.event.LoseSkillEvent;
 import com.atherys.rpg.api.skill.RPGSkill;
@@ -12,16 +13,21 @@ import com.atherys.rpg.service.DamageService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.HealingService;
 import com.atherys.rpg.service.RPGCharacterService;
-import com.atherys.skills.api.event.ResourceRegenEvent;
+import com.atherys.skills.AtherysSkills;
+import com.atherys.skills.api.event.ResourceEvent;
+import com.atherys.skills.api.resource.ResourceUser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
@@ -33,6 +39,7 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -93,42 +100,30 @@ public class RPGCharacterFacade {
         }
     }
 
-    public void displaySkills(Player player) {
+    public void displayAllSkills(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        List<String> skills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
+        List<String> ownedSkills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
 
-        Text.Builder skillsText = Text.builder().append(Text.of(
-                DARK_GRAY, "[]=[ ", GOLD, "Your Skills", DARK_GRAY, " ]=[]"
-        ));
-        skills.forEach(s -> {
-            RPGSkill skill = skillFacade.getSkillById(s).get();
-            Text skillText = Text.of(DARK_GREEN, "- ", skillFacade.renderSkill(skill, player));
-            skillsText.append(NEW_LINE, skillText);
-        });
+        List<Text> messages = new ArrayList<>();
+        messages.add(Text.of(DARK_GRAY, "[]====[ ", GOLD, "Your Skills", DARK_GRAY, " ]====[]"));
 
-        player.sendMessage(skillsText.build());
-    }
+        for (String skillId : ownedSkills) {
+            RPGSkill skill = skillFacade.getSkillById(skillId).get();
+            messages.add(Text.of(DARK_GREEN, "- ", skillFacade.renderSkill(skill, player), " "));
+        }
 
-    public void displayAvailableSkills(Player player) throws RPGCommandException {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        messages.add(Text.of(DARK_GRAY, "[]==[ ", GOLD, "Available Skills", DARK_GRAY, " ]==[]"));
 
-        Text.Builder skills = Text.builder().append(Text.of(
-                DARK_GRAY, "[]=[ ", GOLD, "Available Skills", DARK_GRAY, " ]=[]"
-        ));
-        skillGraphFacade.getLinkedSkills(pc.getSkills()).forEach(s -> {
-
+        for (RPGSkill skill : skillGraphFacade.getLinkedSkills(pc.getSkills())) {
             Text skillText = Text.builder()
-                    .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(s, player)))
-                    .onClick(TextActions.executeCallback(source -> {
-                        chooseSkillWithoutThrowing(player, s.getId());
-                    }))
+                    .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(skill, player), " "))
+                    .onClick(TextActions.executeCallback(source -> chooseSkillWithoutThrowing(player, skill.getId())))
                     .build();
+            messages.add(skillText);
+        }
 
-            skills.append(Text.NEW_LINE, skillText);
-        });
-
-        player.sendMessage(skills.build());
+        messages.forEach(player::sendMessage);
     }
 
     public void checkTreeOnLogin(Player player) {
@@ -162,8 +157,17 @@ public class RPGCharacterFacade {
         });
 
         if (pc.getExperience() >= cost)  {
+            if (pc.getSpentExperience() + cost > config.EXPERIENCE_SPENDING_LIMIT) {
+                throw new RPGCommandException("You cannot go over the experience spending limit of ", config.EXPERIENCE_SPENDING_LIMIT, ".");
+            }
+
+            if (pc.getSpentSkillExperience() + cost > config.SKILL_SPENDING_LIMIT) {
+                throw new RPGCommandException("You cannot go over the skill spending limit of ", config.SKILL_SPENDING_LIMIT, ".");
+            }
+
             characterService.addSkill(pc, skill);
             characterService.removeExperience(pc, cost);
+            characterService.addSpentSkillExperience(pc, cost);
 
             Sponge.getEventManager().post(new GainSkillEvent(player, skill));
 
@@ -178,7 +182,7 @@ public class RPGCharacterFacade {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         if (!pc.getSkills().contains(skillId)) {
-            throw new RPGCommandException("You do not have the skill ", skillId);
+            throw new RPGCommandException("You do not have the skill ", skillId, ".");
         }
 
         List<String> skillsCopy = new ArrayList<>(pc.getSkills());
@@ -188,6 +192,7 @@ public class RPGCharacterFacade {
             characterService.removeSkill(pc, skill);
             skillGraphFacade.getCostForSkill(skill, skillsCopy).ifPresent(cost -> {
                 characterService.addExperience(pc, cost);
+                characterService.addSpentSkillExperience(pc, -cost);
             });
 
             Sponge.getEventManager().post(new LoseSkillEvent(player, skill));
@@ -196,6 +201,11 @@ public class RPGCharacterFacade {
         } else {
             throw new RPGCommandException("You cannot remove that skill.");
         }
+    }
+
+    public void resetSkills(Player player) {
+        characterService.resetCharacterSkills(characterService.getOrCreateCharacter(player));
+        rpgMsg.info(player, "Your skills have been reset.");
     }
 
     private RPGSkill getSkillById(String skillId) throws RPGCommandException {
@@ -216,18 +226,15 @@ public class RPGCharacterFacade {
         return true;
     }
 
-    public void setPlayerExperienceSpendingLimit(Player player, Double amount) {
-        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-        characterService.setCharacterExperienceSpendingLimit(pc, amount);
-    }
-
     public void resetPlayerCharacter(Player player) {
         characterService.resetCharacter(characterService.getOrCreateCharacter(player));
         rpgMsg.info(player, "Skills and attributes reset. Your experience has been returned to you.");
     }
 
-    public void onResourceRegen(ResourceRegenEvent event, Player player) {
+    public void onResourceRegen(ResourceEvent.Regen event, Player player) {
         double amount = characterService.calcResourceRegen(attributeFacade.getAllAttributes(player));
+
+
         event.setRegenAmount(amount);
     }
 
@@ -239,6 +246,25 @@ public class RPGCharacterFacade {
         } else {
             onDirectDamage(event, rootSource);
         }
+    }
+
+    public void onEnvironmentalDamage(DamageEntityEvent event, DamageType type, Living target) {
+        //Remove damage modifiers
+        resetDamageEvent(event);
+
+        double damage;
+
+        if (type == DamageTypes.FALL) {
+            Expression expression = expressionService.getExpression(config.ENVIRONMENTAL_CALCULATIONS.get(type));
+            float blocksFallen = event.getTargetEntity().get(Keys.FALL_DISTANCE).get();
+
+            expression.setVariable("DISTANCE", BigDecimal.valueOf(blocksFallen));
+            damage = expressionService.evalExpression(target, expression).doubleValue();
+        } else {
+            damage = expressionService.evalExpression(target, config.ENVIRONMENTAL_CALCULATIONS.get(type)).doubleValue();
+        }
+
+        event.setBaseDamage(damage);
     }
 
     private void onDirectDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
@@ -254,9 +280,7 @@ public class RPGCharacterFacade {
         }
 
         // Remove all damage modifiers
-        event.getModifiers().forEach(damageFunction -> {
-            event.setDamage(damageFunction.getModifier(), (base) -> 0);
-        });
+        resetDamageEvent(event);
 
         Optional<DamageExpressionData> damageExpressionData = source.get(DamageExpressionData.class);
         if (damageExpressionData.isPresent()) {
@@ -302,9 +326,7 @@ public class RPGCharacterFacade {
         EntityType projectileType = rootSource.getSource().getType();
 
         // Remove all damage modifiers
-        event.getModifiers().forEach(damageFunction -> {
-            event.setDamage(damageFunction.getModifier(), (base) -> 0);
-        });
+        resetDamageEvent(event);
 
         Optional<DamageExpressionData> damageExpressionData = rootSource.getSource().get(DamageExpressionData.class);
         if (damageExpressionData.isPresent()) {
@@ -337,18 +359,42 @@ public class RPGCharacterFacade {
         Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
         Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType));
+        double speed = rootSource.getSource().getVelocity().lengthSquared();
+
+        event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType, speed));
+    }
+
+    private void resetDamageEvent(DamageEntityEvent event) {
+        event.getModifiers().forEach(damageFunction -> {
+            event.setDamage(damageFunction.getModifier(), (base) -> 0);
+        });
     }
 
     public void setPlayerHealth(Player player) {
         assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION);
     }
 
+    public void setPlayerResourceLimit(Player player, boolean fill) {
+        double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
+        ResourceUser user = AtherysSkills.getInstance().getResourceService().getOrCreateUser(player);
+        user.setMax(max);
+        if (fill) user.fill();
+    }
+
     public void assignEntityHealthLimit(Living living, String healthLimitExpression) {
         double maxHP = expressionService.evalExpression(living, healthLimitExpression).doubleValue();
 
-        living.offer(Keys.MAX_HEALTH, maxHP);
-        living.offer(Keys.HEALTH, maxHP);
+        DataTransactionResult maxHPResult = living.offer(Keys.MAX_HEALTH, maxHP);
+        DataTransactionResult hpResult = living.offer(Keys.HEALTH, maxHP);
+
+        if (!maxHPResult.isSuccessful() || !hpResult.isSuccessful()) {
+            AtherysRPG.getInstance().getLogger().warn(
+                    "Failed to set max health for entity {}, Max HP Result: {}, HP Result: {}",
+                    living,
+                    maxHPResult,
+                    hpResult
+            );
+        }
 
         if (living.supports(Keys.HEALTH_SCALE)) {
             living.offer(Keys.HEALTH_SCALE, 20.0d);
