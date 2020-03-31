@@ -7,6 +7,7 @@ import com.atherys.core.command.annotation.Permission;
 import com.atherys.rpg.AtherysRPG;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -18,14 +19,14 @@ import javax.annotation.Nonnull;
 
 @Aliases("spawnitem")
 @Permission("atherysrpg.spawnitem")
-public class ItemSpawnCommand implements PlayerCommand, ParameterizedCommand {
+public class SpawnItemCommand implements ParameterizedCommand {
     @Nonnull
     @Override
-    public CommandResult execute(@Nonnull Player source, @Nonnull CommandContext args) throws CommandException {
+    public CommandResult execute(@Nonnull CommandSource source, @Nonnull CommandContext args) throws CommandException {
         AtherysRPG.getInstance().getItemFacade().createAndGiveItemToPlayer(
                 args.<ItemStackSnapshot>getOne("item").orElse(null),
                 args.<Integer>getOne("quantity").orElse(0),
-                source
+                args.<Player>getOne("player").orElse(source instanceof Player ? (Player) source : null)
         );
 
         return CommandResult.success();
@@ -35,7 +36,8 @@ public class ItemSpawnCommand implements PlayerCommand, ParameterizedCommand {
     public CommandElement[] getArguments() {
         return new CommandElement[] {
                 GenericArguments.choices(Text.of("item"), AtherysRPG.getInstance().getItemFacade().getCachedItems()),
-                GenericArguments.integer(Text.of("quantity"))
+                GenericArguments.integer(Text.of("quantity")),
+                GenericArguments.optional(GenericArguments.player(Text.of("player")))
         };
     }
 }

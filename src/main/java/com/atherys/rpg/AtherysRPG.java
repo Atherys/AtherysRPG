@@ -12,7 +12,7 @@ import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
-import com.atherys.rpg.command.ItemSpawnCommand;
+import com.atherys.rpg.command.SpawnItemCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.ItemsConfig;
@@ -104,7 +104,7 @@ public class AtherysRPG {
             AtherysCore.getCommandService().register(new AttributesCommand(), this);
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
             AtherysCore.getCommandService().register(new SkillsCommand(), this);
-            AtherysCore.getCommandService().register(new ItemSpawnCommand(), this);
+            AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }
@@ -131,7 +131,7 @@ public class AtherysRPG {
                     .get("spawnitem")
                     .ifPresent(Sponge.getCommandManager()::removeMapping);
 
-            AtherysCore.getCommandService().register(new ItemSpawnCommand(), this);
+            AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }

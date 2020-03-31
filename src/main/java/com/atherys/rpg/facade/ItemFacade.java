@@ -68,6 +68,10 @@ public class ItemFacade {
 
     public void createAndGiveItemToPlayer(ItemStackSnapshot snapshot, int quantity, Player player) throws RPGCommandException {
 
+        if (player == null) {
+            throw new RPGCommandException("Must have a player as an arg if run by console.");
+        }
+
         if (quantity < 1) {
             throw new RPGCommandException("Cannot give 0 or negative quantity of an item.");
         }
