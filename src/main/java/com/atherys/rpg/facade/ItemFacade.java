@@ -100,6 +100,7 @@ public class ItemFacade {
 
         // Hide item attributes
         itemStack.offer(Keys.HIDE_ATTRIBUTES, item.HIDE_FLAGS);
+        itemStack.offer(Keys.HIDE_ENCHANTMENTS, item.HIDE_FLAGS);
 
         // Convert and apply enchantments
         List<Enchantment> enchantments = new ArrayList<>();
