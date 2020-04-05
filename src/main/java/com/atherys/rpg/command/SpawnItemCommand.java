@@ -24,8 +24,8 @@ public class SpawnItemCommand implements ParameterizedCommand {
     @Override
     public CommandResult execute(@Nonnull CommandSource source, @Nonnull CommandContext args) throws CommandException {
         AtherysRPG.getInstance().getItemFacade().createAndGiveItemToPlayer(
-                args.<ItemStackSnapshot>getOne("item").orElse(null),
-                args.<Integer>getOne("quantity").orElse(0),
+                args.<ItemStackSnapshot>getOne("item").get(),
+                args.<Integer>getOne("quantity").orElse(1),
                 args.<Player>getOne("player").orElse(source instanceof Player ? (Player) source : null)
         );
 
@@ -36,8 +36,8 @@ public class SpawnItemCommand implements ParameterizedCommand {
     public CommandElement[] getArguments() {
         return new CommandElement[] {
                 GenericArguments.choices(Text.of("item"), AtherysRPG.getInstance().getItemFacade().getCachedItems()),
-                GenericArguments.integer(Text.of("quantity")),
-                GenericArguments.optional(GenericArguments.player(Text.of("player")))
+                GenericArguments.optional(GenericArguments.player(Text.of("player"))),
+                GenericArguments.optional(GenericArguments.integer(Text.of("quantity")))
         };
     }
 }
