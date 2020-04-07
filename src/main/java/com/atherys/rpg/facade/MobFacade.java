@@ -10,6 +10,7 @@ import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
@@ -75,6 +76,8 @@ public class MobFacade {
     }
 
     public void dropMobLoot(Living mob, Player killer) {
+        MutableInt itemLootLimit = new MutableInt(mobsConfig.ITEM_DROP_LIMIT);
+
         // TODO: Add logic for if and when the player ( killer ) is in a party
         getMobConfigFromLiving(mob).map(config -> config.LOOT).ifPresent(lootConfigs -> lootConfigs.forEach((loot) -> {
             // Roll for drop chance is unsuccessful and this loot item will not drop
@@ -88,8 +91,9 @@ public class MobFacade {
             }
 
             // If there is item loot, create the item and drop it at the location of the mob
-            if (loot.ITEM != null) {
+            if (loot.ITEM != null && itemLootLimit.intValue() != 0) {
                 dropItemLoot(mob.getLocation(), loot.ITEM);
+                itemLootLimit.decrement();
             }
 
             // If there is experience loot, calculate it and award to player
