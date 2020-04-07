@@ -14,9 +14,6 @@ public class MobsConfig extends PluginConfig {
         super("config/atherysrpg", "monsters.conf");
     }
 
-    @Setting("item-drop-limit")
-    public int ITEM_DROP_LIMIT = 2;
-
     @Setting("mobs")
     public Map<String, MobConfig> MOBS = new HashMap<>();
 

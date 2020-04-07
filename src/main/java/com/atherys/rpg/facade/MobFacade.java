@@ -76,31 +76,36 @@ public class MobFacade {
     }
 
     public void dropMobLoot(Living mob, Player killer) {
-        MutableInt itemLootLimit = new MutableInt(mobsConfig.ITEM_DROP_LIMIT);
+        MutableInt itemLootLimit = new MutableInt(0);
 
         // TODO: Add logic for if and when the player ( killer ) is in a party
-        getMobConfigFromLiving(mob).map(config -> config.LOOT).ifPresent(lootConfigs -> lootConfigs.forEach((loot) -> {
-            // Roll for drop chance is unsuccessful and this loot item will not drop
-            if (random.nextDouble() > loot.DROP_RATE) {
-                return;
-            }
+        getMobConfigFromLiving(mob)
+                .map(config -> {
+                    itemLootLimit.setValue(config.ITEM_DROP_LIMIT);
+                    return config.LOOT;
+                })
+                .ifPresent(lootConfigs -> lootConfigs.forEach((loot) -> {
+                    // Roll for drop chance is unsuccessful and this loot item will not drop
+                    if (random.nextDouble() > loot.DROP_RATE) {
+                        return;
+                    }
 
-            // If there is currency loot, calculate it and award to player
-            if (loot.CURRENCY != null) {
-                awardPlayerCurrencyLoot(killer, loot.CURRENCY);
-            }
+                    // If there is currency loot, calculate it and award to player
+                    if (loot.CURRENCY != null) {
+                        awardPlayerCurrencyLoot(killer, loot.CURRENCY);
+                    }
 
-            // If there is item loot, create the item and drop it at the location of the mob
-            if (loot.ITEM != null && itemLootLimit.intValue() != 0) {
-                dropItemLoot(mob.getLocation(), loot.ITEM);
-                itemLootLimit.decrement();
-            }
+                    // If there is item loot, create the item and drop it at the location of the mob
+                    if (loot.ITEM != null && itemLootLimit.intValue() != 0) {
+                        dropItemLoot(mob.getLocation(), loot.ITEM);
+                        itemLootLimit.decrement();
+                    }
 
-            // If there is experience loot, calculate it and award to player
-            if (loot.EXPERIENCE != null) {
-                awardPlayerExperienceLoot(killer, loot.EXPERIENCE);
-            }
-        }));
+                    // If there is experience loot, calculate it and award to player
+                    if (loot.EXPERIENCE != null) {
+                        awardPlayerExperienceLoot(killer, loot.EXPERIENCE);
+                    }
+                }));
     }
 
     private void awardPlayerCurrencyLoot(Player player, CurrencyLootConfig config) {
