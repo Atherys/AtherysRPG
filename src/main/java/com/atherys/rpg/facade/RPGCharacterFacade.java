@@ -25,8 +25,10 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
@@ -377,8 +379,13 @@ public class RPGCharacterFacade {
     public void setPlayerResourceLimit(Player player, boolean fill) {
         double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
         ResourceUser user = AtherysSkills.getInstance().getResourceService().getOrCreateUser(player);
+
         user.setMax(max);
-        if (fill) user.fill();
+        if (fill) {
+            user.fill();
+        } else if (user.getCurrent() > user.getMax()) {
+            user.fill();
+        }
     }
 
     public void assignEntityHealthLimit(Living living, String healthLimitExpression) {
@@ -397,7 +404,7 @@ public class RPGCharacterFacade {
         }
 
         if (living.supports(Keys.HEALTH_SCALE)) {
-            living.offer(Keys.HEALTH_SCALE, 20.0d);
+            living.offer(Keys.HEALTH_SCALE, 40d);
         }
     }
 

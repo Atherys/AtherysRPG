@@ -25,6 +25,9 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("offhand-item-types")
     public Set<ItemType> OFFHAND_ITEMS = new HashSet<>();
 
+    @Setting("mainhand-item-types")
+    public Set<ItemType> MAINHAND_ITEMS = new HashSet<>();
+
     @Setting("projectile-damage-types")
     public Map<EntityType, String> PROJECTILE_DAMAGE_TYPES = new HashMap<>();
 

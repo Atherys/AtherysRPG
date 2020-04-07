@@ -1,6 +1,7 @@
 package com.atherys.rpg.service;
 
 import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.ArmorEquipableCharacter;
@@ -148,6 +149,8 @@ public class RPGCharacterService {
         pc.setSpentExperience(pc.getSpentExperience() + amount);
         pc.setSpentAttributeExperience(pc.getSpentAttributeExperience() + amount);
         repository.saveOne(pc);
+
+        Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
     }
 
     public double calcResourceRegen(Map<AttributeType, Double> attributes) {
@@ -184,6 +187,8 @@ public class RPGCharacterService {
         pc.setExperience(pc.getExperience() + spentOnAttributes);
 
         repository.saveOne(pc);
+
+        Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
     }
 
     /**

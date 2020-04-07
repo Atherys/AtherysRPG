@@ -60,7 +60,7 @@ public class AttributeService {
 
     public Map<AttributeType, Double> getMainHandAttributes(Equipable equipable) {
         return equipable.getEquipped(EquipmentTypes.MAIN_HAND).map(itemStack -> {
-            return config.OFFHAND_ITEMS.contains(itemStack.getType()) ? null : getItemStackAttributes(itemStack);
+            return config.MAINHAND_ITEMS.contains(itemStack.getType()) ? getItemStackAttributes(itemStack) : null;
         }).orElse(new HashMap<>());
     }
 
