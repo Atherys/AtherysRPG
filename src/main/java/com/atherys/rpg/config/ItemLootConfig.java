@@ -5,6 +5,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class ItemLootConfig {
+
+    @Setting("drop-rate")
+    public Double DROP_RATE = 0.0d;
+
     @Setting("item-id")
     public String ITEM_ID;
 

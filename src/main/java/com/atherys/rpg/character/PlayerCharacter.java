@@ -18,6 +18,9 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @Transient
     private Player entity;
 
+    @Transient
+    private boolean hasJoined;
+
     @Convert(attributeName = "key.", converter = AttributeTypeConverter.class)
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "attribute_type")
@@ -59,6 +62,14 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void setEntity(Player living) {
         this.entity = living;
+    }
+
+    public boolean hasJoined() {
+        return hasJoined;
+    }
+
+    public void setHasJoined(boolean hasJoined) {
+        this.hasJoined = hasJoined;
     }
 
     @Override

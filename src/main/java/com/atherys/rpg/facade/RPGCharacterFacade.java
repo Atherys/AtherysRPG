@@ -25,10 +25,8 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
-import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
@@ -47,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.spongepowered.api.text.Text.NEW_LINE;
 import static org.spongepowered.api.text.format.TextColors.*;
 
 @Singleton
@@ -372,8 +369,27 @@ public class RPGCharacterFacade {
         });
     }
 
-    public void setPlayerHealth(Player player) {
-        assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION);
+    public void onPlayerJoin(Player player) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        boolean fill = false;
+
+        if (!pc.hasJoined()) {
+            pc.setHasJoined(true);
+            fill = true;
+        }
+
+        setPlayerHealth(player, fill);
+        setPlayerResourceLimit(player, fill);
+        checkTreeOnLogin(player);
+    }
+
+    public void onPlayerRespawn(Player player) {
+        setPlayerHealth(player, true);
+        setPlayerResourceLimit(player, true);
+    }
+
+    public void setPlayerHealth(Player player, boolean fill) {
+        assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION, fill);
     }
 
     public void setPlayerResourceLimit(Player player, boolean fill) {
@@ -388,23 +404,24 @@ public class RPGCharacterFacade {
         }
     }
 
-    public void assignEntityHealthLimit(Living living, String healthLimitExpression) {
+    public void assignEntityHealthLimit(Living living, String healthLimitExpression, boolean fill) {
         double maxHP = expressionService.evalExpression(living, healthLimitExpression).doubleValue();
 
         DataTransactionResult maxHPResult = living.offer(Keys.MAX_HEALTH, maxHP);
-        DataTransactionResult hpResult = living.offer(Keys.HEALTH, maxHP);
+        if (fill) {
+            living.offer(Keys.HEALTH, maxHP);
+        }
 
-        if (!maxHPResult.isSuccessful() || !hpResult.isSuccessful()) {
+        if (!maxHPResult.isSuccessful()) {
             AtherysRPG.getInstance().getLogger().warn(
-                    "Failed to set max health for entity {}, Max HP Result: {}, HP Result: {}",
+                    "Failed to set max health for entity {}, Max HP Result: {}",
                     living,
-                    maxHPResult,
-                    hpResult
+                    maxHPResult
             );
         }
 
         if (living.supports(Keys.HEALTH_SCALE)) {
-            living.offer(Keys.HEALTH_SCALE, 40d);
+            living.offer(Keys.HEALTH_SCALE, 20d);
         }
     }
 
