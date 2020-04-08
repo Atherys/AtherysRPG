@@ -12,10 +12,10 @@ public class ItemLootConfig {
     @Setting("item-id")
     public String ITEM_ID;
 
-    @Setting("quantity-minimum")
+    @Setting("quantity-min")
     public int MINIMUM_QUANTITY = 1;
 
-    @Setting("quantity-minimum")
+    @Setting("quantity-max")
     public int MAXIMUM_QUANTITY = 1;
 
     public ItemLootConfig() {
