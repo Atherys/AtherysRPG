@@ -3,6 +3,7 @@ package com.atherys.rpg.config;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ConfigSerializable
@@ -12,7 +13,7 @@ public class LootConfig {
     public CurrencyLootConfig CURRENCY;
 
     @Setting("items")
-    public List<ItemLootConfig> ITEMS;
+    public List<ItemLootConfig> ITEMS = new ArrayList<>();
 
     @Setting("experience")
     public ExperienceLootConfig EXPERIENCE;

@@ -125,13 +125,15 @@ public class RPGCharacterService {
     }
 
     public void addAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> v1 + v2);
+        pc.getBaseAttributes().merge(attributeType, amount, Double::sum);
         repository.saveOne(pc);
+        Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
     }
 
     public void removeAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
         pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
         repository.saveOne(pc);
+        Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
     }
 
     public void addSpentExperience(PlayerCharacter pc, double amount) {
