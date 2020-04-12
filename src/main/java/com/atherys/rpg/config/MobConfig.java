@@ -5,7 +5,9 @@ import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @ConfigSerializable
 public class MobConfig {
@@ -18,6 +20,9 @@ public class MobConfig {
     @Setting("health-limit-expression")
     public String HEALTH_LIMIT_EXPRESSION = "100.0 * SOURCE_INT";
 
+    @Setting("item-drop-limit")
+    public int ITEM_DROP_LIMIT = 2;
+
     @Setting("loot")
-    public LootConfig LOOT = new LootConfig();
+    public Set<LootConfig> LOOT = new HashSet<>();
 }

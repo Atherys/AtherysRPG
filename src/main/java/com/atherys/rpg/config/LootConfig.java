@@ -9,17 +9,17 @@ import java.util.List;
 @ConfigSerializable
 public class LootConfig {
 
+    @Setting("drop-rate")
+    public Double DROP_RATE = 0.0d;
+
     @Setting("currency")
     public CurrencyLootConfig CURRENCY;
 
     @Setting("items")
-    public List<ItemLootConfig> ITEMS = new ArrayList<>();
+    public ItemLootConfig ITEM;
 
     @Setting("experience")
     public ExperienceLootConfig EXPERIENCE;
-
-    @Setting("item-drop-limit")
-    public int ITEM_DROP_LIMIT = 2;
 
     public LootConfig() {
     }

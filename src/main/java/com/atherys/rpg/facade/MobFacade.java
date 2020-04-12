@@ -10,6 +10,7 @@ import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
@@ -74,35 +75,38 @@ public class MobFacade {
         });
     }
 
+    // To Rynelf: DO NOT TOUCH THIS METHOD
     public void dropMobLoot(Living mob, Player killer) {
-        Optional<LootConfig> lootOptional = getMobConfigFromLiving(mob).map(mobConfig -> mobConfig.LOOT);
+        MutableInt itemLootLimit = new MutableInt(0);
 
         // TODO: Add logic for if and when the player ( killer ) is in a party
-        if (lootOptional.isPresent()) {
-            LootConfig loot = lootOptional.get();
-
-            if (loot.CURRENCY != null) {
-                awardPlayerCurrencyLoot(killer, loot.CURRENCY);
-            }
-
-            if (loot.EXPERIENCE != null) {
-                awardPlayerExperienceLoot(killer, loot.EXPERIENCE);
-            }
-
-            int currentLoot = 0;
-            for (ItemLootConfig itemLoot : loot.ITEMS) {
-                if (currentLoot <= loot.ITEM_DROP_LIMIT) {
-                    double chance = random.nextDouble();
-
-                    if (chance > itemLoot.DROP_RATE) {
-                        dropItemLoot(mob.getLocation(), itemLoot);
-                        currentLoot--;
+        getMobConfigFromLiving(mob)
+                .map(config -> {
+                    itemLootLimit.setValue(config.ITEM_DROP_LIMIT);
+                    return config.LOOT;
+                })
+                .ifPresent(lootConfigs -> lootConfigs.forEach((loot) -> {
+                    // Roll for drop chance is unsuccessful and this loot item will not drop
+                    if (random.nextDouble() > loot.DROP_RATE) {
+                        return;
                     }
-                } else {
-                    return;
-                }
-            }
-        }
+
+                    // If there is currency loot, calculate it and award to player
+                    if (loot.CURRENCY != null) {
+                        awardPlayerCurrencyLoot(killer, loot.CURRENCY);
+                    }
+
+                    // If there is item loot, create the item and drop it at the location of the mob
+                    if (loot.ITEM != null && itemLootLimit.intValue() != 0) {
+                        dropItemLoot(mob.getLocation(), loot.ITEM);
+                        itemLootLimit.decrement();
+                    }
+
+                    // If there is experience loot, calculate it and award to player
+                    if (loot.EXPERIENCE != null) {
+                        awardPlayerExperienceLoot(killer, loot.EXPERIENCE);
+                    }
+                }));
     }
 
     private void awardPlayerCurrencyLoot(Player player, CurrencyLootConfig config) {
