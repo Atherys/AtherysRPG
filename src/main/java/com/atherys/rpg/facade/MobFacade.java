@@ -131,7 +131,7 @@ public class MobFacade {
     private void dropItemLoot(Location<World> dropLocation, ItemLootConfig config) {
         Optional<ItemStack> itemStack = itemFacade.createItemStack(
                 config.ITEM_ID,
-                RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
+                config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
         );
 
         if (!itemStack.isPresent()) {

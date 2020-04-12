@@ -15,6 +15,9 @@ public class ItemLootConfig {
     @Setting("quantity-max")
     public int MAXIMUM_QUANTITY = 1;
 
+    @Setting("quantity")
+    public int QUANTITY = 1;
+
     public ItemLootConfig() {
     }
 }
