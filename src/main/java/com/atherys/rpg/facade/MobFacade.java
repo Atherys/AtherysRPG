@@ -1,6 +1,9 @@
 package com.atherys.rpg.facade;
 
 import com.atherys.core.AtherysCore;
+import com.atherys.core.utils.UserUtils;
+import com.atherys.party.AtherysParties;
+import com.atherys.party.entity.Party;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.*;
@@ -37,6 +40,10 @@ import static org.spongepowered.api.text.format.TextColors.GOLD;
 
 @Singleton
 public class MobFacade {
+
+    @Inject
+    private AtherysRPGConfig config;
+
     @Inject
     private MobsConfig mobsConfig;
 
@@ -96,7 +103,17 @@ public class MobFacade {
 
                     // If there is currency loot, calculate it and award to player
                     if (loot.CURRENCY != null) {
-                        awardPlayerCurrencyLoot(killer, loot.CURRENCY);
+                        Optional<Party> party = AtherysParties.getInstance().getPartyFacade().getPlayerParty(killer);
+
+                        if (party.isPresent()) {
+                            int partySize = party.get().getMembers().size();
+                            party.get().getMembers().stream()
+                                    .map(uuid -> Sponge.getServer().getPlayer(uuid))
+                                    .filter(player -> player.isPresent() && killer.getPosition().distance(player.get().getPosition()) > config.MAX_REWARD_DISTANCE)
+                                    .forEach(player -> awardPlayerCurrencyLoot(player.get(), loot.CURRENCY, partySize));
+                        } else {
+                            awardPlayerCurrencyLoot(killer, loot.CURRENCY, 1);
+                        }
                     }
 
                     // If there is item loot, create the item and drop it at the location of the mob
@@ -106,19 +123,30 @@ public class MobFacade {
                     }
 
                     // If there is experience loot, calculate it and award to player
+                    // TODO: REFACTOR THIS! Either document the dependency, or refactor so it's optional.
                     if (loot.EXPERIENCE != null) {
-                        awardPlayerExperienceLoot(killer, loot.EXPERIENCE);
+                        Optional<Party> party = AtherysParties.getInstance().getPartyFacade().getPlayerParty(killer);
+
+                        if (party.isPresent()) {
+                            int partySize = party.get().getMembers().size();
+                            party.get().getMembers().stream()
+                                    .map(uuid -> Sponge.getServer().getPlayer(uuid))
+                                    .filter(player -> player.isPresent() && killer.getPosition().distance(player.get().getPosition()) > config.MAX_REWARD_DISTANCE)
+                                    .forEach(player -> awardPlayerExperienceLoot(player.get(), loot.EXPERIENCE, partySize));
+                        } else {
+                            awardPlayerExperienceLoot(killer, loot.EXPERIENCE, 1);
+                        }
                     }
                 }));
     }
 
-    private void awardPlayerCurrencyLoot(Player player, CurrencyLootConfig config) {
+    private void awardPlayerCurrencyLoot(Player player, CurrencyLootConfig config, int split) {
         AtherysCore.getEconomyService().flatMap(economyService -> economyService.getOrCreateAccount(player.getUniqueId())).ifPresent(playerAccount -> {
             Optional<Currency> currencyAward = Sponge.getRegistry().getType(Currency.class, config.CURRENCY);
             if (!currencyAward.isPresent()) {
                 throw new RuntimeException("Could not find currency corresponding to id \"" + config.CURRENCY + "\"");
             } else {
-                double amount = Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100) / 100;
+                double amount = (Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100) / 100) / split;
 
                 playerAccount.deposit(
                         currencyAward.get(),
@@ -157,10 +185,10 @@ public class MobFacade {
         }
     }
 
-    private void awardPlayerExperienceLoot(Player player, ExperienceLootConfig config) {
+    private void awardPlayerExperienceLoot(Player player, ExperienceLootConfig config, int split) {
         characterFacade.addPlayerExperience(
                 player,
-                Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100 ) / 100
+                (Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100 ) / 100) / split
         );
     }
 

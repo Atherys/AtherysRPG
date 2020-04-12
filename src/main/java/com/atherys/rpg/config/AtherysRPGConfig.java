@@ -103,6 +103,9 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("skill-message-distance")
     public double SKILL_MESSAGE_DISTANCE = 25;
 
+    @Setting("max-reward-distance")
+    public double MAX_REWARD_DISTANCE = 30.0d;
+
     {
         ATTRIBUTE_ORDER.addAll(Arrays.asList(
                 AttributeTypes.STRENGTH,
