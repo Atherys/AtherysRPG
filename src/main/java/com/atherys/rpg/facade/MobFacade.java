@@ -131,14 +131,21 @@ public class MobFacade {
     }
 
     private void dropItemLoot(Location<World> dropLocation, ItemLootConfig config) {
-        if (config.ITEM_IDS == null || config.ITEM_IDS.isEmpty()) {
-            throw new RuntimeException("Empty list of item ids to drop in loot config");
-        }
+        Optional<ItemStack> itemStack;
 
-        Optional<ItemStack> itemStack = itemFacade.createItemStack(
-                config.ITEM_IDS.get(RandomUtils.nextInt(0, config.ITEM_IDS.size())),
-                config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
-        );
+        // If an item group was configured, prefer that
+        if (config.ITEM_GROUP != null) {
+            itemStack = itemFacade.fetchRandomItemStackFromGroup(
+                    config.ITEM_GROUP,
+                    config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
+            );
+        // If no item group was configured, fetch a random item from the list of item ids
+        } else {
+            itemStack = itemFacade.createItemStack(
+                    config.ITEM_IDS.get(RandomUtils.nextInt(0, config.ITEM_IDS.size())),
+                    config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
+            );
+        }
 
         if (!itemStack.isPresent()) {
             throw new RuntimeException("Could not create an item stack from the item configuration \"" + config + "\"");

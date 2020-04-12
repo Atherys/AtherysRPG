@@ -7,6 +7,7 @@ import com.atherys.rpg.config.ItemsConfig;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.apache.commons.lang3.RandomUtils;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
@@ -30,6 +31,8 @@ public class ItemFacade {
     @Inject
     private AttributeFacade attributeFacade;
 
+    private Map<String, List<String>> groups = new HashMap<>();
+
     private Map<String, ItemStackSnapshot> items = new HashMap<>();
 
     public void init() {
@@ -46,11 +49,30 @@ public class ItemFacade {
             }
 
             items.put(itemConfig.ID, snapshot.get());
+
+            List<String> itemGroup = groups.get(itemConfig.GROUP);
+            if (itemGroup == null) {
+                itemGroup = new ArrayList<>();
+                itemGroup.add(itemConfig.ID);
+                groups.put(itemConfig.GROUP, itemGroup);
+            } else {
+                itemGroup.add(itemConfig.ID);
+            }
         });
     }
 
     public Map<String, ItemStackSnapshot> getCachedItems() {
         return ImmutableMap.copyOf(items);
+    }
+
+    public Optional<ItemStack> fetchRandomItemStackFromGroup(String groupId, int quantity) {
+        List<String> itemGroup = groups.get(groupId);
+
+        if (itemGroup == null || itemGroup.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return createItemStack(itemGroup.get(RandomUtils.nextInt(0, itemGroup.size())), quantity);
+        }
     }
 
     public Optional<ItemStack> createItemStack(String itemId, int quantity) {

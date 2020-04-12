@@ -10,6 +10,9 @@ import java.util.Set;
 @ConfigSerializable
 public class ItemLootConfig {
 
+    @Setting("item-group")
+    public String ITEM_GROUP = null;
+
     @Setting("item-ids")
     public List<String> ITEM_IDS = new ArrayList<>();
 

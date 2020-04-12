@@ -39,4 +39,7 @@ public class ItemConfig {
     @Setting("attributes")
     public Map<AttributeType, Double> ATTRIBUTES = new HashMap<>();
 
+    @Setting("group")
+    public String GROUP = "default";
+
 }
