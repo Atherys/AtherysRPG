@@ -89,7 +89,7 @@ public class MobFacade {
                 })
                 .ifPresent(lootConfigs -> lootConfigs.forEach((loot) -> {
                     // Roll for drop chance is unsuccessful and this loot item will not drop
-                    if (random.nextDouble() > loot.DROP_RATE) {
+                    if (random.nextDouble() < loot.DROP_RATE) {
                         return;
                     }
 
