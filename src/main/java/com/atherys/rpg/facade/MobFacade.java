@@ -9,6 +9,7 @@ import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.spongepowered.api.Sponge;
@@ -22,6 +23,7 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.economy.Currency;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.CollectionUtils;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -129,8 +131,12 @@ public class MobFacade {
     }
 
     private void dropItemLoot(Location<World> dropLocation, ItemLootConfig config) {
+        if (config.ITEM_IDS == null || config.ITEM_IDS.isEmpty()) {
+            throw new RuntimeException("Empty list of item ids to drop in loot config");
+        }
+
         Optional<ItemStack> itemStack = itemFacade.createItemStack(
-                config.ITEM_ID,
+                config.ITEM_IDS.get(RandomUtils.nextInt(0, config.ITEM_IDS.size())),
                 config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
         );
 

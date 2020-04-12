@@ -3,11 +3,15 @@ package com.atherys.rpg.config;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 @ConfigSerializable
 public class ItemLootConfig {
 
-    @Setting("item-id")
-    public String ITEM_ID;
+    @Setting("item-ids")
+    public List<String> ITEM_IDS = new ArrayList<>();
 
     @Setting("quantity-min")
     public int MINIMUM_QUANTITY = 1;
