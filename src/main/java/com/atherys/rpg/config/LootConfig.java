@@ -15,7 +15,7 @@ public class LootConfig {
     @Setting("currency")
     public CurrencyLootConfig CURRENCY;
 
-    @Setting("items")
+    @Setting("item")
     public ItemLootConfig ITEM;
 
     @Setting("experience")
