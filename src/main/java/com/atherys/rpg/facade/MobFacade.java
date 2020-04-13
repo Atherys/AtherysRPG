@@ -31,6 +31,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.math.BigDecimal;
+import java.security.cert.CollectionCertStoreParameters;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,60 +85,53 @@ public class MobFacade {
         });
     }
 
-    // To Rynelf: DO NOT TOUCH THIS METHOD
+    // To HeadHunter: DO NOT WRITE BUGS THEN
     public void dropMobLoot(Living mob, Player killer) {
-        MutableInt itemLootLimit = new MutableInt(0);
+        Optional<MobConfig> lootOptional = getMobConfigFromLiving(mob);
 
-        // TODO: Add logic for if and when the player ( killer ) is in a party
-        getMobConfigFromLiving(mob)
-                .map(config -> {
-                    itemLootLimit.setValue(config.ITEM_DROP_LIMIT);
-                    return config.LOOT;
-                })
-                .ifPresent(lootConfigs -> lootConfigs.forEach((loot) -> {
-                    double drop = random.nextDouble();
-                    // Roll for drop chance is unsuccessful and this loot item will not drop
-                    if (drop >= loot.DROP_RATE) {
-                        return;
-                    }
+        if (lootOptional.isPresent()) {
+            int itemLimit = lootOptional.get().ITEM_DROP_LIMIT;
+            Set<LootConfig> lootConfigs = lootOptional.get().LOOT;
 
-                    // If there is currency loot, calculate it and award to player
-                    if (loot.CURRENCY != null) {
-                        Optional<Party> party = AtherysParties.getInstance().getPartyFacade().getPlayerParty(killer);
+            if (lootConfigs.isEmpty()) return;
 
-                        if (party.isPresent()) {
-                            int partySize = party.get().getMembers().size();
-                            party.get().getMembers().stream()
-                                    .map(uuid -> Sponge.getServer().getPlayer(uuid))
-                                    .filter(player -> player.isPresent() && killer.getPosition().distance(player.get().getPosition()) > config.MAX_REWARD_DISTANCE)
-                                    .forEach(player -> awardPlayerCurrencyLoot(player.get(), loot.CURRENCY, partySize));
-                        } else {
-                            awardPlayerCurrencyLoot(killer, loot.CURRENCY, 1);
-                        }
-                    }
+            Optional<Party> partyOptional = AtherysParties.getInstance().getPartyFacade().getPlayerParty(killer);
+            Set<Player> playersToReceiveLoot = partyOptional.map(party -> {
+                return party.getMembers().stream()
+                        .map(uuid -> Sponge.getServer().getPlayer(uuid))
+                        .filter(player -> {
+                            boolean inRange = player.isPresent() && killer.getPosition().distanceSquared(player.get().getPosition()) < Math.pow(config.MAX_REWARD_DISTANCE, 2);
+                            return inRange || player.isPresent() && player.get().getUniqueId() == killer.getUniqueId();
+                        })
+                        .map(Optional::get)
+                        .collect(Collectors.toSet());
+            })
+            .orElse(Collections.singleton(killer));
 
-                    // If there is item loot, create the item and drop it at the location of the mob
-                    if (loot.ITEM != null && itemLootLimit.intValue() != 0) {
-                        dropItemLoot(mob.getLocation(), loot.ITEM);
-                        itemLootLimit.decrement();
-                    }
+            for (LootConfig lootConfig : lootConfigs) {
+                double drop = random.nextDouble();
+                // Roll for drop chance is unsuccessful and this loot item will not drop
+                if (drop >= lootConfig.DROP_RATE) {
+                    continue;
+                }
 
-                    // If there is experience loot, calculate it and award to player
-                    // TODO: REFACTOR THIS! Either document the dependency, or refactor so it's optional.
-                    if (loot.EXPERIENCE != null) {
-                        Optional<Party> party = AtherysParties.getInstance().getPartyFacade().getPlayerParty(killer);
+                if (lootConfig.CURRENCY != null) {
+                    playersToReceiveLoot.forEach(player -> awardPlayerCurrencyLoot(player, lootConfig.CURRENCY, playersToReceiveLoot.size()));
+                }
 
-                        if (party.isPresent()) {
-                            int partySize = party.get().getMembers().size();
-                            party.get().getMembers().stream()
-                                    .map(uuid -> Sponge.getServer().getPlayer(uuid))
-                                    .filter(player -> player.isPresent() && killer.getPosition().distance(player.get().getPosition()) > config.MAX_REWARD_DISTANCE)
-                                    .forEach(player -> awardPlayerExperienceLoot(player.get(), loot.EXPERIENCE, partySize));
-                        } else {
-                            awardPlayerExperienceLoot(killer, loot.EXPERIENCE, 1);
-                        }
-                    }
-                }));
+                // If there is experience loot, calculate it and award to player
+                // TODO: REFACTOR THIS! Either document the dependency, or refactor so it's optional.
+                if (lootConfig.EXPERIENCE != null) {
+                    playersToReceiveLoot.forEach(player -> awardPlayerExperienceLoot(player, lootConfig.EXPERIENCE, playersToReceiveLoot.size()));
+                }
+
+                // If there is item loot, create the item and drop it at the location of the mob
+                if (lootConfig.ITEM != null && itemLimit != 0) {
+                    dropItemLoot(mob.getLocation(), lootConfig.ITEM);
+                    itemLimit--;
+                }
+            }
+        }
     }
 
     private void awardPlayerCurrencyLoot(Player player, CurrencyLootConfig config, int split) {
