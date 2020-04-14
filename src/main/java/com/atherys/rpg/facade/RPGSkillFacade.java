@@ -58,7 +58,7 @@ public class RPGSkillFacade {
             name = event.getUser().get(Keys.DISPLAY_NAME).orElse(Text.of(event.getUser().getType().getName())).toPlain();
         }
 
-        Text message = rpgMsg.formatInfo(GOLD, name, DARK_GREEN, " casted ", GOLD, event.getSkill().getName(), "!");
+        Text message = rpgMsg.formatInfo(GOLD, name, DARK_GREEN, " cast ", GOLD, event.getSkill().getName(), "!");
 
         event.getUser().getNearbyEntities(config.SKILL_MESSAGE_DISTANCE).forEach(entity -> {
             if (entity instanceof Player) {
