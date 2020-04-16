@@ -7,7 +7,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class CurrencyLootConfig {
 
     @Setting("currency")
-    public String CURRENCY = "atherys:argent";
+    public String CURRENCY = "atherys:sickles";
 
     @Setting("minimum")
     public Double MINIMUM = 0.0d;
