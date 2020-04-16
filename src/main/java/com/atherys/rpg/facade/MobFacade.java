@@ -188,6 +188,7 @@ public class MobFacade {
 
     public Optional<MobConfig> getMobConfigFromLiving(Living entity) {
         String name = entity.get(Keys.DISPLAY_NAME).orElse(Text.of(entity.getType().getId())).toPlain();
+        AtherysRPG.getInstance().getLogger().info(name);
         return Optional.ofNullable(mobsConfig.MOBS.get(name));
     }
 

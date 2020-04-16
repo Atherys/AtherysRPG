@@ -79,7 +79,7 @@ public class RPGCharacterFacade {
 
     public void showPlayerExperience(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
-        rpgMsg.info(player, Text.of(DARK_GREEN, "Your current experience: ", GOLD, pc.getExperience()));
+        rpgMsg.info(player, Text.of(DARK_GREEN, "Your current experience: ", GOLD, (int) pc.getExperience()));
     }
 
     public void addPlayerExperience(Player player, double amount) {
@@ -87,7 +87,7 @@ public class RPGCharacterFacade {
 
         if (validateExperience(pc.getExperience() + amount)) {
             characterService.addExperience(pc, amount);
-            rpgMsg.info(player, "Gained ", GOLD, amount, DARK_GREEN, " experience.");
+            rpgMsg.info(player, "Gained ", GOLD, (int) amount, DARK_GREEN, " experience.");
         }
     }
 
