@@ -71,6 +71,8 @@ public class AtherysRPG {
     @Inject
     private Injector spongeInjector;
 
+    private Injector rpgInjector;
+
     @Inject
     private PluginContainer container;
 
@@ -84,7 +86,7 @@ public class AtherysRPG {
         instance = this;
 
         components = new Components();
-        Injector rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
+        rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
         rpgInjector.injectMembers(components);
 
         // Initialize the config
@@ -306,6 +308,10 @@ public class AtherysRPG {
 
     public ItemFacade getItemFacade() {
         return components.itemFacade;
+    }
+
+    public Injector getRpgInjector() {
+        return rpgInjector;
     }
 
     private static class Components {
