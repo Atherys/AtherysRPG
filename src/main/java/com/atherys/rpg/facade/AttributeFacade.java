@@ -155,8 +155,9 @@ public class AttributeFacade {
     public void showPlayerAttributes(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        Text.Builder attributeText = Text.builder().append(Text.of(
-                DARK_GRAY, "[]==[ ", GOLD, "Your Attributes", DARK_GRAY, " ]==[]"
+        List<Text> attributeTexts = new ArrayList<>();
+        attributeTexts.add(Text.of(
+                DARK_GRAY, "[]===[ ", GOLD, "Your Attributes", DARK_GRAY, " ]===[]"
         ));
 
         Map<AttributeType, Double> baseAttributes = pc.getBaseAttributes();
@@ -181,32 +182,34 @@ public class AttributeFacade {
                     .onHover(TextActions.showText(hoverText))
                     .build();
 
-            Text upgradeButton;
+            Text upgradeButton1 = Text.EMPTY;
+            Text upgradeButton5 = Text.EMPTY;
 
             if (type.isUpgradable()) {
-                upgradeButton = getAddAttributeButton(pc, type, base);
-            } else {
-                upgradeButton = Text.EMPTY;
+                upgradeButton1 = getAddAttributeButton(pc, type, 1.0);
+                upgradeButton5 = getAddAttributeButton(pc, type, 5.0);
             }
 
             Text attribute = Text.builder()
                     .append(NEW_LINE)
-                    .append(upgradeButton)
+                    .append(upgradeButton1)
+                    .append(Text.of(" "))
+                    .append(upgradeButton5)
                     .append(Text.of(TextActions.showText(getAttributeDescription(type)), type.getColor(), type.getName(), ": ", TextColors.RESET, textTotal))
                     .build();
 
-            attributeText.append(attribute);
+            attributeTexts.add(attribute);
         });
 
-        player.sendMessage(attributeText.build());
+        attributeTexts.forEach(player::sendMessage);
     }
 
-    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double currentValue) {
+    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double amountToAdd) {
 
         Consumer<CommandSource> onClick = source -> {
             if (source instanceof Player) {
                 try {
-                    purchaseAttribute((Player) source, type, 1.0);
+                    purchaseAttribute((Player) source, type, amountToAdd);
                 } catch (RPGCommandException e) {
                     source.sendMessage(e.getText());
                 }
@@ -218,7 +221,7 @@ public class AttributeFacade {
                 .build();
 
         return Text.builder()
-                .append(Text.of(DARK_GRAY, "[", GOLD, "+", DARK_GRAY, "] "))
+                .append(Text.of(DARK_GRAY, "[", GOLD, "+", (int) amountToAdd, DARK_GRAY, "] "))
                 .onHover(TextActions.showText(hoverText))
                 .onClick(TextActions.executeCallback(onClick))
                 .build();
