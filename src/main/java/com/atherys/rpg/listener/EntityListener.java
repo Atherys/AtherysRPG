@@ -47,15 +47,8 @@ public class EntityListener {
     }
 
     @Listener
-    public void onDamage(DamageEntityEvent event, @Root EntityDamageSource source) {
-        characterFacade.onDamage(event, source);
-    }
-
-    @Listener
-    public void onEnvironmentalDamage(DamageEntityEvent event, @Root DamageSource source, @Getter("getTargetEntity") Living target) {
-        if (config.ENVIRONMENTAL_CALCULATIONS.containsKey(source.getType())) {
-            characterFacade.onEnvironmentalDamage(event, source.getType(), target);
-        }
+    public void onDamage(DamageEntityEvent event, @Root DamageSource source, @Getter("getTargetEntity") Living target) {
+        characterFacade.onDamage(event, source, target);
     }
 
     @Listener
