@@ -13,7 +13,7 @@ import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
 
-@Aliases({"experience", "xp"})
+@Aliases({"experience", "xp", "exp"})
 @Children({
         AddExperienceCommand.class,
         RemoveExperienceCommand.class,
