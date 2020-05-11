@@ -108,7 +108,7 @@ public class AttributeFacade {
             characterService.addSpentAttributeExperience(pc, expCost);
 
             rpgMsg.info(player,
-                    "You have added ", type.getColor(), 1, " ",
+                    "You have added ", type.getColor(), (int) amount, " ",
                     type.getName(), DARK_GREEN,
                     " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN,
                     " experience."
@@ -191,7 +191,6 @@ public class AttributeFacade {
             }
 
             Text attribute = Text.builder()
-                    .append(NEW_LINE)
                     .append(upgradeButton1)
                     .append(Text.of(" "))
                     .append(upgradeButton5)
@@ -217,7 +216,7 @@ public class AttributeFacade {
         };
 
         Text hoverText = Text.builder()
-                .append(Text.of(DARK_GREEN, "Click to add 1 ", type.getColor(), type.getName(), DARK_GREEN, " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN, " experience"))
+                .append(Text.of(DARK_GREEN, "Click to add ", (int) amountToAdd, type.getColor(), type.getName(), DARK_GREEN, " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN, " experience"))
                 .build();
 
         return Text.builder()
