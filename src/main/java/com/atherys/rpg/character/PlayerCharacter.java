@@ -3,7 +3,9 @@ package com.atherys.rpg.character;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.repository.converter.AttributeTypeConverter;
+import com.atherys.rpg.repository.converter.ItemTypeConverter;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemType;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
@@ -30,6 +32,12 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     @Transient
     private Map<AttributeType, Double> buffAttributes = new HashMap<>();
+
+    @Convert(attributeName = "key.", converter = ItemTypeConverter.class)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name = "item_bindings")
+    @CollectionTable(name = "playercharacter_bindings")
+    private Map<ItemType, String> itemBindings = new HashMap<>();
 
     private double experience;
 
@@ -104,6 +112,22 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void setSpentExperience(double spentExperience) {
         this.spentExperience = spentExperience;
+    }
+
+    public Map<ItemType, String> getItemBindings() {
+        return itemBindings;
+    }
+
+    public void setItemBindings(Map<ItemType, String> itemBindings) {
+        this.itemBindings = itemBindings;
+    }
+
+    public void addItemBinding(ItemType itemType, String skillId) {
+        this.itemBindings.put(itemType, skillId);
+    }
+
+    public void removeItemBinding(ItemType itemType) {
+        this.itemBindings.remove(itemType);
     }
 
     public void setSkills(List<String> skills) {

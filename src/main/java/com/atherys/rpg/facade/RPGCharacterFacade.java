@@ -15,13 +15,16 @@ import com.atherys.rpg.service.HealingService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.ResourceEvent;
+import com.atherys.skills.api.exception.CastException;
 import com.atherys.skills.api.resource.ResourceUser;
+import com.atherys.skills.api.skill.Castable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
@@ -212,6 +215,55 @@ public class RPGCharacterFacade {
         return skillFacade.getSkillById(skillId).orElseThrow(() -> {
             return new RPGCommandException("No skill with ID ", skillId, " found.");
         });
+    }
+
+    public void bindItemToSkill(Player player, Castable castable) throws RPGCommandException {
+        ItemType type = player.getItemInHand(HandTypes.MAIN_HAND).orElse(ItemStack.empty()).getType();
+
+        if (type == ItemTypes.NONE || type == ItemTypes.AIR) {
+            throw new RPGCommandException("You can't bind a skill to nothing.");
+        }
+
+        rpgMsg.info(player, GOLD, castable.getName(), DARK_GREEN, " is now bound to ", GOLD, type.getTranslation().get(), ".");
+        characterService.addItemBinding(characterService.getOrCreateCharacter(player), type, castable.getId());
+    }
+
+    public void unbindItemFromSkill(Player player) throws RPGCommandException {
+        ItemType type = player.getItemInHand(HandTypes.MAIN_HAND).orElse(ItemStack.empty()).getType();
+
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        if (pc.getItemBindings().containsKey(type)) {
+            rpgMsg.info(player, GOLD, type.getName(), DARK_GREEN, " is now unbound.");
+            characterService.removeItemBinding(pc, type);
+        } else {
+            throw new RPGCommandException("There is no binding for that item.");
+        }
+    }
+
+    public void onRightClick(Player source) {
+        ItemType type = source.getItemInHand(HandTypes.OFF_HAND).orElse(ItemStack.empty()).getType();
+
+        if (type == ItemTypes.AIR || type == ItemTypes.NONE) {
+            type = source.getItemInHand(HandTypes.MAIN_HAND).orElse(ItemStack.empty()).getType();
+            if (type == ItemTypes.AIR || type == ItemTypes.NONE) return;
+        }
+
+        PlayerCharacter pc = characterService.getOrCreateCharacter(source);
+        String skillId = pc.getItemBindings().get(type);
+
+        if (skillId != null) {
+            Optional<RPGSkill> skill = skillFacade.getSkillById(skillId);
+            if (skill.isPresent()) {
+                try {
+                    AtherysSkills.getInstance().getSkillFacade().playerCastSkill(source, skill.get());
+                } catch (CastException e) {
+                    source.sendMessage(e.getText());
+                }
+            } else {
+                characterService.removeItemBinding(pc, type);
+            }
+        }
     }
 
     private boolean validateExperience(double experience) {
