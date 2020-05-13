@@ -10,6 +10,7 @@ import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.udojava.evalex.Expression;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
@@ -21,10 +22,8 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
@@ -48,6 +47,20 @@ public class AttributeFacade {
 
     @Inject
     private ExpressionService expressionService;
+
+    private List<Double> attributeCosts;
+
+    public void init() {
+        this.attributeCosts = new ArrayList<>();
+        int attribute = 0;
+        Expression expression = expressionService.getExpression(config.ATTRIBUTE_UPGRADE_COST);
+
+        while (attribute <= config.ATTRIBUTE_MAX) {
+            expression.setVariable("ATTRIBUTE", BigDecimal.valueOf(attribute));
+            this.attributeCosts.add(expression.eval().doubleValue());
+            attribute++;
+        }
+    }
 
     public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
@@ -77,10 +90,21 @@ public class AttributeFacade {
         return true;
     }
 
+    private double getCostForAttribute(Player player, AttributeType type, double amount) {
+        double min = characterService.getOrCreateCharacter(player).getBaseAttributes().get(type);
+
+        double cost = 0;
+        for (int i = 0; i < amount; i++) {
+             cost += attributeCosts.get((int) Math.round(min + i));
+        }
+
+        return cost;
+    }
+
     public void purchaseAttribute(Player player, AttributeType type, double amount) throws RPGCommandException{
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
+        double expCost = getCostForAttribute(player, type, amount);
 
         // If the player has already reached their experience spending limit, cancel
         if (pc.getSpentExperience() + expCost > config.EXPERIENCE_SPENDING_LIMIT) {

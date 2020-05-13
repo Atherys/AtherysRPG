@@ -94,8 +94,8 @@ public class AtherysRPG {
         getGraphConfig().init();
         getMobsConfig().init();
         getItemsConfig().init();
-
-        components.itemFacade.init();
+        getAttributeFacade().init();
+        getItemFacade().init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);

@@ -68,7 +68,7 @@ public class AtherysRPGConfig extends PluginConfig {
     public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
 
     @Setting("attribute-upgrade-cost")
-    public double ATTRIBUTE_UPGRADE_COST = 100.0;
+    public String ATTRIBUTE_UPGRADE_COST = "100.0";
 
     @Setting("experience-max")
     public double EXPERIENCE_MAX = 100_000.0;
@@ -99,6 +99,9 @@ public class AtherysRPGConfig extends PluginConfig {
 
     @Setting("attribute-descriptions")
     public Map<AttributeType, Text> ATTRIBUTE_DESCRIPTIONS = new HashMap<>();
+
+    @Setting("attribute-costs")
+    public Map<AttributeType, String> ATTRIBUTE_COSTS = new HashMap<>();
 
     @Setting("skill-message-distance")
     public double SKILL_MESSAGE_DISTANCE = 25;
