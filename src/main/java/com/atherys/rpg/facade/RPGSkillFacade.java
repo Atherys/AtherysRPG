@@ -50,15 +50,22 @@ public class RPGSkillFacade {
     private RPGMessagingFacade rpgMsg;
 
     public void sendMessageOnSkillCast(SkillCastEvent.Post event) {
-        String name;
 
-        if (event.getUser() instanceof Player) {
-            name = ((Player) event.getUser()).getName();
+        Text message;
+
+        if (event.getResult().getMessage() != Text.EMPTY) {
+            message = event.getResult().getMessage();
         } else {
-            name = event.getUser().get(Keys.DISPLAY_NAME).orElse(Text.of(event.getUser().getType().getName())).toPlain();
-        }
+            String name;
 
-        Text message = rpgMsg.formatInfo(GOLD, name, DARK_GREEN, " casted ", GOLD, event.getSkill().getName(), "!");
+            if (event.getUser() instanceof Player) {
+                name = ((Player) event.getUser()).getName();
+            } else {
+                name = event.getUser().get(Keys.DISPLAY_NAME).orElse(Text.of(event.getUser().getType().getName())).toPlain();
+            }
+
+            message = rpgMsg.formatInfo(GOLD, name, DARK_GREEN, " casted ", GOLD, event.getSkill().getName(), "!");
+        }
 
         event.getUser().getNearbyEntities(config.SKILL_MESSAGE_DISTANCE).forEach(entity -> {
             if (entity instanceof Player) {
