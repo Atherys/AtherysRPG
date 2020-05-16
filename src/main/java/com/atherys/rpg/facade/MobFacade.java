@@ -140,8 +140,7 @@ public class MobFacade {
             if (!currencyAward.isPresent()) {
                 throw new RuntimeException("Could not find currency corresponding to id \"" + config.CURRENCY + "\"");
             } else {
-                double amount = (Math.floor(RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) * 100) / 100) / split;
-
+                double amount = Math.floor((RandomUtils.nextDouble(config.MINIMUM, config.MAXIMUM) / split) * 100) / 100;
                 playerAccount.deposit(
                         currencyAward.get(),
                         BigDecimal.valueOf(amount),
