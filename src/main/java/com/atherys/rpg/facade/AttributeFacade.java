@@ -132,12 +132,9 @@ public class AttributeFacade {
         updateItemLore(item);
     }
 
-    public void setItemAttributeValue(ItemStack item, AttributeType attributeType, Double amount) throws RPGCommandException {
+    public void setItemAttributeValue(ItemStack item, AttributeType attributeType, Double amount) {
         AttributeData data = item.get(AttributeData.class).orElseGet(AttributeData::new);
         data.setAttribute(attributeType, amount);
-        if (!item.offer(data).isSuccessful()) {
-            throw new RPGCommandException("Failed to set attribute " + attributeType.getId() + " on item.");
-        }
     }
 
     public Map<AttributeType, Double> getAllAttributes(Entity entity) {
