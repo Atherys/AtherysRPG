@@ -136,11 +136,7 @@ public class ItemFacade {
 
         // Apply RPG attributes
         item.ATTRIBUTES.forEach((t, a) -> {
-            try {
-                attributeFacade.setItemAttributeValue(itemStack, t, a);
-            } catch (RPGCommandException e) {
-                e.printStackTrace();
-            }
+            attributeFacade.setItemAttributeValue(itemStack, t, a);
         });
 
         // Convert and apply item lore
