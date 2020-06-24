@@ -135,6 +135,7 @@ public class AttributeFacade {
     public void setItemAttributeValue(ItemStack item, AttributeType attributeType, Double amount) {
         AttributeData data = item.get(AttributeData.class).orElseGet(AttributeData::new);
         data.setAttribute(attributeType, amount);
+        item.offer(data);
     }
 
     public Map<AttributeType, Double> getAllAttributes(Entity entity) {
