@@ -166,10 +166,11 @@ public class RPGCharacterService {
     public void resetCharacterSkills(PlayerCharacter pc) {
         double spentOnSkills = pc.getSpentSkillExperience();
 
-        pc.getSkills().forEach(s -> {
-            setSkillPermission(pc, AtherysSkills.getInstance().getSkillService().getSkillById(s).get().getPermission(), false);
+        AtherysSkills.getInstance().getSkillService().getAllSkills().values().forEach(castable -> {
+            setSkillPermission(pc, castable.getPermission(), false);
         });
-        pc.setSkills(new ArrayList<>());
+
+        pc.getSkills().clear();
         pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
         setSkillPermission(pc, skillGraphFacade.getSkillGraphRoot().getPermission(), true);
 
