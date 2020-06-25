@@ -52,6 +52,8 @@ public class RPGCharacterService {
             pc.setEntity(player);
             pc.setBaseAttributes(attributeService.getDefaultAttributes());
             pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
+            pc.setExperience(config.EXPERIENCE_START);
+
             repository.saveOne(pc);
 
             return pc;

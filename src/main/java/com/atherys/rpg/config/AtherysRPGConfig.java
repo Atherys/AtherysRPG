@@ -76,6 +76,9 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("experience-min")
     public double EXPERIENCE_MIN = 0.0;
 
+    @Setting("experience-start")
+    public double EXPERIENCE_START = 0.0;
+
     @Setting("attribute-max")
     public double ATTRIBUTE_MAX = 99.0;
 
