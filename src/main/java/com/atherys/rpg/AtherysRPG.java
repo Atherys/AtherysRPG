@@ -23,6 +23,7 @@ import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.data.RPGKeys;
 import com.atherys.rpg.facade.*;
 import com.atherys.rpg.listener.EntityListener;
+import com.atherys.rpg.listener.PlayerListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.*;
@@ -100,6 +101,7 @@ public class AtherysRPG {
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
         Sponge.getEventManager().registerListeners(this, components.skillsListener);
+        Sponge.getEventManager().registerListeners(this, components.playerListener);
 
         // Register commands
         try {
@@ -368,5 +370,8 @@ public class AtherysRPG {
 
         @Inject
         SkillsListener skillsListener;
+
+        @Inject
+        PlayerListener playerListener;
     }
 }

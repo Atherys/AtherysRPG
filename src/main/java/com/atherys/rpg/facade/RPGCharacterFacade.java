@@ -480,6 +480,14 @@ public class RPGCharacterFacade {
         }
     }
 
+    public void storePlayerData(Player player) {
+        characterService.storeCachedPlayerData(characterService.getOrCreateCharacter(player));
+    }
+
+    public void fetchPlayerData(Player player) {
+        characterService.fetchAndCachePlayerData(player.getUniqueId());
+    }
+
 // Healing is currently not implementable as such due to Sponge
 //    public void onHeal(ChangeDataHolderEvent.ValueChange event) {
 //        if (event.getTargetHolder() instanceof Living) {

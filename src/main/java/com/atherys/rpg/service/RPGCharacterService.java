@@ -211,4 +211,12 @@ public class RPGCharacterService {
         resetCharacterSkills(pc);
         resetCharacterAttributes(pc);
     }
+
+    public void storeCachedPlayerData(PlayerCharacter playerCharacter) {
+        repository.saveOneAsync(playerCharacter);
+    }
+
+    public void fetchAndCachePlayerData(UUID playerUUID) {
+        repository.fetchAndCachePlayerCharacter(playerUUID);
+    }
 }

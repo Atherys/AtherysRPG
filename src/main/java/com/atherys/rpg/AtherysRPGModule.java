@@ -8,6 +8,7 @@ import com.atherys.rpg.facade.MobFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.facade.RPGMessagingFacade;
 import com.atherys.rpg.listener.EntityListener;
+import com.atherys.rpg.listener.PlayerListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.AttributeService;
@@ -43,5 +44,6 @@ public class AtherysRPGModule extends AbstractModule {
         // Listeners
         bind(EntityListener.class).in(Scopes.SINGLETON);
         bind(SkillsListener.class).in(Scopes.SINGLETON);
+        bind(PlayerListener.class).in(Scopes.SINGLETON);
     }
 }
