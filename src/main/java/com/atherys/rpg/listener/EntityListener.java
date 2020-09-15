@@ -7,7 +7,6 @@ import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.facade.MobFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
-import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
@@ -35,9 +34,6 @@ public class EntityListener {
 
     @Inject
     private MobFacade mobFacade;
-
-    @Inject
-    private RPGCharacterService characterService;
 
     @Inject
     private AtherysRPGConfig config;
