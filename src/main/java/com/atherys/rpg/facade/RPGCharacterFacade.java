@@ -27,6 +27,7 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifierTypes;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
@@ -365,7 +366,9 @@ public class RPGCharacterFacade {
 
     private void resetDamageEvent(DamageEntityEvent event) {
         event.getModifiers().forEach(damageFunction -> {
-            event.setDamage(damageFunction.getModifier(), (base) -> 0);
+            if (damageFunction.getModifier().getType() != DamageModifierTypes.ABSORPTION) {
+                event.setDamage(damageFunction.getModifier(), (base) -> 0);
+            }
         });
     }
 
