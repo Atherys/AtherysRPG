@@ -98,8 +98,9 @@ public class LootableFacade {
 
         List<ItemStack> items = fetchRandomizedListOfItems(lootableConfig);
 
-        // TODO: Limit how many times a player can loot a chest
-        // TODO: Introduce time interval limit between looting
+        // TODO: Limit how many times a player can loot a chest ( loot-limit-per-player ), lootable can be looted only so many times by any one player
+        // TODO: Introduce time interval limit between looting ( loot-time-limit-seconds ), lootable can be looted once per duration
+        // TODO: Introduce global loot limit ( global-loot-limit ), lootable can only be looted so many times total, regardless of player loot limits
 
         // TODO: Create Inventory GUI containing items and show to player
     }
