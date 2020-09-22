@@ -5,6 +5,7 @@ import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.facade.LootableFacade;
 import com.atherys.rpg.facade.MobFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.service.RPGCharacterService;
@@ -15,6 +16,7 @@ import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.ChangeEntityEquipmentEvent;
@@ -41,6 +43,9 @@ public class EntityListener {
 
     @Inject
     private AtherysRPGConfig config;
+
+    @Inject
+    private LootableFacade lootableFacade;
 
     @Listener
     public void onJoin(ClientConnectionEvent.Join event) {
@@ -95,4 +100,10 @@ public class EntityListener {
             characterFacade.setPlayerResourceLimit(player, false);
         }
     }
+
+    @Listener
+    public void onBlockClick(InteractBlockEvent.Secondary event, @Root Player player) {
+        lootableFacade.onBlockClick(player, event.getTargetBlock(), event);
+    }
+
 }
