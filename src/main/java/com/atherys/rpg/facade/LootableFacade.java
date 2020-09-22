@@ -63,7 +63,7 @@ public class LootableFacade {
 
         BlockRay<World> blockRay = BlockRay.from(source)
                 .distanceLimit(5)
-                .skipFilter(worldBlockRayHit -> !source.getWorld().getTileEntity(worldBlockRayHit.getBlockPosition()).isPresent())
+                .skipFilter(worldBlockRayHit -> source.getWorld().getTileEntity(worldBlockRayHit.getBlockPosition()).isPresent())
                 .build();
 
         // If there is any block ray hits, fetch the first and ignore the rest
@@ -108,6 +108,8 @@ public class LootableFacade {
 
         List<ItemStack> items = fetchRandomizedListOfItems(lootableConfig);
 
+        System.out.println(items);
+
         Inventory loot = Inventory.builder()
                 .of(InventoryArchetypes.CHEST)
                 .property(new InventoryTitle(Text.of("Loot")))
@@ -134,7 +136,7 @@ public class LootableFacade {
             if (!StringUtils.isEmpty(lootableConfig.LOOT.ITEM_GROUP)) {
 
                 // quantity settings take precedence over randomly selected quantity
-                if (lootableConfig.LOOT.QUANTITY >= 1) {
+                if (lootableConfig.LOOT.QUANTITY <= 0) {
                     item = itemFacade.fetchRandomItemStackFromGroup(
                             lootableConfig.LOOT.ITEM_GROUP,
                             lootableConfig.LOOT.MINIMUM_QUANTITY,
@@ -149,7 +151,7 @@ public class LootableFacade {
             } else {
                 String itemId = lootableConfig.LOOT.ITEM_IDS.get(RandomUtils.nextInt(0, lootableConfig.LOOT.ITEM_IDS.size()));
 
-                if (lootableConfig.LOOT.QUANTITY >= 1) {
+                if (lootableConfig.LOOT.QUANTITY <= 0) {
                     item = itemFacade.createItemStack(
                             itemId,
                             lootableConfig.LOOT.MINIMUM_QUANTITY,
