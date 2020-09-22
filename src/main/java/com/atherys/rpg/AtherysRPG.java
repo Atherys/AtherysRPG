@@ -10,6 +10,7 @@ import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.ExperienceCommand;
+import com.atherys.rpg.command.LootableCommand;
 import com.atherys.rpg.command.SpawnItemCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
@@ -110,6 +111,7 @@ public class AtherysRPG {
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
             AtherysCore.getCommandService().register(new SkillsCommand(), this);
             AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
+            AtherysCore.getCommandService().register(new LootableCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }

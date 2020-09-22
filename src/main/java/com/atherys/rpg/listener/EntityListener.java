@@ -103,7 +103,7 @@ public class EntityListener {
 
     @Listener
     public void onBlockClick(InteractBlockEvent.Secondary event, @Root Player player) {
-        lootableFacade.onBlockClick(player, event.getTargetBlock());
+        lootableFacade.onBlockClick(player, event.getTargetBlock(), event);
     }
 
 }

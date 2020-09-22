@@ -1,5 +1,7 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.core.AtherysCore;
+import com.atherys.core.utils.InventoryUtils;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.LootableConfig;
@@ -10,6 +12,7 @@ import com.atherys.rpg.data.RPGKeys;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.mcsimonflash.sponge.teslalibs.inventory.View;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -18,10 +21,10 @@ import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.Property;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.item.inventory.InventoryArchetypes;
-import org.spongepowered.api.item.inventory.InventoryProperty;
-import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.*;
+import org.spongepowered.api.item.inventory.property.AbstractInventoryProperty;
+import org.spongepowered.api.item.inventory.property.InventoryTitle;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.blockray.BlockRay;
 import org.spongepowered.api.util.blockray.BlockRayHit;
 import org.spongepowered.api.world.World;
@@ -41,6 +44,8 @@ public class LootableFacade {
     private RPGMessagingFacade messagingFacade;
 
     private Map<String, LootableConfig> lootableGroups = new HashMap<>();
+
+    private Map<String, Inventory> lastKnownInventory = new HashMap<>();
 
     public void init() {
         lootableGroups.clear();
@@ -96,13 +101,21 @@ public class LootableFacade {
         // if the block meets all criteria, cancel the event and open custom gui containing randomly selected items
         event.setCancelled(true);
 
-        List<ItemStack> items = fetchRandomizedListOfItems(lootableConfig);
-
         // TODO: Limit how many times a player can loot a chest ( loot-limit-per-player ), lootable can be looted only so many times by any one player
         // TODO: Introduce time interval limit between looting ( loot-time-limit-seconds ), lootable can be looted once per duration
         // TODO: Introduce global loot limit ( global-loot-limit ), lootable can only be looted so many times total, regardless of player loot limits
+        // TODO: Cache last known contents of lootable. If player re-loots before time limit has elapsed, or if they can no longer loot at all, display unlooted contents
 
-        // TODO: Create Inventory GUI containing items and show to player
+        List<ItemStack> items = fetchRandomizedListOfItems(lootableConfig);
+
+        Inventory loot = Inventory.builder()
+                .of(InventoryArchetypes.CHEST)
+                .property(new InventoryTitle(Text.of("Loot")))
+                .build(AtherysCore.getInstance());
+
+        items.forEach(loot::offer);
+
+        player.openInventory(loot);
     }
 
     private List<ItemStack> fetchRandomizedListOfItems(LootableConfig lootableConfig) {
