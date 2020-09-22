@@ -65,6 +65,10 @@ public class ItemFacade {
         return ImmutableMap.copyOf(items);
     }
 
+    public Optional<ItemStack> fetchRandomItemStackFromGroup(String groupId, int quantityMin, int quantityMax) {
+        return fetchRandomItemStackFromGroup(groupId, RandomUtils.nextInt(quantityMin, quantityMax + 1));
+    }
+
     public Optional<ItemStack> fetchRandomItemStackFromGroup(String groupId, int quantity) {
         List<String> itemGroup = groups.get(groupId);
 
@@ -73,6 +77,10 @@ public class ItemFacade {
         } else {
             return createItemStack(itemGroup.get(RandomUtils.nextInt(0, itemGroup.size())), quantity);
         }
+    }
+
+    public Optional<ItemStack> createItemStack(String itemId, int quantityMin, int quantityMax) {
+        return createItemStack(itemId, RandomUtils.nextInt(quantityMin, quantityMax + 1));
     }
 
     public Optional<ItemStack> createItemStack(String itemId, int quantity) {

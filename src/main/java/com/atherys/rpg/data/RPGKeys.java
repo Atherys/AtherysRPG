@@ -5,6 +5,8 @@ import org.spongepowered.api.data.value.mutable.Value;
 
 public class RPGKeys {
 
+    public static Key<Value<String>> LOOTABLE_ID;
+
     public static Key<Value<String>> DAMAGE_EXPRESSION;
 
     public static Key<Value<Double>> DEXTERITY;

@@ -14,14 +14,13 @@ import com.atherys.rpg.command.SpawnItemCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.command.skill.SkillsCommand;
-import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.config.ItemsConfig;
-import com.atherys.rpg.config.MobsConfig;
-import com.atherys.rpg.config.SkillGraphConfig;
+import com.atherys.rpg.config.*;
 import com.atherys.rpg.data.AttributeData;
 import com.atherys.rpg.data.DamageExpressionData;
+import com.atherys.rpg.data.LootableData;
 import com.atherys.rpg.data.RPGKeys;
 import com.atherys.rpg.facade.*;
+import com.atherys.rpg.facade.LootableFacade;
 import com.atherys.rpg.listener.EntityListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
@@ -89,13 +88,17 @@ public class AtherysRPG {
         rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
         rpgInjector.injectMembers(components);
 
-        // Initialize the config
+        // Initialize the configs
         getConfig().init();
         getGraphConfig().init();
         getMobsConfig().init();
         getItemsConfig().init();
+        getLootablesConfig().init();
+
+        // Initialize facades
         getAttributeFacade().init();
         getItemFacade().init();
+        getLootableFacade().init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
@@ -124,8 +127,10 @@ public class AtherysRPG {
         getGraphConfig().load();
         getMobsConfig().load();
         getItemsConfig().load();
+        getLootablesConfig().load();
 
         components.itemFacade.init();
+        components.lootableFacade.init();
 
         // Re-register command to update item choices
         try {
@@ -198,6 +203,13 @@ public class AtherysRPG {
                 .type(new TypeToken<Value<String>>() {})
                 .build();
 
+        RPGKeys.LOOTABLE_ID = Key.builder()
+                .id("atherys:lootable_id")
+                .name("Lootable ID")
+                .query(DataQuery.of("Lootable_ID"))
+                .type(new TypeToken<Value<String>>() {})
+                .build();
+
         RPGKeys.DEXTERITY= createKey(AttributeTypes.DEXTERITY, "Dexterity");
 
         RPGKeys.CONSTITUTION = createKey(AttributeTypes.CONSTITUTION, "Constitution");
@@ -244,6 +256,14 @@ public class AtherysRPG {
                 .dataName("Attributes")
                 .manipulatorId("attributes")
                 .buildAndRegister(container);
+
+        DataRegistration.builder()
+                .dataClass(LootableData.class)
+                .immutableClass(LootableData.Immutable.class)
+                .builder(new LootableData.Builder())
+                .dataName("LootableId")
+                .manipulatorId("lootableId")
+                .buildAndRegister(container);
     }
 
     public Logger getLogger() {
@@ -264,6 +284,10 @@ public class AtherysRPG {
 
     public ItemsConfig getItemsConfig() {
         return components.itemsConfig;
+    }
+
+    public LootablesConfig getLootablesConfig() {
+        return components.lootablesConfig;
     }
 
     public PlayerCharacterRepository getPlayerCharacterRepository() {
@@ -306,6 +330,10 @@ public class AtherysRPG {
         return components.skillGraphFacade;
     }
 
+    public LootableFacade getLootableFacade() {
+        return components.lootableFacade;
+    }
+
     public ItemFacade getItemFacade() {
         return components.itemFacade;
     }
@@ -326,6 +354,9 @@ public class AtherysRPG {
 
         @Inject
         ItemsConfig itemsConfig;
+
+        @Inject
+        LootablesConfig lootablesConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;
@@ -359,6 +390,9 @@ public class AtherysRPG {
 
         @Inject
         AttributeFacade attributeFacade;
+
+        @Inject
+        LootableFacade lootableFacade;
 
         @Inject
         ItemFacade itemFacade;
