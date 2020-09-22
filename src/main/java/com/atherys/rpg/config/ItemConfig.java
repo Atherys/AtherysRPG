@@ -7,10 +7,7 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.enchantment.EnchantmentType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ConfigSerializable
 public class ItemConfig {
@@ -39,7 +36,7 @@ public class ItemConfig {
     @Setting("attributes")
     public Map<AttributeType, Double> ATTRIBUTES = new HashMap<>();
 
-    @Setting("group")
-    public String GROUP = "default";
+    @Setting("groups")
+    public List<String> GROUPS = Arrays.asList("default");
 
 }

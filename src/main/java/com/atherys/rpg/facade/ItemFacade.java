@@ -50,14 +50,16 @@ public class ItemFacade {
 
             items.put(itemConfig.ID, snapshot.get());
 
-            List<String> itemGroup = groups.get(itemConfig.GROUP);
-            if (itemGroup == null) {
-                itemGroup = new ArrayList<>();
-                itemGroup.add(itemConfig.ID);
-                groups.put(itemConfig.GROUP, itemGroup);
-            } else {
-                itemGroup.add(itemConfig.ID);
-            }
+            itemConfig.GROUPS.forEach(group -> {
+                List<String> itemGroup = groups.get(group);
+                if (itemGroup == null) {
+                    itemGroup = new ArrayList<>();
+                    itemGroup.add(itemConfig.ID);
+                    groups.put(group, itemGroup);
+                } else {
+                    itemGroup.add(itemConfig.ID);
+                }
+            });
         });
     }
 
