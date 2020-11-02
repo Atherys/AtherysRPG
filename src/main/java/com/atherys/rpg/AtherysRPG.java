@@ -53,7 +53,7 @@ import org.spongepowered.api.text.channel.MessageReceiver;
         id = "atherysrpg",
         name = "A'therys RPG",
         description = "An RPG plugin for the A'therys Horizons server",
-        version = "%PLUGIN_VERSION%",
+        version = "%PROJECT_VERSION%",
         dependencies = {
                 @Dependency(id = "atheryscore"),
                 @Dependency(id = "atherysskills")
