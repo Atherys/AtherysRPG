@@ -23,6 +23,8 @@ public class SkillGraphFacade {
 
     private SkillGraph skillGraph;
 
+    private Set<RPGSkill> uniqueSkills;
+
     public SkillGraph getSkillGraph() {
 
         if (skillGraph != null) {
@@ -57,6 +59,10 @@ public class SkillGraphFacade {
 
             newSkillGraph.add(parent, child, cost, type);
         });
+
+        this.uniqueSkills = config.UNIQUE_SKILLS.stream()
+                .map(skillId -> skillFacade.getSkillById(skillId).get())
+                .collect(Collectors.toSet());
 
         return newSkillGraph;
     }
@@ -155,16 +161,22 @@ public class SkillGraphFacade {
     public Set<RPGSkill> getLinkedSkills(Set<RPGSkill> skills) {
         Set<RPGSkill> linked = new HashSet<>();
 
+        boolean hasUnique = skills.stream()
+                .anyMatch(skill -> uniqueSkills.contains(skill));
+
         skills.forEach(s -> {
             getSkillGraph().getLinksWhereParent(s).forEach(link -> {
+                RPGSkill child = link.getChild().getData();
+                RPGSkill parent = link.getParent().getData();
+
                 // If the link is bidirectional we have to check if the other node is the "parent"
                 if (link.getType() == Graph.LinkType.BIDIRECTIONAL) {
-                    if (!skills.contains(link.getParent().getData())) {
-                        linked.add(link.getParent().getData());
+                    if (!skills.contains(parent) && (!hasUnique || !uniqueSkills.contains(parent))) {
+                        linked.add(parent);
                     }
                 }
-                if (!skills.contains(link.getChild().getData())) {
-                    linked.add(link.getChild().getData());
+                if (!skills.contains(child) && (!hasUnique || !uniqueSkills.contains(child))) {
+                    linked.add(child);
                 }
             });
         });

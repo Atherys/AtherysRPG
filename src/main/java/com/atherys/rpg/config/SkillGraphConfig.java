@@ -5,10 +5,7 @@ import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Singleton
 public class SkillGraphConfig extends PluginConfig {
@@ -21,6 +18,9 @@ public class SkillGraphConfig extends PluginConfig {
 
     @Setting("skill-links")
     public List<SkillNodeLinkConfig> LINKS = new ArrayList<>();
+
+    @Setting("unique-skills")
+    public Set<String> UNIQUE_SKILLS = new HashSet<>();
 
     protected SkillGraphConfig() throws IOException {
         super("config/atherysrpg", "skill-graph.json");
