@@ -1,20 +1,16 @@
 package com.atherys.rpg.facade;
 
 import com.atherys.core.AtherysCore;
-import com.atherys.core.utils.UserUtils;
-import com.atherys.party.AtherysParties;
-import com.atherys.party.entity.Party;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.*;
 import com.atherys.rpg.data.DamageExpressionData;
+import com.atherys.rpg.integration.AtherysPartiesIntegration;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
@@ -26,12 +22,10 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.economy.Currency;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.util.CollectionUtils;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.math.BigDecimal;
-import java.security.cert.CollectionCertStoreParameters;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,18 +89,14 @@ public class MobFacade {
 
             if (lootConfigs.isEmpty()) return;
 
-            Optional<Party> partyOptional = AtherysParties.getInstance().getPartyFacade().getPlayerParty(killer);
-            Set<Player> playersToReceiveLoot = partyOptional.map(party -> {
-                return party.getMembers().stream()
-                        .map(uuid -> Sponge.getServer().getPlayer(uuid))
-                        .filter(player -> {
-                            boolean inRange = player.isPresent() && killer.getPosition().distanceSquared(player.get().getPosition()) < Math.pow(config.MAX_REWARD_DISTANCE, 2);
-                            return inRange || player.isPresent() && player.get().getUniqueId() == killer.getUniqueId();
-                        })
-                        .map(Optional::get)
-                        .collect(Collectors.toSet());
-            })
-            .orElse(Collections.singleton(killer));
+            Set<Player> playersToReceiveLoot = new HashSet<>();
+            playersToReceiveLoot.add(killer);
+
+            if (Sponge.getPluginManager().isLoaded("atherysparties")) {
+                playersToReceiveLoot = AtherysPartiesIntegration.fetchPlayerPartyMembersWithRadius(killer, config.MAX_REWARD_DISTANCE);
+            }
+
+            int playersToReceiveLootSize = playersToReceiveLoot.size();
 
             for (LootConfig lootConfig : lootConfigs) {
                 double drop = random.nextDouble();
@@ -116,13 +106,12 @@ public class MobFacade {
                 }
 
                 if (lootConfig.CURRENCY != null) {
-                    playersToReceiveLoot.forEach(player -> awardPlayerCurrencyLoot(player, lootConfig.CURRENCY, playersToReceiveLoot.size()));
+                    playersToReceiveLoot.forEach(player -> awardPlayerCurrencyLoot(player, lootConfig.CURRENCY, playersToReceiveLootSize));
                 }
 
                 // If there is experience loot, calculate it and award to player
-                // TODO: REFACTOR THIS! Either document the dependency, or refactor so it's optional.
                 if (lootConfig.EXPERIENCE != null) {
-                    playersToReceiveLoot.forEach(player -> awardPlayerExperienceLoot(player, lootConfig.EXPERIENCE, playersToReceiveLoot.size()));
+                    playersToReceiveLoot.forEach(player -> awardPlayerExperienceLoot(player, lootConfig.EXPERIENCE, playersToReceiveLootSize));
                 }
 
                 // If there is item loot, create the item and drop it at the location of the mob

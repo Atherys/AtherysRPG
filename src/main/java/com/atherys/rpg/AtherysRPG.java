@@ -56,7 +56,8 @@ import org.spongepowered.api.text.channel.MessageReceiver;
         version = "%PROJECT_VERSION%",
         dependencies = {
                 @Dependency(id = "atheryscore"),
-                @Dependency(id = "atherysskills")
+                @Dependency(id = "atherysskills"),
+                @Dependency(id = "atherysparties", optional = true)
         }
 )
 public class AtherysRPG {
