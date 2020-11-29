@@ -3,7 +3,7 @@ package com.atherys.rpg.service;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.data.AttributeMapData;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
@@ -43,10 +43,10 @@ public class AttributeService {
     }
 
     public Map<AttributeType, Double> getItemStackAttributes(ItemStack stack) {
-        Optional<AttributeData> attributeData = stack.get(AttributeData.class);
+        Optional<AttributeMapData> attributeData = stack.get(AttributeMapData.class);
 
         if (attributeData.isPresent()) {
-            return attributeData.get().asMap();
+            return attributeData.get().getAttributes();
         } else {
             return new HashMap<>();
         }

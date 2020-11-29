@@ -4,7 +4,7 @@ import com.atherys.core.utils.EntityUtils;
 import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.data.AttributeMapData;
 import com.atherys.rpg.facade.MobFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.service.RPGCharacterService;
@@ -78,8 +78,8 @@ public class EntityListener {
     public void onPlayerEquip(ChangeEntityEquipmentEvent.TargetPlayer event) {
         if (event.getTransaction().getFinal().equals(event.getTransaction().getOriginal())) return;
 
-        boolean newHasAttributes = event.getTransaction().getFinal().get(AttributeData.Immutable.class).isPresent();
-        boolean oldHadAttributes = event.getTransaction().getOriginal().get(AttributeData.Immutable.class).isPresent();
+        boolean newHasAttributes = event.getTransaction().getFinal().get(AttributeMapData.Immutable.class).isPresent();
+        boolean oldHadAttributes = event.getTransaction().getOriginal().get(AttributeMapData.Immutable.class).isPresent();
 
         if (newHasAttributes || oldHadAttributes) {
             characterFacade.setPlayerHealth(event.getTargetEntity(), false);

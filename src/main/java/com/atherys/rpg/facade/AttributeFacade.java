@@ -4,7 +4,7 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.data.AttributeMapData;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
@@ -133,7 +133,7 @@ public class AttributeFacade {
     }
 
     public void setItemAttributeValue(ItemStack item, AttributeType attributeType, Double amount) {
-        AttributeData data = item.get(AttributeData.class).orElseGet(AttributeData::new);
+        AttributeMapData data = item.get(AttributeMapData.class).orElseGet(AttributeMapData::new);
         data.setAttribute(attributeType, amount);
         item.offer(data);
     }
@@ -232,12 +232,12 @@ public class AttributeFacade {
      * @param stack The itemstack whose lore is to be updated
      */
     public void updateItemLore(ItemStack stack) {
-        Optional<AttributeData> attributeData = stack.get(AttributeData.class);
+        Optional<AttributeMapData> attributeData = stack.get(AttributeMapData.class);
 
         attributeData.ifPresent((data) -> {
             List<Text> lore = stack.get(Keys.ITEM_LORE).orElse(new ArrayList<>());
 
-            data.asMap().forEach((type, value) -> {
+            data.getAttributes().forEach((type, value) -> {
                 if (value == 0.0d) {
                     return;
                 }
