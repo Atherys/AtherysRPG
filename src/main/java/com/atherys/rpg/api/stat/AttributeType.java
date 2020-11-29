@@ -15,11 +15,13 @@ public class AttributeType implements CatalogType {
 
     private boolean upgradable;
 
+    private boolean hidden;
+
     private TextColor color;
 
     private String description;
 
-    AttributeType(String id, String shortName, String name, String description, boolean upgradable, TextColor color) {
+    AttributeType(String id, String shortName, String name, String description, boolean upgradable, boolean hidden, TextColor color) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
@@ -44,6 +46,10 @@ public class AttributeType implements CatalogType {
 
     public boolean isUpgradable() {
         return upgradable;
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 
     public TextColor getColor() {

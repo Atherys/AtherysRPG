@@ -23,6 +23,9 @@ public class AttributeTypeConfig {
     @Setting("upgradable")
     private boolean upgradable = false;
 
+    @Setting("hidden")
+    private boolean hidden = false;
+
     @Setting("color")
     private TextColor color = TextColors.RESET;
 
@@ -32,12 +35,13 @@ public class AttributeTypeConfig {
     public AttributeTypeConfig() {
     }
 
-    public AttributeTypeConfig(String id, String shortName, String name, String description, boolean upgradable, TextColor color, double defaultValue) {
+    public AttributeTypeConfig(String id, String shortName, String name, String description, boolean upgradable, boolean hidden, TextColor color, double defaultValue) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.description = description;
         this.upgradable = upgradable;
+        this.hidden = hidden;
         this.color = color;
         this.defaultValue = defaultValue;
     }
@@ -72,6 +76,14 @@ public class AttributeTypeConfig {
 
     public void setUpgradable(boolean upgradable) {
         this.upgradable = upgradable;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     public TextColor getColor() {

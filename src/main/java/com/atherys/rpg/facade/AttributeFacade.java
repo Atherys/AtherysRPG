@@ -177,6 +177,11 @@ public class AttributeFacade {
                 throw new NoSuchElementException("Configured attribute type '" + config.getId() + "' could not be found in the game registry.");
             }
 
+            // if the attribute is hidden, there's no need to proceed.
+            if (type.get().isHidden()) {
+                return;
+            }
+
             double base = baseAttributes.get(type.get());
             double buff = buffAttributes.getOrDefault(type.get(), 0.0d);
             double item = itemAttributes.getOrDefault(type.get(), 0.0d);
