@@ -1,8 +1,8 @@
 package com.atherys.rpg;
 
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.config.MobsConfig;
-import com.atherys.rpg.config.SkillGraphConfig;
+import com.atherys.rpg.config.mob.MobsConfig;
+import com.atherys.rpg.config.skill.SkillGraphConfig;
 import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.MobFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
