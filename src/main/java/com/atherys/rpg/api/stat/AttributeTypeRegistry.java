@@ -1,7 +1,10 @@
 package com.atherys.rpg.api.stat;
 
+import com.atherys.rpg.config.stat.AttributesConfig;
+import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.api.registry.CatalogRegistryModule;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,15 +15,21 @@ public final class AttributeTypeRegistry implements CatalogRegistryModule<Attrib
     private Map<String, AttributeType> attributeTypeMap = new HashMap<>();
 
     public AttributeTypeRegistry() {
-        attributeTypeMap.put(AttributeTypes.STRENGTH.getId(), AttributeTypes.STRENGTH);
-        attributeTypeMap.put(AttributeTypes.CONSTITUTION.getId(), AttributeTypes.CONSTITUTION);
-        attributeTypeMap.put(AttributeTypes.DEXTERITY.getId(), AttributeTypes.DEXTERITY);
-        attributeTypeMap.put(AttributeTypes.INTELLIGENCE.getId(), AttributeTypes.INTELLIGENCE);
-        attributeTypeMap.put(AttributeTypes.WISDOM.getId(), AttributeTypes.WISDOM);
-        attributeTypeMap.put(AttributeTypes.MAGICAL_RESISTANCE.getId(), AttributeTypes.MAGICAL_RESISTANCE);
-        attributeTypeMap.put(AttributeTypes.PHYSICAL_RESISTANCE.getId(), AttributeTypes.PHYSICAL_RESISTANCE);
-        attributeTypeMap.put(AttributeTypes.BASE_ARMOR.getId(), AttributeTypes.BASE_ARMOR);
-        attributeTypeMap.put(AttributeTypes.BASE_DAMAGE.getId(), AttributeTypes.BASE_DAMAGE);
+        try {
+            AttributesConfig config = new AttributesConfig();
+            config.init();
+
+            config.ATTRIBUTE_TYPES.stream().map(conf -> new AttributeType(
+                    conf.getId(),
+                    conf.getShortName(),
+                    conf.getName(),
+                    conf.getDescription(),
+                    conf.isUpgradable(),
+                    conf.getColor()
+            )).forEach(type -> attributeTypeMap.put(type.getId(), type));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
