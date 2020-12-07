@@ -33,6 +33,7 @@ import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -426,6 +427,10 @@ public class RPGCharacterFacade {
         if (living.supports(Keys.HEALTH_SCALE)) {
             living.offer(Keys.HEALTH_SCALE, 20d);
         }
+    }
+
+    public void setKeepInventoryOnPVP(DestructEntityEvent.Death event) {
+        event.setKeepInventory(config.PLAYERS_KEEP_INVENTORY_ON_PVP);
     }
 
 // Healing is currently not implementable as such due to Sponge
