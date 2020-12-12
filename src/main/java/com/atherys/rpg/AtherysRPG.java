@@ -2,6 +2,7 @@ package com.atherys.rpg;
 
 import com.atherys.core.AtherysCore;
 import com.atherys.core.command.CommandService;
+import com.atherys.core.event.AtherysDatabaseMigrationEvent;
 import com.atherys.core.event.AtherysHibernateConfigurationEvent;
 import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
@@ -155,6 +156,11 @@ public class AtherysRPG {
     @Listener
     public void onHibernateConfiguration(AtherysHibernateConfigurationEvent event) {
         event.registerEntity(PlayerCharacter.class);
+    }
+
+    @Listener
+    public void onDatabaseMigration(AtherysDatabaseMigrationEvent event) {
+        event.registerForMigration("atherysrpg");
     }
 
     @Listener(order = Order.LATE)
