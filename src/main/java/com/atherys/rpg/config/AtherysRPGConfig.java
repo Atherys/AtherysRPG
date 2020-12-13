@@ -10,6 +10,9 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.equipment.EquipmentType;
+import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
+import org.spongepowered.api.item.inventory.property.EquipmentSlotType;
 import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
@@ -98,6 +101,9 @@ public class AtherysRPGConfig extends PluginConfig {
 
     @Setting("max-reward-distance")
     public double MAX_REWARD_DISTANCE = 30.0d;
+
+    @Setting("players-keep-inventory-on-pvp")
+    public boolean PLAYERS_KEEP_INVENTORY_ON_PVP = false;
 
     {
         // Wood

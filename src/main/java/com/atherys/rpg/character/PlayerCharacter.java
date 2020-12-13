@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
+@Table(schema = "atherysrpg", name = "PlayerCharacter")
 public class PlayerCharacter implements RPGCharacter<Player> {
 
     @Id
@@ -25,7 +26,7 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "attribute_type")
     @Column(name = "value")
-    @CollectionTable(name = "playercharacter_attributes")
+    @CollectionTable(schema = "atherysrpg", name = "PlayerCharacter_attributes")
     private Map<AttributeType, Double> baseAttributes = new HashMap<>();
 
     @Transient
@@ -40,6 +41,7 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     private double spentSkillExperience;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(schema = "atherysrpg", name = "PlayerCharacter_skills")
     private List<String> skills = new ArrayList<>();
 
     public PlayerCharacter() {

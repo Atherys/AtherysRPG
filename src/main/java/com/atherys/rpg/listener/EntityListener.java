@@ -1,5 +1,6 @@
 package com.atherys.rpg.listener;
 
+import com.atherys.core.AtherysCore;
 import com.atherys.core.utils.EntityUtils;
 import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -11,6 +12,7 @@ import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -24,6 +26,7 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 @Singleton
@@ -61,6 +64,10 @@ public class EntityListener {
     @Listener
     public void onEntityDeath(DestructEntityEvent.Death event, @Getter("getTargetEntity") Living target, @Root EntityDamageSource source) {
         EntityUtils.playerAttackedEntity(source).ifPresent(player -> mobFacade.dropMobLoot(target, player));
+
+        if (EntityUtils.getRootEntity(source).getType().equals(EntityTypes.PLAYER) && target.getType().equals(EntityTypes.PLAYER)) {
+            characterFacade.setKeepInventoryOnPVP(event);
+        }
     }
 
     @Listener(order = Order.LAST)
