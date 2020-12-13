@@ -1,4 +1,4 @@
-package com.atherys.rpg.config;
+package com.atherys.rpg.config.item;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;

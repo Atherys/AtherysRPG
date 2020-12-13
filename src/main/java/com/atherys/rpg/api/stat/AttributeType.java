@@ -2,11 +2,9 @@ package com.atherys.rpg.api.stat;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.text.format.TextColor;
-import org.spongepowered.api.util.annotation.CatalogedBy;
 
 import java.util.Objects;
 
-@CatalogedBy(AttributeTypes.class)
 public class AttributeType implements CatalogType {
 
     private String id;
@@ -17,13 +15,18 @@ public class AttributeType implements CatalogType {
 
     private boolean upgradable;
 
+    private boolean hidden;
+
     private TextColor color;
 
-    AttributeType(String id, String shortName, String name, boolean upgradable, TextColor color) {
+    private String description;
+
+    AttributeType(String id, String shortName, String name, String description, boolean upgradable, boolean hidden, TextColor color) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.upgradable = upgradable;
+        this.description = description;
         this.color = color;
     }
 
@@ -45,8 +48,16 @@ public class AttributeType implements CatalogType {
         return upgradable;
     }
 
+    public boolean isHidden() {
+        return hidden;
+    }
+
     public TextColor getColor() {
         return color;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.atherys.rpg.config;
 import com.atherys.core.utils.PluginConfig;
 import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.atherys.rpg.api.stat.AttributeType;
-import com.atherys.rpg.api.stat.AttributeTypes;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
 import org.spongepowered.api.entity.EntityType;
@@ -67,9 +66,6 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("health-limit-calculation")
     public String HEALTH_LIMIT_CALCULATION = "100.0 + SOURCE_CON * 1.5";
 
-    @Setting("default-attributes")
-    public Map<AttributeType, Double> DEFAULT_ATTRIBUTES = new HashMap<>();
-
     @Setting("attribute-upgrade-cost")
     public double ATTRIBUTE_UPGRADE_COST = 100.0;
 
@@ -100,12 +96,6 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("display-root-skill")
     public boolean DISPLAY_ROOT_SKILL = true;
 
-    @Setting("attribute-order")
-    public List<AttributeType> ATTRIBUTE_ORDER = new ArrayList<>();
-
-    @Setting("attribute-descriptions")
-    public Map<AttributeType, Text> ATTRIBUTE_DESCRIPTIONS = new HashMap<>();
-
     @Setting("skill-message-distance")
     public double SKILL_MESSAGE_DISTANCE = 25;
 
@@ -114,22 +104,6 @@ public class AtherysRPGConfig extends PluginConfig {
 
     @Setting("players-keep-inventory-on-pvp")
     public boolean PLAYERS_KEEP_INVENTORY_ON_PVP = false;
-
-    {
-        ATTRIBUTE_ORDER.addAll(Arrays.asList(
-                AttributeTypes.STRENGTH,
-                AttributeTypes.CONSTITUTION,
-                AttributeTypes.DEXTERITY,
-                AttributeTypes.INTELLIGENCE,
-                AttributeTypes.WISDOM,
-                AttributeTypes.PHYSICAL_RESISTANCE,
-                AttributeTypes.MAGICAL_RESISTANCE,
-                AttributeTypes.BASE_ARMOR,
-                AttributeTypes.BASE_DAMAGE
-        ));
-
-        ATTRIBUTE_DESCRIPTIONS.put(AttributeTypes.STRENGTH, Text.of("Increases weapon damage"));
-    }
 
     {
         // Wood
@@ -183,16 +157,6 @@ public class AtherysRPGConfig extends PluginConfig {
         DAMAGE_CALCULATIONS.put(AtherysDamageTypes.UNARMED.getId(), "CLAMP(SOURCE_INT, 1.0, 15.0)");
         DAMAGE_CALCULATIONS.put(AtherysDamageTypes.PIERCE.getId(), "CLAMP(SOURCE_DEX, 1.0, 15.0)");
         DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BALLISTIC.getId(), "CLAMP(SOURCE_DEX, 1.0, 15.0)");
-    }
-
-    {
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.STRENGTH, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.CONSTITUTION, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.DEXTERITY, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.INTELLIGENCE, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.WISDOM, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.MAGICAL_RESISTANCE, 1.0d);
-        DEFAULT_ATTRIBUTES.put(AttributeTypes.PHYSICAL_RESISTANCE, 1.0d);
     }
 
     protected AtherysRPGConfig() throws IOException {

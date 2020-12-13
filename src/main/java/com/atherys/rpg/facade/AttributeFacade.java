@@ -4,12 +4,14 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.config.stat.AttributesConfig;
+import com.atherys.rpg.data.AttributeMapData;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
@@ -21,10 +23,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
@@ -38,6 +37,9 @@ public class AttributeFacade {
     private AtherysRPGConfig config;
 
     @Inject
+    private AttributesConfig attributesConfig;
+
+    @Inject
     private RPGCharacterService characterService;
 
     @Inject
@@ -48,6 +50,10 @@ public class AttributeFacade {
 
     @Inject
     private ExpressionService expressionService;
+
+    public void init() {
+
+    }
 
     public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
@@ -133,7 +139,7 @@ public class AttributeFacade {
     }
 
     public void setItemAttributeValue(ItemStack item, AttributeType attributeType, Double amount) {
-        AttributeData data = item.get(AttributeData.class).orElseGet(AttributeData::new);
+        AttributeMapData data = item.get(AttributeMapData.class).orElseGet(AttributeMapData::new);
         data.setAttribute(attributeType, amount);
         item.offer(data);
     }
@@ -161,10 +167,24 @@ public class AttributeFacade {
         Map<AttributeType, Double> buffAttributes = pc.getBuffAttributes();
         Map<AttributeType, Double> itemAttributes = attributeService.getEquipmentAttributes(player);
 
-        config.ATTRIBUTE_ORDER.forEach(type -> {
-            double base = baseAttributes.get(type);
-            double buff = buffAttributes.getOrDefault(type, 0.0d);
-            double item = itemAttributes.getOrDefault(type, 0.0d);
+        attributesConfig.ATTRIBUTE_TYPES.forEach(config -> {
+            Optional<AttributeType> type = Sponge.getRegistry().getType(AttributeType.class, config.getId());
+
+            // if no such type could be found, something's gone terribly wrong.
+            // This means that there is a configured attribute type which is not present in the registry.
+            // Throw an exception, as this could be a serious problem
+            if (!type.isPresent()) {
+                throw new NoSuchElementException("Configured attribute type '" + config.getId() + "' could not be found in the game registry.");
+            }
+
+            // if the attribute is hidden, there's no need to proceed.
+            if (type.get().isHidden()) {
+                return;
+            }
+
+            double base = baseAttributes.get(type.get());
+            double buff = buffAttributes.getOrDefault(type.get(), 0.0d);
+            double item = itemAttributes.getOrDefault(type.get(), 0.0d);
 
             int total = (int) Math.round(base + buff + item);
 
@@ -175,14 +195,14 @@ public class AttributeFacade {
             );
 
             Text textTotal = Text.builder()
-                    .append(Text.of(type.getColor(), BOLD, total))
+                    .append(Text.of(config.getColor(), BOLD, total))
                     .onHover(TextActions.showText(hoverText))
                     .build();
 
             Text upgradeButton;
 
-            if (type.isUpgradable()) {
-                upgradeButton = getAddAttributeButton(pc, type, base);
+            if (config.isUpgradable()) {
+                upgradeButton = getAddAttributeButton(pc, type.get(), base);
             } else {
                 upgradeButton = Text.EMPTY;
             }
@@ -190,7 +210,7 @@ public class AttributeFacade {
             Text attribute = Text.builder()
                     .append(NEW_LINE)
                     .append(upgradeButton)
-                    .append(Text.of(TextActions.showText(getAttributeDescription(type)), type.getColor(), type.getName(), ": ", TextColors.RESET, textTotal))
+                    .append(Text.of(TextActions.showText(getAttributeDescription(type.get())), config.getColor(), config.getName(), ": ", TextColors.RESET, textTotal))
                     .build();
 
             attributeText.append(attribute);
@@ -223,7 +243,7 @@ public class AttributeFacade {
     }
 
     private Text getAttributeDescription(AttributeType type) {
-        return Text.of(type.getColor(), type.getName(), NEW_LINE, DARK_GREEN, config.ATTRIBUTE_DESCRIPTIONS.getOrDefault(type, Text.EMPTY));
+        return Text.of(type.getColor(), type.getName(), NEW_LINE, DARK_GREEN, type.getDescription());
     }
 
     /**
@@ -232,12 +252,12 @@ public class AttributeFacade {
      * @param stack The itemstack whose lore is to be updated
      */
     public void updateItemLore(ItemStack stack) {
-        Optional<AttributeData> attributeData = stack.get(AttributeData.class);
+        Optional<AttributeMapData> attributeData = stack.get(AttributeMapData.class);
 
         attributeData.ifPresent((data) -> {
             List<Text> lore = stack.get(Keys.ITEM_LORE).orElse(new ArrayList<>());
 
-            data.asMap().forEach((type, value) -> {
+            data.getAttributes().forEach((type, value) -> {
                 if (value == 0.0d) {
                     return;
                 }

@@ -4,8 +4,8 @@ import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.util.Graph;
 import com.atherys.rpg.command.exception.RPGCommandException;
-import com.atherys.rpg.config.SkillGraphConfig;
-import com.atherys.rpg.config.SkillNodeConfig;
+import com.atherys.rpg.config.skill.SkillGraphConfig;
+import com.atherys.rpg.config.skill.SkillNodeConfig;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 

@@ -1,4 +1,4 @@
-package com.atherys.rpg.config;
+package com.atherys.rpg.config.mob;
 
 import com.atherys.core.utils.PluginConfig;
 import com.google.inject.Singleton;

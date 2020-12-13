@@ -1,10 +1,10 @@
-package com.atherys.rpg.config;
+package com.atherys.rpg.config.item;
 
+import com.atherys.rpg.config.CurrencyLootConfig;
+import com.atherys.rpg.config.ExperienceLootConfig;
+import com.atherys.rpg.config.item.ItemLootConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ConfigSerializable
 public class LootConfig {

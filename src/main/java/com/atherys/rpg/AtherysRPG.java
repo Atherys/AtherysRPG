@@ -8,7 +8,6 @@ import com.atherys.rpg.api.damage.AtherysDamageType;
 import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
-import com.atherys.rpg.api.stat.AttributeTypes;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.SpawnItemCommand;
@@ -16,10 +15,11 @@ import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.config.ItemsConfig;
-import com.atherys.rpg.config.MobsConfig;
-import com.atherys.rpg.config.SkillGraphConfig;
-import com.atherys.rpg.data.AttributeData;
+import com.atherys.rpg.config.item.ItemsConfig;
+import com.atherys.rpg.config.mob.MobsConfig;
+import com.atherys.rpg.config.skill.SkillGraphConfig;
+import com.atherys.rpg.config.stat.AttributesConfig;
+import com.atherys.rpg.data.AttributeMapData;
 import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.data.RPGKeys;
 import com.atherys.rpg.facade.*;
@@ -35,6 +35,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -97,7 +98,7 @@ public class AtherysRPG {
         getMobsConfig().init();
         getItemsConfig().init();
 
-        components.itemFacade.init();
+        getItemFacade().init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
@@ -205,23 +206,12 @@ public class AtherysRPG {
                 .type(new TypeToken<Value<String>>() {})
                 .build();
 
-        RPGKeys.DEXTERITY= createKey(AttributeTypes.DEXTERITY, "Dexterity");
-
-        RPGKeys.CONSTITUTION = createKey(AttributeTypes.CONSTITUTION, "Constitution");
-
-        RPGKeys.INTELLIGENCE = createKey(AttributeTypes.INTELLIGENCE, "Intelligence");
-
-        RPGKeys.STRENGTH = createKey(AttributeTypes.STRENGTH, "Strength");
-
-        RPGKeys.WISDOM = createKey(AttributeTypes.WISDOM, "Wisdom");
-
-        RPGKeys.MAGICAL_RESISTANCE = createKey(AttributeTypes.MAGICAL_RESISTANCE, "Magical_Resistance");
-
-        RPGKeys.PHYSICAL_RESISTANCE = createKey(AttributeTypes.PHYSICAL_RESISTANCE, "Physical_Resistance");
-
-        RPGKeys.BASE_ARMOR = createKey(AttributeTypes.BASE_ARMOR, "Base_Armor");
-
-        RPGKeys.BASE_DAMAGE = createKey(AttributeTypes.BASE_DAMAGE, "Base_Damage");
+        RPGKeys.ATTRIBUTES = Key.builder()
+                .id("atherysrpg:attributes")
+                .name("Attributes")
+                .query(DataQuery.of("Attributes"))
+                .type(new TypeToken<MapValue<AttributeType, Double>>(){})
+                .build();
     }
 
     private static Key<Value<Double>> createKey(AttributeType attributeType, String dataQuery) {
@@ -245,9 +235,9 @@ public class AtherysRPG {
                 .buildAndRegister(container);
 
         DataRegistration.builder()
-                .dataClass(AttributeData.class)
-                .immutableClass(AttributeData.Immutable.class)
-                .builder(new AttributeData.Builder())
+                .dataClass(AttributeMapData.class)
+                .immutableClass(AttributeMapData.Immutable.class)
+                .builder(new AttributeMapData.Builder())
                 .dataName("Attributes")
                 .manipulatorId("attributes")
                 .buildAndRegister(container);
@@ -259,6 +249,10 @@ public class AtherysRPG {
 
     public AtherysRPGConfig getConfig() {
         return components.config;
+    }
+
+    public AttributesConfig getAttributesConfig() {
+        return components.attributesConfig;
     }
 
     public SkillGraphConfig getGraphConfig() {
@@ -324,6 +318,9 @@ public class AtherysRPG {
     private static class Components {
         @Inject
         AtherysRPGConfig config;
+
+        @Inject
+        AttributesConfig attributesConfig;
 
         @Inject
         SkillGraphConfig skillGraphConfig;
