@@ -42,10 +42,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.spongepowered.api.text.format.TextColors.*;
 
@@ -329,12 +326,19 @@ public class RPGCharacterFacade {
         // Remove all damage modifiers
         resetDamageEvent(event);
 
+        double speed = rootSource.getSource().getVelocity().lengthSquared();
+
         Optional<DamageExpressionData> damageExpressionData = rootSource.getSource().get(DamageExpressionData.class);
         if (damageExpressionData.isPresent()) {
             Map<AttributeType, Double> sourceAttributes = attributeFacade.getAllAttributes(source);
             Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
 
-            event.setBaseDamage(Math.max(damageService.getDamageFromExpression(sourceAttributes, targetAttributes, damageExpressionData.get().getDamageExpression()), 0.0d));
+            Map<String, BigDecimal> extra = new HashMap<String, BigDecimal>() {{
+                put("SPEED", BigDecimal.valueOf(speed));
+            }};
+
+            event.setBaseDamage(Math.max(damageService.getDamageFromExpression(sourceAttributes, targetAttributes,
+                                damageExpressionData.get().getDamageExpression(), extra), 0.0d));
             return;
         }
 
@@ -359,8 +363,6 @@ public class RPGCharacterFacade {
 
         Map<AttributeType, Double> attackerAttributes = attributeFacade.getAllAttributes(source);
         Map<AttributeType, Double> targetAttributes = attributeFacade.getAllAttributes(target);
-
-        double speed = rootSource.getSource().getVelocity().lengthSquared();
 
         event.setBaseDamage(damageService.getRangedDamage(attackerAttributes, targetAttributes, projectileType, speed));
     }

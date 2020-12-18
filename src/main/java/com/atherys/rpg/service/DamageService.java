@@ -91,8 +91,21 @@ public class DamageService {
         return mitigatedDamageExpression.setVariable(INCOMING, new BigDecimal(producedDamage)).eval().doubleValue();
     }
 
-    public double getDamageFromExpression(Map<AttributeType, Double> attackerAttributes, Map<AttributeType, Double> targetAttributes, String damageExpression) {
+    public double getDamageFromExpression(Map<AttributeType, Double> attackerAttributes,
+                                          Map<AttributeType, Double> targetAttributes,
+                                          String damageExpression) {
+        return getDamageFromExpression(attackerAttributes, targetAttributes, damageExpression, null);
+    }
+
+    public double getDamageFromExpression(Map<AttributeType, Double> attackerAttributes,
+                                          Map<AttributeType, Double> targetAttributes,
+                                          String damageExpression,
+                                          Map<String, BigDecimal> extraAttributes) {
         Expression customExpression = expressionService.getExpression(damageExpression);
+
+        if (extraAttributes != null) {
+            extraAttributes.forEach(customExpression::setVariable);
+        }
 
         expressionService.populateAttributes(customExpression, attackerAttributes, "source");
         expressionService.populateAttributes(customExpression, targetAttributes, "target");
@@ -100,8 +113,18 @@ public class DamageService {
         return customExpression.eval().doubleValue();
     }
 
+    public String getMeleeDamageExpression(ItemType itemType) {
+        String type = getMeleeDamageType(itemType);
+        return config.DAMAGE_CALCULATIONS.get(type);
+    }
+
     private String getMeleeDamageType(ItemType itemType) {
         return config.ITEM_DAMAGE_TYPES.getOrDefault(itemType, config.DEFAULT_MELEE_TYPE);
+    }
+
+    public String getRangedDamageExpression(EntityType projectileType) {
+        String type = getRangedDamageType(projectileType);
+        return config.DAMAGE_CALCULATIONS.get(type);
     }
 
     private String getRangedDamageType(EntityType projectileType) {
