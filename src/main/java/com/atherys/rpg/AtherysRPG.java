@@ -230,17 +230,17 @@ public class AtherysRPG {
                 .dataClass(DamageExpressionData.class)
                 .immutableClass(DamageExpressionData.Immutable.class)
                 .builder(new DamageExpressionData.Builder())
-                .dataName("DamageExpression")
-                .manipulatorId("damageExpression")
-                .buildAndRegister(container);
+                .id("damageExpression")
+                .name("DamageExpression")
+                .build();
 
         DataRegistration.builder()
                 .dataClass(AttributeMapData.class)
                 .immutableClass(AttributeMapData.Immutable.class)
                 .builder(new AttributeMapData.Builder())
-                .dataName("Attributes")
-                .manipulatorId("attributes")
-                .buildAndRegister(container);
+                .id("attributes")
+                .name("Attributes")
+                .build();
     }
 
     public Logger getLogger() {
