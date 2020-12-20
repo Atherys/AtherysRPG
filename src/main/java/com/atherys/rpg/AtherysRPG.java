@@ -200,14 +200,14 @@ public class AtherysRPG {
     @Listener
     public void onKeyRegistration(GameRegistryEvent.Register<Key<?>> event) {
         RPGKeys.DAMAGE_EXPRESSION = Key.builder()
-                .id("atherys:damage_expression")
+                .id("damage_expression")
                 .name("Damage Expression")
                 .query(DataQuery.of("Damage_Expression"))
                 .type(new TypeToken<Value<String>>() {})
                 .build();
 
         RPGKeys.ATTRIBUTES = Key.builder()
-                .id("atherysrpg:attributes")
+                .id("attributes")
                 .name("Attributes")
                 .query(DataQuery.of("Attributes"))
                 .type(new TypeToken<MapValue<AttributeType, Double>>(){})
