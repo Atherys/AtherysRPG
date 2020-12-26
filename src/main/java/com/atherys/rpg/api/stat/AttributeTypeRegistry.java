@@ -1,18 +1,14 @@
 package com.atherys.rpg.api.stat;
 
 import com.atherys.rpg.config.stat.AttributesConfig;
-import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.api.registry.CatalogRegistryModule;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public final class AttributeTypeRegistry implements CatalogRegistryModule<AttributeType> {
 
-    private Map<String, AttributeType> attributeTypeMap = new HashMap<>();
+    private Map<String, AttributeType> attributeTypeMap = new LinkedHashMap<>();
 
     public AttributeTypeRegistry() {
         try {
@@ -26,7 +22,8 @@ public final class AttributeTypeRegistry implements CatalogRegistryModule<Attrib
                     conf.getDescription(),
                     conf.isUpgradable(),
                     conf.isHidden(),
-                    conf.getColor()
+                    conf.getColor(),
+                    conf.getDefaultValue()
             )).forEach(type -> attributeTypeMap.put(type.getId(), type));
         } catch (IOException e) {
             e.printStackTrace();

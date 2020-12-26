@@ -167,24 +167,16 @@ public class AttributeFacade {
         Map<AttributeType, Double> buffAttributes = pc.getBuffAttributes();
         Map<AttributeType, Double> itemAttributes = attributeService.getEquipmentAttributes(player);
 
-        attributesConfig.ATTRIBUTE_TYPES.forEach(config -> {
-            Optional<AttributeType> type = Sponge.getRegistry().getType(AttributeType.class, config.getId());
-
-            // if no such type could be found, something's gone terribly wrong.
-            // This means that there is a configured attribute type which is not present in the registry.
-            // Throw an exception, as this could be a serious problem
-            if (!type.isPresent()) {
-                throw new NoSuchElementException("Configured attribute type '" + config.getId() + "' could not be found in the game registry.");
-            }
+        Sponge.getRegistry().getAllOf(AttributeType.class).forEach( type -> {
 
             // if the attribute is hidden, there's no need to proceed.
-            if (type.get().isHidden()) {
+            if (type.isHidden()) {
                 return;
             }
 
-            double base = baseAttributes.get(type.get());
-            double buff = buffAttributes.getOrDefault(type.get(), 0.0d);
-            double item = itemAttributes.getOrDefault(type.get(), 0.0d);
+            double base = baseAttributes.get(type);
+            double buff = buffAttributes.getOrDefault(type, 0.0d);
+            double item = itemAttributes.getOrDefault(type, 0.0d);
 
             int total = (int) Math.round(base + buff + item);
 
@@ -195,14 +187,14 @@ public class AttributeFacade {
             );
 
             Text textTotal = Text.builder()
-                    .append(Text.of(config.getColor(), BOLD, total))
+                    .append(Text.of(type.getColor(), BOLD, total))
                     .onHover(TextActions.showText(hoverText))
                     .build();
 
             Text upgradeButton;
 
-            if (config.isUpgradable()) {
-                upgradeButton = getAddAttributeButton(pc, type.get(), base);
+            if (type.isUpgradable()) {
+                upgradeButton = getAddAttributeButton(pc, type, base);
             } else {
                 upgradeButton = Text.EMPTY;
             }
@@ -210,7 +202,7 @@ public class AttributeFacade {
             Text attribute = Text.builder()
                     .append(NEW_LINE)
                     .append(upgradeButton)
-                    .append(Text.of(TextActions.showText(getAttributeDescription(type.get())), config.getColor(), config.getName(), ": ", TextColors.RESET, textTotal))
+                    .append(Text.of(TextActions.showText(getAttributeDescription(type)), type.getColor(), type.getName(), ": ", TextColors.RESET, textTotal))
                     .build();
 
             attributeText.append(attribute);
