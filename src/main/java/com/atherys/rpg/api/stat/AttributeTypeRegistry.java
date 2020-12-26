@@ -23,7 +23,8 @@ public final class AttributeTypeRegistry implements CatalogRegistryModule<Attrib
                     conf.isUpgradable(),
                     conf.isHidden(),
                     conf.getColor(),
-                    conf.getDefaultValue()
+                    conf.getDefaultValue(),
+                    conf.isResetOnLogin()
             )).forEach(type -> attributeTypeMap.put(type.getId(), type));
         } catch (IOException e) {
             e.printStackTrace();

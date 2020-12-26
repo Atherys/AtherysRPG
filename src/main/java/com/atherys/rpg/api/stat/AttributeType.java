@@ -7,24 +7,26 @@ import java.util.Objects;
 
 public class AttributeType implements CatalogType {
 
-    private String id;
+    private final String id;
 
-    private String name;
+    private final String name;
 
-    private String shortName;
+    private final String shortName;
 
-    private boolean upgradable;
+    private final boolean upgradable;
 
-    private boolean hidden;
+    private final boolean hidden;
 
-    private TextColor color;
+    private final TextColor color;
 
-    private String description;
+    private final String description;
 
-    private double defaultValue;
+    private final double defaultValue;
+
+    private final boolean resetOnLogin;
 
     AttributeType(String id, String shortName, String name, String description, boolean upgradable, boolean hidden,
-                  TextColor color, Double defaultValue) {
+                  TextColor color, Double defaultValue, boolean resetOnLogin) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
@@ -33,6 +35,7 @@ public class AttributeType implements CatalogType {
         this.description = description;
         this.color = color;
         this.defaultValue = defaultValue;
+        this.resetOnLogin = resetOnLogin;
     }
 
     @Override
@@ -67,6 +70,10 @@ public class AttributeType implements CatalogType {
 
     public double getDefaultValue() {
         return defaultValue;
+    }
+
+    public boolean isResetOnLogin() {
+        return resetOnLogin;
     }
 
     @Override
