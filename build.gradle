@@ -6,7 +6,7 @@ plugins {
 }
 group 'com.atherys'
 
-version '2.1.2'
+version '2.2.0'
 
 dependencies {
     shadow 'com.atherys:AtherysCore:2.0.0'
