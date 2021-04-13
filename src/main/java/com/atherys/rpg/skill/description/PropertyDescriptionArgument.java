@@ -8,11 +8,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
 
 public class PropertyDescriptionArgument implements DescriptionArgument {
-    private RPGSkill skill;
-
-    private String propertyName;
-
-    private String defaultValue;
+    protected RPGSkill skill;
+    protected String propertyName;
+    protected String defaultValue;
 
     public PropertyDescriptionArgument(RPGSkill skill, String propertyName, String defaultValue) {
         this.skill = skill;
