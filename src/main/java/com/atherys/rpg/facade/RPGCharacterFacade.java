@@ -427,7 +427,7 @@ public class RPGCharacterFacade {
         }
 
         if (living.supports(Keys.HEALTH_SCALE)) {
-            living.offer(Keys.HEALTH_SCALE, 20d);
+            living.offer(Keys.HEALTH_SCALE, config.HEALTH_SCALING);
         }
     }
 
