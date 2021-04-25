@@ -32,10 +32,14 @@ public class AttributeTypeConfig {
     @Setting("default-value")
     private double defaultValue = 0.0d;
 
+    @Setting(value = "reset-on-login", comment = "Whether this attribute should reset on login")
+    private boolean resetOnLogin = false;
+
     public AttributeTypeConfig() {
     }
 
-    public AttributeTypeConfig(String id, String shortName, String name, String description, boolean upgradable, boolean hidden, TextColor color, double defaultValue) {
+    public AttributeTypeConfig(String id, String shortName, String name, String description, boolean upgradable,
+                               boolean hidden, TextColor color, double defaultValue, boolean resetOnLogin) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
@@ -44,6 +48,7 @@ public class AttributeTypeConfig {
         this.hidden = hidden;
         this.color = color;
         this.defaultValue = defaultValue;
+        this.resetOnLogin = resetOnLogin;
     }
 
     public String getId() {
@@ -108,5 +113,13 @@ public class AttributeTypeConfig {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setResetOnLogin(boolean resetOnLogin) {
+        this.resetOnLogin = resetOnLogin;
+    }
+
+    public boolean isResetOnLogin() {
+        return resetOnLogin;
     }
 }

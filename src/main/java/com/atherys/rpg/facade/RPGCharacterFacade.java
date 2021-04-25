@@ -9,10 +9,7 @@ import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.data.DamageExpressionData;
-import com.atherys.rpg.service.DamageService;
-import com.atherys.rpg.service.ExpressionService;
-import com.atherys.rpg.service.HealingService;
-import com.atherys.rpg.service.RPGCharacterService;
+import com.atherys.rpg.service.*;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.ResourceEvent;
 import com.atherys.skills.api.resource.ResourceUser;
@@ -66,6 +63,9 @@ public class RPGCharacterFacade {
 
     @Inject
     private AttributeFacade attributeFacade;
+
+    @Inject
+    private AttributeService attributeService;
 
     @Inject
     private RPGSkillFacade skillFacade;
@@ -131,6 +131,16 @@ public class RPGCharacterFacade {
             characterService.resetCharacter(pc);
             characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot());
             rpgMsg.info(player, "The server's skill tree has changed. Your attributes and skill tree have been reset.");
+        }
+    }
+
+    public void checkAttributesDefaults(PlayerCharacter pc) {
+        Map<AttributeType, Double> attributes = attributeService.getBaseAttributes(pc);
+
+        for (AttributeType type : Sponge.getRegistry().getAllOf(AttributeType.class)) {
+            if (!attributes.containsKey(type) || type.isResetOnLogin() || attributes.get(type) < type.getDefaultValue()) {
+                characterService.setAttribute(pc, type, type.getDefaultValue());
+            }
         }
     }
 
@@ -387,6 +397,7 @@ public class RPGCharacterFacade {
         setPlayerHealth(player, fill);
         setPlayerResourceLimit(player, fill);
         checkTreeOnLogin(player);
+        checkAttributesDefaults(pc);
     }
 
     public void onPlayerRespawn(Player player) {

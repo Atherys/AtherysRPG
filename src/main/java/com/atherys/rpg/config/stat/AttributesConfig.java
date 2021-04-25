@@ -23,7 +23,8 @@ public class AttributesConfig extends PluginConfig {
                 true,
                 false,
                 TextColors.RED,
-                1.0d
+                1.0d,
+                false
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:constitution",
@@ -33,7 +34,8 @@ public class AttributesConfig extends PluginConfig {
                 true,
                 false,
                 TextColors.YELLOW,
-                1.0d
+                1.0d,
+                false
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:dexterity",
@@ -43,7 +45,8 @@ public class AttributesConfig extends PluginConfig {
                 true,
                 false,
                 TextColors.GREEN,
-                1.0d
+                1.0d,
+                false
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:intelligence",
@@ -53,7 +56,8 @@ public class AttributesConfig extends PluginConfig {
                 true,
                 false,
                 TextColors.BLUE,
-                1.0d
+                1.0d,
+                false
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:wisdom",
@@ -63,7 +67,8 @@ public class AttributesConfig extends PluginConfig {
                 true,
                 false,
                 TextColors.LIGHT_PURPLE,
-                1.0d
+                1.0d,
+                false
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:magical_resistance",
@@ -73,7 +78,8 @@ public class AttributesConfig extends PluginConfig {
                 false,
                 false,
                 TextColors.AQUA,
-                1.0d
+                0.0d,
+                true
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:physical_resistance",
@@ -83,7 +89,8 @@ public class AttributesConfig extends PluginConfig {
                 false,
                 false,
                 TextColors.GOLD,
-                1.0d
+                0.0d,
+                true
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:base_armor",
@@ -93,7 +100,8 @@ public class AttributesConfig extends PluginConfig {
                 false,
                 true,
                 TextColors.DARK_AQUA,
-                1.0d
+                0.0d,
+                true
         ));
         ATTRIBUTE_TYPES.add(new AttributeTypeConfig(
                 "atherys:base_damage",
@@ -103,7 +111,8 @@ public class AttributesConfig extends PluginConfig {
                 false,
                 true,
                 TextColors.DARK_RED,
-                1.0d
+                0.0d,
+                true
         ));
     }
 
