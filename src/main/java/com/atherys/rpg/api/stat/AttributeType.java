@@ -21,13 +21,18 @@ public class AttributeType implements CatalogType {
 
     private String description;
 
-    AttributeType(String id, String shortName, String name, String description, boolean upgradable, boolean hidden, TextColor color) {
+    private double defaultValue;
+
+    AttributeType(String id, String shortName, String name, String description, boolean upgradable, boolean hidden,
+                  TextColor color, Double defaultValue) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.upgradable = upgradable;
+        this.hidden = hidden;
         this.description = description;
         this.color = color;
+        this.defaultValue = defaultValue;
     }
 
     @Override
@@ -58,6 +63,10 @@ public class AttributeType implements CatalogType {
 
     public String getDescription() {
         return description;
+    }
+
+    public double getDefaultValue() {
+        return defaultValue;
     }
 
     @Override

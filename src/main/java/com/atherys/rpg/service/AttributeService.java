@@ -37,17 +37,8 @@ public class AttributeService {
     public Map<AttributeType, Double> getDefaultAttributes() {
         Map<AttributeType, Double> defaultAttributes = new HashMap<>();
 
-        attributesConfig.ATTRIBUTE_TYPES.forEach(config -> {
-            Optional<AttributeType> type = Sponge.getRegistry().getType(AttributeType.class, config.getId());
-
-            // if no such type could be found, something's gone terribly wrong.
-            // This means that there is a configured attribute type which is not present in the registry.
-            // Throw an exception, as this could be a serious problem
-            if (!type.isPresent()) {
-                throw new NoSuchElementException("Configured attribute type '" + config.getId() + "' could not be found in the game registry.");
-            }
-
-            defaultAttributes.put(type.get(), config.getDefaultValue());
+        Sponge.getRegistry().getAllOf(AttributeType.class).forEach( type -> {
+            defaultAttributes.put(type, type.getDefaultValue());
         });
 
         return fillInAttributes(defaultAttributes);
