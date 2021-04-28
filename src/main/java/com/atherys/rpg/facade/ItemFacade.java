@@ -19,14 +19,14 @@ import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResu
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
 public class ItemFacade {
-
-    @Inject
-    private ItemsConfig config;
 
     @Inject
     private AttributeFacade attributeFacade;
@@ -40,25 +40,41 @@ public class ItemFacade {
             items = new HashMap<>();
         }
 
-        config.ITEMS.forEach(itemConfig -> {
-            Optional<ItemStackSnapshot> snapshot = createItemStackSnapshotFromItemConfig(itemConfig);
+        try {
+            List<String> itemConfigs = Files.walk(Paths.get("config/atherysrpg/items/"), 1)
+                    .filter(Files::isRegularFile)
+                    .map(path -> path.getFileName().toString())
+                    .collect(Collectors.toList());
 
-            if (!snapshot.isPresent()) {
-                AtherysRPG.getInstance().getLogger().error("Could not create item snapshot for item configuration with id \"" + itemConfig.ID + "\"");
-                return;
+            for (String file : itemConfigs) {
+                AtherysRPG.getInstance().getLogger().info(file);
+                ItemsConfig itemsConfig = new ItemsConfig(file);
+                itemsConfig.load();
+                itemsConfig.ITEMS.forEach(this::loadItem);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-            items.put(itemConfig.ID, snapshot.get());
+    private void loadItem(ItemConfig itemConfig) {
+        Optional<ItemStackSnapshot> snapshot = createItemStackSnapshotFromItemConfig(itemConfig);
 
-            List<String> itemGroup = groups.get(itemConfig.GROUP);
-            if (itemGroup == null) {
-                itemGroup = new ArrayList<>();
-                itemGroup.add(itemConfig.ID);
-                groups.put(itemConfig.GROUP, itemGroup);
-            } else {
-                itemGroup.add(itemConfig.ID);
-            }
-        });
+        if (!snapshot.isPresent()) {
+            AtherysRPG.getInstance().getLogger().error("Could not create item snapshot for item configuration with id \"" + itemConfig.ID + "\"");
+            return;
+        }
+
+        items.put(itemConfig.ID, snapshot.get());
+
+        List<String> itemGroup = groups.get(itemConfig.GROUP);
+        if (itemGroup == null) {
+            itemGroup = new ArrayList<>();
+            itemGroup.add(itemConfig.ID);
+            groups.put(itemConfig.GROUP, itemGroup);
+        } else {
+            itemGroup.add(itemConfig.ID);
+        }
     }
 
     public Map<String, ItemStackSnapshot> getCachedItems() {

@@ -51,6 +51,10 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.channel.MessageReceiver;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 @Plugin(
         id = "atherysrpg",
         name = "A'therys RPG",
@@ -96,8 +100,6 @@ public class AtherysRPG {
         getConfig().init();
         getGraphConfig().init();
         getMobsConfig().init();
-        getItemsConfig().init();
-
         getItemFacade().init();
 
         // Register listeners
@@ -126,9 +128,7 @@ public class AtherysRPG {
         getConfig().load();
         getGraphConfig().load();
         getMobsConfig().load();
-        getItemsConfig().load();
-
-        components.itemFacade.init();
+        getItemFacade().init();
 
         // Re-register command to update item choices
         try {
@@ -263,10 +263,6 @@ public class AtherysRPG {
         return components.mobsConfig;
     }
 
-    public ItemsConfig getItemsConfig() {
-        return components.itemsConfig;
-    }
-
     public PlayerCharacterRepository getPlayerCharacterRepository() {
         return components.playerCharacterRepository;
     }
@@ -327,9 +323,6 @@ public class AtherysRPG {
 
         @Inject
         MobsConfig mobsConfig;
-
-        @Inject
-        ItemsConfig itemsConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;
