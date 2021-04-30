@@ -8,6 +8,8 @@ import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.archetype.ArchetypeConfig;
+import com.atherys.rpg.config.archetype.ArchetypesConfig;
 import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.service.*;
 import com.atherys.skills.AtherysSkills;
@@ -42,12 +44,16 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.spongepowered.api.text.format.TextColors.*;
+import static org.spongepowered.api.text.format.TextStyles.BOLD;
 
 @Singleton
 public class RPGCharacterFacade {
 
     @Inject
     private AtherysRPGConfig config;
+
+    @Inject
+    private ArchetypesConfig archetypesConfig;
 
     @Inject
     private DamageService damageService;
@@ -104,6 +110,7 @@ public class RPGCharacterFacade {
         List<String> ownedSkills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
 
         List<Text> messages = new ArrayList<>();
+        messages.add(Text.of(GOLD, BOLD, getArchetype(ownedSkills)));
         messages.add(Text.of(DARK_GRAY, "[]====[ ", GOLD, "Your Skills", DARK_GRAY, " ]====[]"));
 
         for (String skillId : ownedSkills) {
@@ -122,6 +129,23 @@ public class RPGCharacterFacade {
         }
 
         messages.forEach(player::sendMessage);
+    }
+
+    private String getArchetype(List<String> skills) {
+        int skillCount = 0;
+        String finalArchetype = archetypesConfig.DEFAULT;
+
+        for (ArchetypeConfig archetype : archetypesConfig.ARCHETYPES) {
+            Set<String> archetypeSkills = new HashSet<>(archetype.SKILLS);
+            archetypeSkills.retainAll(skills);
+
+            if (archetypeSkills.size() > skillCount) {
+                skillCount = archetypeSkills.size();
+                finalArchetype = archetype.NAME;
+            }
+        }
+
+        return finalArchetype;
     }
 
     public void checkTreeOnLogin(Player player) {

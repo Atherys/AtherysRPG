@@ -1,8 +1,5 @@
-package com.atherys.rpg.config.item;
+package com.atherys.rpg.config.loot;
 
-import com.atherys.rpg.config.CurrencyLootConfig;
-import com.atherys.rpg.config.ExperienceLootConfig;
-import com.atherys.rpg.config.item.ItemLootConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 

@@ -1,7 +1,7 @@
 package com.atherys.rpg.config.mob;
 
 import com.atherys.rpg.api.stat.AttributeType;
-import com.atherys.rpg.config.item.LootConfig;
+import com.atherys.rpg.config.loot.LootConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 

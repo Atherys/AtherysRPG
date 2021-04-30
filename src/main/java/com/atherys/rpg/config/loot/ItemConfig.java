@@ -1,4 +1,4 @@
-package com.atherys.rpg.config.item;
+package com.atherys.rpg.config.loot;
 
 import com.atherys.rpg.api.stat.AttributeType;
 import ninja.leaping.configurate.objectmapping.Setting;

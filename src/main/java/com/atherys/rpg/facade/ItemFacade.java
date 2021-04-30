@@ -2,8 +2,8 @@ package com.atherys.rpg.facade;
 
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.command.exception.RPGCommandException;
-import com.atherys.rpg.config.item.ItemConfig;
-import com.atherys.rpg.config.item.ItemsConfig;
+import com.atherys.rpg.config.loot.ItemConfig;
+import com.atherys.rpg.config.loot.ItemsConfig;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

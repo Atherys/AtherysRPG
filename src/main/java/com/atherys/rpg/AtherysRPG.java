@@ -15,7 +15,7 @@ import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.config.item.ItemsConfig;
+import com.atherys.rpg.config.archetype.ArchetypesConfig;
 import com.atherys.rpg.config.mob.MobsConfig;
 import com.atherys.rpg.config.skill.SkillGraphConfig;
 import com.atherys.rpg.config.stat.AttributesConfig;
@@ -50,10 +50,6 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.channel.MessageReceiver;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Plugin(
         id = "atherysrpg",
@@ -100,6 +96,8 @@ public class AtherysRPG {
         getConfig().init();
         getGraphConfig().init();
         getMobsConfig().init();
+        getArchetypesConfig().init();
+
         getItemFacade().init();
 
         // Register listeners
@@ -128,6 +126,8 @@ public class AtherysRPG {
         getConfig().load();
         getGraphConfig().load();
         getMobsConfig().load();
+        getArchetypesConfig().load();
+
         getItemFacade().init();
 
         // Re-register command to update item choices
@@ -263,6 +263,10 @@ public class AtherysRPG {
         return components.mobsConfig;
     }
 
+    public ArchetypesConfig getArchetypesConfig() {
+        return components.archetypesConfig;
+    }
+
     public PlayerCharacterRepository getPlayerCharacterRepository() {
         return components.playerCharacterRepository;
     }
@@ -323,6 +327,9 @@ public class AtherysRPG {
 
         @Inject
         MobsConfig mobsConfig;
+
+        @Inject
+        ArchetypesConfig archetypesConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;

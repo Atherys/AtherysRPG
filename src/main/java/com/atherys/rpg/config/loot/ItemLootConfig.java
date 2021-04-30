@@ -1,11 +1,10 @@
-package com.atherys.rpg.config.item;
+package com.atherys.rpg.config.loot;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @ConfigSerializable
 public class ItemLootConfig {
