@@ -1,9 +1,5 @@
 package com.atherys.rpg.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Generated;
 import com.atherys.rpg.api.stat.AttributeType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -17,6 +13,11 @@ import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.immutable.ImmutableMapValue;
 import org.spongepowered.api.data.value.mutable.MapValue;
+
+import javax.annotation.Generated;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2020-11-29T10:49:53.562Z")
 public class AttributeMapData extends AbstractData<AttributeMapData, AttributeMapData.Immutable> {

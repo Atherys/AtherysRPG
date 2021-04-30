@@ -5,11 +5,9 @@ import com.atherys.rpg.expression.ClampFunction;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.Living;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 

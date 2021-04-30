@@ -3,7 +3,7 @@ package com.atherys.rpg.facade;
 import com.atherys.core.AtherysCore;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
-import com.atherys.rpg.config.*;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.loot.CurrencyLootConfig;
 import com.atherys.rpg.config.loot.ExperienceLootConfig;
 import com.atherys.rpg.config.loot.ItemLootConfig;

@@ -4,7 +4,10 @@ import com.atherys.rpg.config.stat.AttributesConfig;
 import org.spongepowered.api.registry.CatalogRegistryModule;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public final class AttributeTypeRegistry implements CatalogRegistryModule<AttributeType> {
 

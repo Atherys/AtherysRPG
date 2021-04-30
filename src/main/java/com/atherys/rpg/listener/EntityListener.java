@@ -1,6 +1,5 @@
 package com.atherys.rpg.listener;
 
-import com.atherys.core.AtherysCore;
 import com.atherys.core.utils.EntityUtils;
 import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -26,7 +25,6 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 @Singleton
