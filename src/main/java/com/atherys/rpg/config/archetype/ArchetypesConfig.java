@@ -10,13 +10,18 @@ import java.util.Set;
 
 @Singleton
 public class ArchetypesConfig extends PluginConfig {
+    @Setting("archetypes")
+    public Set<ArchetypeConfig> ARCHETYPES = new HashSet<>();
+
+    {
+        ARCHETYPES.add(new ArchetypeConfig());
+    }
+
+    @Setting("default-archetype")
+    public String DEFAULT = "None";
+
     public ArchetypesConfig() throws IOException {
         super("config/atherysrpg/", "archetypes.conf");
     }
 
-    @Setting("archetypes")
-    public Set<ArchetypeConfig> ARCHETYPES = new HashSet<>();
-
-    @Setting("default-archetype")
-    public String DEFAULT = "None";
 }
