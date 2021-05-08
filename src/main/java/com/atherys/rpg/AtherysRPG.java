@@ -98,6 +98,7 @@ public class AtherysRPG {
         getGraphConfig().init();
         getMobsConfig().init();
         getArchetypesConfig().init();
+        getTemplatesConfig().init();
 
         getItemFacade().init();
 
@@ -128,6 +129,7 @@ public class AtherysRPG {
         getGraphConfig().load();
         getMobsConfig().load();
         getArchetypesConfig().load();
+        getTemplatesConfig().load();
 
         getItemFacade().init();
 
@@ -266,6 +268,10 @@ public class AtherysRPG {
 
     public ArchetypesConfig getArchetypesConfig() {
         return components.archetypesConfig;
+    }
+
+    public ItemTemplatesConfig getTemplatesConfig() {
+        return components.itemTemplatesConfig;
     }
 
     public PlayerCharacterRepository getPlayerCharacterRepository() {
