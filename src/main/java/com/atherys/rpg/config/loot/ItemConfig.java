@@ -33,6 +33,18 @@ public class ItemConfig {
     @Setting("lore")
     public List<String> LORE = new ArrayList<>();
 
+    @Setting("template")
+    public String TEMPLATE = "";
+
+    @Setting("category")
+    public String CATEGORY = "";
+
+    @Setting("rarity")
+    public String RARITY = "";
+
+    @Setting("description")
+    public String DESCRIPTION = "";
+
     @Setting("enchantments")
     public Map<EnchantmentType, Integer> ENCHANTMENTS = new HashMap<>();
 

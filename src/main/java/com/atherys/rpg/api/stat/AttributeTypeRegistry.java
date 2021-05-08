@@ -27,7 +27,8 @@ public final class AttributeTypeRegistry implements CatalogRegistryModule<Attrib
                     conf.isHidden(),
                     conf.getColor(),
                     conf.getDefaultValue(),
-                    conf.isResetOnLogin()
+                    conf.isResetOnLogin(),
+                    conf.getDisplay()
             )).forEach(type -> attributeTypeMap.put(type.getId(), type));
         } catch (IOException e) {
             e.printStackTrace();

@@ -35,11 +35,14 @@ public class AttributeTypeConfig {
     @Setting(value = "reset-on-login", comment = "Whether this attribute should reset on login")
     private boolean resetOnLogin = false;
 
+    @Setting("display")
+    private String display = "";
+
     public AttributeTypeConfig() {
     }
 
     public AttributeTypeConfig(String id, String shortName, String name, String description, boolean upgradable,
-                               boolean hidden, TextColor color, double defaultValue, boolean resetOnLogin) {
+                               boolean hidden, TextColor color, double defaultValue, boolean resetOnLogin, String display) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
@@ -49,77 +52,46 @@ public class AttributeTypeConfig {
         this.color = color;
         this.defaultValue = defaultValue;
         this.resetOnLogin = resetOnLogin;
+        this.display = display;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getShortName() {
         return shortName;
     }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
     public boolean isUpgradable() {
         return upgradable;
-    }
-
-    public void setUpgradable(boolean upgradable) {
-        this.upgradable = upgradable;
     }
 
     public boolean isHidden() {
         return hidden;
     }
 
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
-
     public TextColor getColor() {
         return color;
-    }
-
-    public void setColor(TextColor color) {
-        this.color = color;
     }
 
     public double getDefaultValue() {
         return defaultValue;
     }
 
-    public void setDefaultValue(double defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setResetOnLogin(boolean resetOnLogin) {
-        this.resetOnLogin = resetOnLogin;
-    }
-
     public boolean isResetOnLogin() {
         return resetOnLogin;
+    }
+
+    public String getDisplay() {
+        return display;
     }
 }

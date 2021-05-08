@@ -16,6 +16,7 @@ import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.archetype.ArchetypesConfig;
+import com.atherys.rpg.config.loot.ItemTemplatesConfig;
 import com.atherys.rpg.config.mob.MobsConfig;
 import com.atherys.rpg.config.skill.SkillGraphConfig;
 import com.atherys.rpg.config.stat.AttributesConfig;
@@ -330,6 +331,9 @@ public class AtherysRPG {
 
         @Inject
         ArchetypesConfig archetypesConfig;
+
+        @Inject
+        ItemTemplatesConfig itemTemplatesConfig;
 
         @Inject
         PlayerCharacterRepository playerCharacterRepository;

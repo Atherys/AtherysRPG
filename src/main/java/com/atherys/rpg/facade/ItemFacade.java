@@ -1,13 +1,19 @@
 package com.atherys.rpg.facade;
 
 import com.atherys.rpg.AtherysRPG;
+import com.atherys.rpg.api.stat.AttributeType;
+import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.command.exception.RPGCommandException;
+import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.loot.ItemConfig;
+import com.atherys.rpg.config.loot.ItemTemplatesConfig;
 import com.atherys.rpg.config.loot.ItemsConfig;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomUtils;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
@@ -18,6 +24,7 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.w3c.dom.Attr;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,9 +38,17 @@ public class ItemFacade {
     @Inject
     private AttributeFacade attributeFacade;
 
+    @Inject
+    private AtherysRPGConfig config;
+
+    @Inject
+    private ItemTemplatesConfig templatesConfig;
+
     private Map<String, List<String>> groups = new HashMap<>();
 
     private Map<String, ItemStackSnapshot> items = new HashMap<>();
+
+    private static final Map<AttributeType, String> ATTRIBUTE_PLACEHOLDERS = new HashMap<>();
 
     public void init() {
         if (items == null || !items.isEmpty()) {
@@ -55,6 +70,11 @@ public class ItemFacade {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ATTRIBUTE_PLACEHOLDERS.clear();
+        Sponge.getRegistry().getAllOf(AttributeType.class).forEach(attributeType -> {
+            ATTRIBUTE_PLACEHOLDERS.put(attributeType, "%" + attributeType.getId() + "%");
+        });
     }
 
     private void loadItem(ItemConfig itemConfig) {
@@ -156,12 +176,64 @@ public class ItemFacade {
         });
 
         // Convert and apply item lore
-        List<Text> convertedLore = item.LORE.stream()
-                .map(TextSerializers.FORMATTING_CODE::deserialize)
-                .collect(Collectors.toList());
-        itemStack.offer(Keys.ITEM_LORE, convertedLore);
+        if (item.TEMPLATE.isEmpty()) {
+            List<Text> convertedLore = item.LORE.stream()
+                    .map(TextSerializers.FORMATTING_CODE::deserialize)
+                    .collect(Collectors.toList());
+            itemStack.offer(Keys.ITEM_LORE, convertedLore);
+        } else {
+            itemStack.offer(Keys.ITEM_LORE, generateTemplateLoreForItem(item));
+        }
 
         return Optional.of(itemStack.createSnapshot());
     }
 
+    private static final String CATEGORY_PLACEHOLDER = "%category%";
+    private static final String RARITY_PLACEHOLDER = "%rarity%";
+    private static final String ATTRIBUTES_PLACEHOLDER = "%attributes%";
+    private static final String DESCRIPTION_PLACEHOLDER = "%description%";
+
+    private List<Text> generateTemplateLoreForItem(ItemConfig itemConfig) {
+        String template = config.ITEM_TEMPLATES.get(itemConfig.TEMPLATE).stream()
+                .reduce("", (acc, line) -> acc + (line + "\n"));
+        Set<AttributeType> attributesUsed = new HashSet<>();
+
+        for (Map.Entry<AttributeType, String> entry : ATTRIBUTE_PLACEHOLDERS.entrySet()) {
+            String placeholder = entry.getValue();
+            AttributeType type = entry.getKey();
+
+            if (template.contains(placeholder)) {
+                attributesUsed.add(type);
+                template = template.replace(placeholder, getAttributePlaceholder(type, itemConfig));
+            }
+        }
+
+        template = template
+                .replaceAll(CATEGORY_PLACEHOLDER, templatesConfig.CATEGORIES.getOrDefault(itemConfig.CATEGORY, ""))
+                .replaceAll(RARITY_PLACEHOLDER, templatesConfig.RARITIES.getOrDefault(itemConfig.RARITY, ""))
+                .replaceAll(DESCRIPTION_PLACEHOLDER, itemConfig.DESCRIPTION);
+
+        if (template.contains(ATTRIBUTES_PLACEHOLDER)) {
+            StringBuilder builder = new StringBuilder();
+
+            for (AttributeType type : itemConfig.ATTRIBUTES.keySet()) {
+                if (!attributesUsed.contains(type)) {
+                    builder.append(getAttributePlaceholder(type, itemConfig));
+                }
+            }
+            String attributes = builder.toString();
+
+            template = template.replace(ATTRIBUTES_PLACEHOLDER, attributes);
+        }
+
+        return Arrays.stream(template.split("\n"))
+                .map(line -> TextSerializers.formattingCode('&').deserialize(line))
+                .collect(Collectors.toList());
+    }
+
+    private String getAttributePlaceholder(AttributeType type, ItemConfig itemConfig) {
+        double value = itemConfig.ATTRIBUTES.get(type);
+        String valueFinal = "" + (value % 1 == 0 ? (int) value : value);
+        return type.getDisplay().replace("%value%", valueFinal) + "\n";
+    }
 }

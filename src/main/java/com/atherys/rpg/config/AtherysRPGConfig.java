@@ -11,10 +11,7 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Singleton
 public class AtherysRPGConfig extends PluginConfig {
@@ -105,6 +102,8 @@ public class AtherysRPGConfig extends PluginConfig {
 
     @Setting("players-keep-inventory-on-pvp")
     public boolean PLAYERS_KEEP_INVENTORY_ON_PVP = false;
+
+    public Map<String, List<String>> ITEM_TEMPLATES = new HashMap<>();
 
     {
         // Wood

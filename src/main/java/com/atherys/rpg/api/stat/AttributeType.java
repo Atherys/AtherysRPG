@@ -25,8 +25,10 @@ public class AttributeType implements CatalogType {
 
     private final boolean resetOnLogin;
 
+    private final String display;
+
     AttributeType(String id, String shortName, String name, String description, boolean upgradable, boolean hidden,
-                  TextColor color, Double defaultValue, boolean resetOnLogin) {
+                  TextColor color, Double defaultValue, boolean resetOnLogin, String display) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
@@ -36,6 +38,7 @@ public class AttributeType implements CatalogType {
         this.color = color;
         this.defaultValue = defaultValue;
         this.resetOnLogin = resetOnLogin;
+        this.display = display;
     }
 
     @Override
@@ -74,6 +77,10 @@ public class AttributeType implements CatalogType {
 
     public boolean isResetOnLogin() {
         return resetOnLogin;
+    }
+
+    public String getDisplay() {
+        return this.display.isEmpty() ? getName() + ": " + "%value%" : this.display;
     }
 
     @Override
