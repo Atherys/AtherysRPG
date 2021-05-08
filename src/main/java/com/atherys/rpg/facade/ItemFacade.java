@@ -194,7 +194,7 @@ public class ItemFacade {
     private static final String DESCRIPTION_PLACEHOLDER = "%description%";
 
     private List<Text> generateTemplateLoreForItem(ItemConfig itemConfig) {
-        String template = config.ITEM_TEMPLATES.get(itemConfig.TEMPLATE).stream()
+        String template = templatesConfig.ITEM_TEMPLATES.get(itemConfig.TEMPLATE).stream()
                 .reduce("", (acc, line) -> acc + (line + "\n"));
         Set<AttributeType> attributesUsed = new HashSet<>();
 

@@ -103,8 +103,6 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("players-keep-inventory-on-pvp")
     public boolean PLAYERS_KEEP_INVENTORY_ON_PVP = false;
 
-    public Map<String, List<String>> ITEM_TEMPLATES = new HashMap<>();
-
     {
         // Wood
         ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_HOE, AtherysDamageTypes.BLUNT.getId());
