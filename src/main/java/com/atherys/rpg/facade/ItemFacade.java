@@ -55,6 +55,11 @@ public class ItemFacade {
             items = new HashMap<>();
         }
 
+        ATTRIBUTE_PLACEHOLDERS.clear();
+        Sponge.getRegistry().getAllOf(AttributeType.class).forEach(attributeType -> {
+            ATTRIBUTE_PLACEHOLDERS.put(attributeType, "%" + attributeType.getId() + "%");
+        });
+
         try {
             List<String> itemConfigs = Files.walk(Paths.get("config/atherysrpg/items/"), 1)
                     .filter(Files::isRegularFile)
@@ -70,11 +75,6 @@ public class ItemFacade {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        ATTRIBUTE_PLACEHOLDERS.clear();
-        Sponge.getRegistry().getAllOf(AttributeType.class).forEach(attributeType -> {
-            ATTRIBUTE_PLACEHOLDERS.put(attributeType, "%" + attributeType.getId() + "%");
-        });
     }
 
     private void loadItem(ItemConfig itemConfig) {
