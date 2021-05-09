@@ -147,7 +147,7 @@ public class AttributeService {
         mergeAttributes(attributes, getEquipmentAttributes(entity));
         mergeAttributes(attributes, character.getBuffAttributes());
 
-        attributes.replaceAll((AttributeType key,Double value) -> Math.max(0.0d,value));
+        attributes.replaceAll((key, value) -> Math.max(0.0d, value));
         return attributes;
     }
 

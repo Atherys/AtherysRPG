@@ -83,7 +83,7 @@ public class AttributeFacade {
         return true;
     }
 
-    public void purchaseAttribute(Player player, AttributeType type, double amount) throws RPGCommandException{
+    public void purchaseAttribute(Player player, AttributeType type, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
         double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
@@ -186,7 +186,7 @@ public class AttributeFacade {
             double buff = buffAttributes.getOrDefault(type.get(), 0.0d);
             double item = itemAttributes.getOrDefault(type.get(), 0.0d);
 
-            int total = Math.max(0,(int) Math.round(base + buff + item));
+            int total = Math.max(0, (int) Math.round(base + buff + item));
 
             Text hoverText = Text.of(
                     RED, BOLD, base, TextStyles.RESET, " base", Text.NEW_LINE,
