@@ -129,8 +129,6 @@ public class AttributeService {
      */
     public Map<AttributeType, Double> mergeAttributes(Map<AttributeType, Double> source, Map<AttributeType, Double> additional) {
         additional.forEach((type, value) -> source.merge(type, value, Double::sum));
-        //Added Check for Stats under 0; Replace with 0;
-        additional.forEach((k,v) -> { if (v <= 0){additional.replace(k,v,0.0); }});
         return additional;
     }
 
@@ -149,6 +147,7 @@ public class AttributeService {
         mergeAttributes(attributes, getEquipmentAttributes(entity));
         mergeAttributes(attributes, character.getBuffAttributes());
 
+        attributes.replaceAll((AttributeType key,Double value) -> Math.max(0.0d,value));
         return attributes;
     }
 
