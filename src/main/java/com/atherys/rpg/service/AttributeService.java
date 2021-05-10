@@ -21,6 +21,8 @@ import java.util.Optional;
 @Singleton
 public class AttributeService {
 
+    private Map<AttributeType, Double> defaultAttributes;
+
     @Inject
     private AtherysRPGConfig config;
 
@@ -33,21 +35,29 @@ public class AttributeService {
     public AttributeService() {
     }
 
+    /**
+     * Returns a map containing the default values configured for each attribute
+     * @return Map
+     */
     public Map<AttributeType, Double> getDefaultAttributes() {
-        Map<AttributeType, Double> defaultAttributes = new HashMap<>();
-
-        Sponge.getRegistry().getAllOf(AttributeType.class).forEach( type -> {
-            defaultAttributes.put(type, type.getDefaultValue());
-        });
-
-        return fillInAttributes(defaultAttributes);
+        if (defaultAttributes == null) {
+            defaultAttributes = new HashMap<>();
+            Sponge.getRegistry().getAllOf(AttributeType.class).forEach( type -> {
+                defaultAttributes.put(type, Math.max(0, type.getDefaultValue()));
+            });
+        }
+        return defaultAttributes;
     }
 
+    /**
+     * Set any missing attributes to 0
+     * @param attributes Attribute hashmap to modify
+     * @return modified attributes with missing attributes set to 0
+     */
     public Map<AttributeType, Double> fillInAttributes(Map<AttributeType, Double> attributes) {
         for (AttributeType type : Sponge.getRegistry().getAllOf(AttributeType.class)) {
             attributes.putIfAbsent(type, 0.0);
         }
-
         return attributes;
     }
 
@@ -117,13 +127,9 @@ public class AttributeService {
      * @param additional The additional attributes to be added
      * @return The altered source map
      */
-    public Map<AttributeType, Double> mergeAttributes(Map<AttributeType, Double> source, Map<AttributeType, Double> additional) {
+    private Map<AttributeType, Double> mergeAttributes(Map<AttributeType, Double> source, Map<AttributeType, Double> additional) {
         additional.forEach((type, value) -> source.merge(type, value, Double::sum));
         return additional;
-    }
-
-    public Map<AttributeType, Double> getBaseAttributes(RPGCharacter<?> character) {
-        return new HashMap<>(character.getBaseAttributes());
     }
 
     public Map<AttributeType, Double> getBuffAttributes(RPGCharacter<?> character) {
@@ -133,12 +139,15 @@ public class AttributeService {
     public Map<AttributeType, Double> getAllAttributes(Entity entity) {
         RPGCharacter<?> character = characterService.getOrCreateCharacter(entity);
 
-        Map<AttributeType, Double> attributes = getBaseAttributes(character);
-        mergeAttributes(attributes, getEquipmentAttributes(entity));
-        mergeAttributes(attributes, character.getBuffAttributes());
+        HashMap<AttributeType, Double> results = new HashMap<>();
 
-        attributes.replaceAll((key, value) -> Math.max(0.0d, value));
-        return attributes;
+        mergeAttributes(results, getDefaultAttributes());
+        mergeAttributes(results, character.getCharacterAttributes());
+        mergeAttributes(results, getEquipmentAttributes(entity));
+        mergeAttributes(results, character.getBuffAttributes());
+
+        results.replaceAll((key, value) -> Math.max(0.0d, value));
+        return results;
     }
 
     public Map<AttributeType, Double> getEquipmentAttributes(Entity entity) {

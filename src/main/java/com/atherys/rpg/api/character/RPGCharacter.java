@@ -18,9 +18,36 @@ public interface RPGCharacter<T extends Living & Equipable> extends SpongeIdenti
 
     void setEntity(T entity);
 
-    Map<AttributeType, Double> getBaseAttributes();
+    /**
+     * Gets the current Character Attributes
+     * @return Map of Character Attributes
+     */
+    Map<AttributeType, Double> getCharacterAttributes();
 
+    /**
+     * Set a Character attribute to a specific value
+     * @param type Attribute to set
+     * @param value Value to set to
+     */
+    void setCharacterAttribute(AttributeType type, Double value);
+
+    /**
+     * Add a value to an existing character attribute
+     * @param type Attribute to add
+     * @param amount Amount to add
+     */
+    void addCharacterAttribute(AttributeType type, Double amount);
+
+    /**
+     * Gets the current Buffed Attributes
+     * @return Map of Attributes provided by buffs
+     */
     Map<AttributeType, Double> getBuffAttributes();
 
-    void setBuffAttributes(Map<AttributeType, Double> attributes);
+    /**
+     * Merge the values of the two attribute type maps by adding them together
+     * @param additional Attributes to add
+     */
+    void mergeBuffAttributes(Map<AttributeType, Double> additional);
+
 }

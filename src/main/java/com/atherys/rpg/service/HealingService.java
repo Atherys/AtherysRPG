@@ -19,9 +19,6 @@ public class HealingService {
     private ExpressionService expressionService;
 
     @Inject
-    private AttributeService attributeService;
-
-    @Inject
     private RPGCharacterService characterService;
 
     private Task healthRegenTask;

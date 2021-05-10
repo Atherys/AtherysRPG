@@ -8,6 +8,7 @@ import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.character.SimpleCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.facade.AttributeFacade;
 import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.skills.AtherysSkills;
@@ -50,10 +51,8 @@ public class RPGCharacterService {
         return repository.findById(player.getUniqueId()).orElseGet(() -> {
             PlayerCharacter pc = new PlayerCharacter(player.getUniqueId());
             pc.setEntity(player);
-            pc.setBaseAttributes(attributeService.getDefaultAttributes());
             pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
             pc.setExperience(config.EXPERIENCE_START);
-
             repository.saveOne(pc);
 
             return pc;
@@ -126,22 +125,45 @@ public class RPGCharacterService {
         repository.saveOne(pc);
     }
 
+    /**
+     * Increase the value of an attribute directly on a character
+     * @param pc The Character to remove the attribute from
+     * @param attributeType The attribute to increase
+     * @param amount The amount to increase
+     */
     public void addAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getBaseAttributes().merge(attributeType, amount, Double::sum);
+        pc.addCharacterAttribute(attributeType, amount);
         repository.saveOne(pc);
         Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
     }
 
+    /**
+     * Set the value of an attribute directly on a Character
+     * @param pc The Character to remove the attribute from
+     * @param attributeType The attribute to set
+     * @param amount The amount to set
+     */
     public void setAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getBaseAttributes().put(attributeType, amount);
+        pc.setCharacterAttribute(attributeType, amount);
         repository.saveOne(pc);
         Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
     }
 
+    /**
+     * Remove an Attribute from a Character
+     * @param pc The Character to remove the attribute from
+     * @param attributeType The attribute to decrease
+     * @param amount The amount to decrease by
+     */
     public void removeAttribute(PlayerCharacter pc, AttributeType attributeType, double amount) {
-        pc.getBaseAttributes().merge(attributeType, amount, (v1, v2) -> Math.abs(v1 - v2));
+        Double cur = pc.getCharacterAttributes().getOrDefault(attributeType, 0.0d);
+        pc.setCharacterAttribute(attributeType, Math.max(0.0d, cur - amount));
         repository.saveOne(pc);
         Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
+    }
+
+    public void mergeBuffAttributes(RPGCharacter<?> pc, Map<AttributeType, Double> attributes) {
+        pc.mergeBuffAttributes(attributes);
     }
 
     public void addSpentExperience(PlayerCharacter pc, double amount) {
@@ -192,7 +214,7 @@ public class RPGCharacterService {
     public void resetCharacterAttributes(PlayerCharacter pc) {
         double spentOnAttributes = pc.getSpentAttributeExperience();
 
-        pc.setBaseAttributes(attributeService.getDefaultAttributes());
+        pc.setCharacterAttributes(new HashMap<>());
         pc.setSpentAttributeExperience(0);
         pc.setSpentExperience(pc.getSpentExperience() - spentOnAttributes);
         pc.setExperience(pc.getExperience() + spentOnAttributes);

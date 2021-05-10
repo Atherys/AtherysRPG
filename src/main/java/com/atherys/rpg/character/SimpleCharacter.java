@@ -17,14 +17,14 @@ public class SimpleCharacter<T extends Living & Equipable> implements RPGCharact
 
     private T entity;
 
-    private Map<AttributeType, Double> baseAttributes;
+    private Map<AttributeType, Double> characterAttributes;
 
     private Map<AttributeType, Double> buffAttributes;
 
-    public SimpleCharacter(T entity, Map<AttributeType, Double> baseAttributes) {
+    public SimpleCharacter(T entity, Map<AttributeType, Double> characterAttributes) {
         this.id = entity.getUniqueId();
         this.entity = entity;
-        this.baseAttributes = baseAttributes;
+        this.characterAttributes = characterAttributes;
         this.buffAttributes = new HashMap<>();
     }
 
@@ -44,12 +44,22 @@ public class SimpleCharacter<T extends Living & Equipable> implements RPGCharact
     }
 
     @Override
-    public Map<AttributeType, Double> getBaseAttributes() {
-        return baseAttributes;
+    public Map<AttributeType, Double> getCharacterAttributes() {
+        return characterAttributes;
     }
 
-    public void setBaseAttributes(Map<AttributeType, Double> baseAttributes) {
-        this.baseAttributes = baseAttributes;
+    @Override
+    public void setCharacterAttribute(AttributeType type, Double value) {
+        characterAttributes.put(type, value);
+    }
+
+    @Override
+    public void addCharacterAttribute(AttributeType type, Double amount) {
+        characterAttributes.merge(type, amount, Double::sum);
+    }
+
+    public void setCharacterAttributes(Map<AttributeType, Double> characterAttributes) {
+        this.characterAttributes = characterAttributes;
     }
 
     @Override
@@ -57,7 +67,9 @@ public class SimpleCharacter<T extends Living & Equipable> implements RPGCharact
         return buffAttributes;
     }
 
-    public void setBuffAttributes(Map<AttributeType, Double> buffAttributes) {
-        this.buffAttributes = baseAttributes;
+    @Override
+    public void mergeBuffAttributes(Map<AttributeType, Double> additional) {
+        additional.forEach((type, value) -> buffAttributes.merge(type, value, Double::sum));
     }
+
 }
