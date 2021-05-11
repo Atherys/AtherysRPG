@@ -20,9 +20,6 @@ public class DamageService {
     private AtherysRPGConfig config;
 
     @Inject
-    private AttributeService attributeService;
-
-    @Inject
     private ExpressionService expressionService;
 
     public DamageService() {

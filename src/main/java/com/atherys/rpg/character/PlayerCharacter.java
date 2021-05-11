@@ -22,13 +22,21 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @Transient
     private boolean hasJoined;
 
+    /**
+     * Attributes the player has leveled up, not including the default attribute amount
+     * from the configuration
+     * Only Upgradable Attributes should be stored within this map
+     */
     @Convert(attributeName = "key.", converter = AttributeTypeConverter.class)
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "attribute_type")
     @Column(name = "value")
     @CollectionTable(schema = "atherysrpg", name = "PlayerCharacter_attributes")
-    private Map<AttributeType, Double> baseAttributes = new HashMap<>();
+    private Map<AttributeType, Double> characterAttributes = new HashMap<>();
 
+    /**
+     * Attributes that come from temporary sources
+     */
     @Transient
     private Map<AttributeType, Double> buffAttributes = new HashMap<>();
 
@@ -75,21 +83,32 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     }
 
     @Override
-    public Map<AttributeType, Double> getBaseAttributes() {
-        return baseAttributes;
+    public Map<AttributeType, Double> getCharacterAttributes() {
+        return Collections.unmodifiableMap(characterAttributes);
     }
 
-    public void setBaseAttributes(Map<AttributeType, Double> baseAttributes) {
-        this.baseAttributes = baseAttributes;
+    @Override
+    public void setCharacterAttribute(AttributeType type, Double value) {
+        characterAttributes.put(type, value);
+    }
+
+    @Override
+    public void addCharacterAttribute(AttributeType type, Double amount) {
+        characterAttributes.merge(type, amount, Double::sum);
+    }
+
+    public void setCharacterAttributes(Map<AttributeType, Double> characterAttributes) {
+        this.characterAttributes = characterAttributes;
     }
 
     @Override
     public Map<AttributeType, Double> getBuffAttributes() {
-        return buffAttributes;
+        return Collections.unmodifiableMap(buffAttributes);
     }
 
-    public void setBuffAttributes(Map<AttributeType, Double> buffAttributes) {
-        this.buffAttributes = buffAttributes;
+    @Override
+    public void mergeBuffAttributes(Map<AttributeType, Double> additional) {
+        additional.forEach((type, value) -> buffAttributes.merge(type, value, Double::sum));
     }
 
     public double getExperience() {

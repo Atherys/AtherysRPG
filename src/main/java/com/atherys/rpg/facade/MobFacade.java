@@ -49,13 +49,10 @@ public class MobFacade {
     private MobsConfig mobsConfig;
 
     @Inject
-    private AttributeFacade attributeFacade;
+    private AttributeService attributeService;
 
     @Inject
     private RPGCharacterService characterService;
-
-    @Inject
-    private AttributeService attributeService;
 
     @Inject
     private RPGCharacterFacade characterFacade;

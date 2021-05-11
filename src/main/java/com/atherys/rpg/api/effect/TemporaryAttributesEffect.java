@@ -24,10 +24,7 @@ public class TemporaryAttributesEffect extends TemporaryEffect {
     protected boolean apply(ApplyableCarrier<?> character) {
         character.getLiving().ifPresent(living -> {
             RPGCharacter<?> rpgCharacter = AtherysRPG.getInstance().getCharacterService().getOrCreateCharacter(living);
-            AtherysRPG.getInstance().getAttributeService().mergeAttributes(
-                    rpgCharacter.getBuffAttributes(),
-                    attributeIncreases
-            );
+            AtherysRPG.getInstance().getAttributeFacade().mergeBuffAttributes(rpgCharacter, attributeIncreases);
         });
         return true;
     }
@@ -36,10 +33,7 @@ public class TemporaryAttributesEffect extends TemporaryEffect {
     protected boolean remove(ApplyableCarrier<?> character) {
         character.getLiving().ifPresent(living -> {
             RPGCharacter<?> rpgCharacter = AtherysRPG.getInstance().getCharacterService().getOrCreateCharacter(living);
-            AtherysRPG.getInstance().getAttributeService().mergeAttributes(
-                    rpgCharacter.getBuffAttributes(),
-                    attributeDecreases
-            );
+            AtherysRPG.getInstance().getAttributeFacade().mergeBuffAttributes(rpgCharacter, attributeDecreases);
         });
 
         return true;

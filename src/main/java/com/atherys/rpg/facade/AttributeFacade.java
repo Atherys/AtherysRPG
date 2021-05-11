@@ -1,5 +1,6 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
@@ -14,7 +15,9 @@ import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
@@ -23,10 +26,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.spongepowered.api.text.Text.NEW_LINE;
@@ -36,11 +36,16 @@ import static org.spongepowered.api.text.format.TextStyles.BOLD;
 @Singleton
 public class AttributeFacade {
 
+    private Map<AttributeType, Double> defaultAttributes;
+
     @Inject
     private AtherysRPGConfig config;
 
     @Inject
     private AttributesConfig attributesConfig;
+
+    @Inject
+    private AttributeService attributeService;
 
     @Inject
     private RPGCharacterService characterService;
@@ -49,36 +54,54 @@ public class AttributeFacade {
     private RPGMessagingFacade rpgMsg;
 
     @Inject
-    private AttributeService attributeService;
-
-    @Inject
     private ExpressionService expressionService;
 
-    public void init() {
+    public void init() {}
 
-    }
-
+    /**
+     * Adds a CharacterAttribute to a players character
+     * @param player The Player to add the attribute for
+     * @param attributeType The attribute to add
+     * @param amount The amount to add
+     * @throws RPGCommandException
+     */
     public void addPlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (validateAttribute(pc.getBaseAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount)) {
+        if (validateCharacterAttribute(attributeType, pc.getCharacterAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) + amount)) {
             characterService.addAttribute(pc, attributeType, amount);
         }
     }
 
+    /**
+     * Removes a CharacterAttribute from a players character
+     * @param player The player to remove the attribute for
+     * @param attributeType The Attribute to remove
+     * @param amount The amount to remove
+     * @throws RPGCommandException
+     */
     public void removePlayerAttribute(Player player, AttributeType attributeType, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (validateAttribute(pc.getBaseAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount)) {
+        if (validateCharacterAttribute(attributeType, pc.getCharacterAttributes().getOrDefault(attributeType, config.ATTRIBUTE_MIN) - amount)) {
             characterService.removeAttribute(pc, attributeType, amount);
         }
     }
 
-    private boolean validateAttribute(double amount) throws RPGCommandException {
+    /**
+     * Validate setting the value of an Attribute against a Character
+     * @param type The Attribute to be set
+     * @param amount The amount to the attribute will be set to
+     * @return true if this is a valid action
+     * @throws RPGCommandException When the Attribute is invalid
+     */
+    private boolean validateCharacterAttribute(AttributeType type, Double amount) throws RPGCommandException {
+        if (!type.isUpgradable()) {
+            throw new RPGCommandException("Cannot set a Non-Upgradable attribute against a Character");
+        }
         if (amount < config.ATTRIBUTE_MIN) {
             throw new RPGCommandException("A player cannot have attributes less than ", config.ATTRIBUTE_MIN);
         }
-
         if (amount > config.ATTRIBUTE_MAX) {
             throw new RPGCommandException("A player cannot have attributes bigger than ", config.ATTRIBUTE_MAX);
         }
@@ -86,8 +109,23 @@ public class AttributeFacade {
         return true;
     }
 
+    public void mergeBuffAttributes(RPGCharacter<?> pc, Map<AttributeType, Double> attributes) {
+        characterService.mergeBuffAttributes(pc, attributes);
+    }
+
+    /**
+     * Called when the player purchases an attribute for experience
+     * @param player The Player purchasing the attribute
+     * @param type The type of attribute being purchased
+     * @param amount The amount being purchased
+     * @throws RPGCommandException
+     */
     public void purchaseAttribute(Player player, AttributeType type, double amount) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        if (!type.isUpgradable()) {
+            throw new RPGCommandException("You may not purchase a Non-Upgradable attribute.");
+        }
 
         double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
 
@@ -106,7 +144,7 @@ public class AttributeFacade {
                 );
             }
 
-            double afterPurchase = pc.getBaseAttributes().getOrDefault(type, config.ATTRIBUTE_MIN) + amount;
+            double afterPurchase = pc.getCharacterAttributes().getOrDefault(type, config.ATTRIBUTE_MIN) + amount;
 
             if (afterPurchase > config.ATTRIBUTE_MAX) {
                 throw new RPGCommandException("You cannot have more than a base of ", config.ATTRIBUTE_MAX, " in this attribute.");
@@ -147,16 +185,12 @@ public class AttributeFacade {
         item.offer(data);
     }
 
-    public Map<AttributeType, Double> getAllAttributes(Entity entity) {
-        return attributeService.getAllAttributes(entity);
-    }
-
-    public Map<AttributeType, Double> getBaseAttributes(Entity entity) {
-        return attributeService.getBaseAttributes(characterService.getOrCreateCharacter(entity));
-    }
-
     public Map<AttributeType, Double> getEquipmentAttributes(Entity entity) {
         return attributeService.getEquipmentAttributes(entity);
+    }
+
+    public Map<AttributeType, Double> getAllAttributes(Entity entity) {
+        return attributeService.getAllAttributes(entity);
     }
 
     public void showPlayerAttributes(Player player) {
@@ -166,9 +200,10 @@ public class AttributeFacade {
                 DARK_GRAY, "[]==[ ", GOLD, "Your Attributes", DARK_GRAY, " ]==[]"
         ));
 
-        Map<AttributeType, Double> baseAttributes = pc.getBaseAttributes();
+        Map<AttributeType, Double> defaultAttributes = attributeService.getDefaultAttributes();
+        Map<AttributeType, Double> characterAttributes = pc.getCharacterAttributes();
         Map<AttributeType, Double> buffAttributes = pc.getBuffAttributes();
-        Map<AttributeType, Double> itemAttributes = attributeService.getEquipmentAttributes(player);
+        Map<AttributeType, Double> equipmentAttributes = getEquipmentAttributes(player);
 
         Sponge.getRegistry().getAllOf(AttributeType.class).forEach( type -> {
 
@@ -177,9 +212,9 @@ public class AttributeFacade {
                 return;
             }
 
-            double base = baseAttributes.get(type);
+            double base = defaultAttributes.get(type) + characterAttributes.getOrDefault(type, config.ATTRIBUTE_MIN);
             double buff = buffAttributes.getOrDefault(type, 0.0d);
-            double item = itemAttributes.getOrDefault(type, 0.0d);
+            double item = equipmentAttributes.getOrDefault(type, 0.0d);
 
             int total = Math.max(0, (int) Math.round(base + buff + item));
 
@@ -271,16 +306,6 @@ public class AttributeFacade {
 
             stack.offer(Keys.ITEM_LORE, lore);
         });
-    }
-
-    private double getFinalAttributeValue(PlayerCharacter pc, Player player, AttributeType type) {
-        double finalValue = pc.getBaseAttributes().get(type);
-
-        finalValue += attributeService.getHeldItemAttributes(player).getOrDefault(type, 0.0);
-        finalValue += attributeService.getArmorAttributes(player).getOrDefault(type, 0.0);
-        finalValue += attributeService.getBuffAttributes(pc).getOrDefault(type, 0.0);
-
-        return finalValue;
     }
 
     private Text getAttributeLoreLine(AttributeType type, Double amount) {

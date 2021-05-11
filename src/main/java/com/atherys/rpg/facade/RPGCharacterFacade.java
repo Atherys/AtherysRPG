@@ -71,9 +71,6 @@ public class RPGCharacterFacade {
     private AttributeFacade attributeFacade;
 
     @Inject
-    private AttributeService attributeService;
-
-    @Inject
     private RPGSkillFacade skillFacade;
 
     @Inject
@@ -155,16 +152,6 @@ public class RPGCharacterFacade {
             characterService.resetCharacter(pc);
             characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot());
             rpgMsg.info(player, "The server's skill tree has changed. Your attributes and skill tree have been reset.");
-        }
-    }
-
-    public void checkAttributesDefaults(PlayerCharacter pc) {
-        Map<AttributeType, Double> attributes = attributeService.getBaseAttributes(pc);
-
-        for (AttributeType type : Sponge.getRegistry().getAllOf(AttributeType.class)) {
-            if (!attributes.containsKey(type) || type.isResetOnLogin() || attributes.get(type) < type.getDefaultValue()) {
-                characterService.setAttribute(pc, type, type.getDefaultValue());
-            }
         }
     }
 
@@ -265,8 +252,6 @@ public class RPGCharacterFacade {
 
     public void onResourceRegen(ResourceEvent.Regen event, Player player) {
         double amount = characterService.calcResourceRegen(attributeFacade.getAllAttributes(player));
-
-
         event.setRegenAmount(amount);
     }
 
@@ -421,7 +406,6 @@ public class RPGCharacterFacade {
         setPlayerHealth(player, fill);
         setPlayerResourceLimit(player, fill);
         checkTreeOnLogin(player);
-        checkAttributesDefaults(pc);
     }
 
     public void onPlayerRespawn(Player player) {
