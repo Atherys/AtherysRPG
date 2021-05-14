@@ -8,9 +8,6 @@ import java.util.Set;
 
 @ConfigSerializable
 public class ArchetypeConfig {
-    @Setting("id")
-    public String ID = "example";
-
     @Setting("display-name")
     public String NAME = "Example";
 
