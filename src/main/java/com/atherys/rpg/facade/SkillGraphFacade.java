@@ -67,6 +67,10 @@ public class SkillGraphFacade {
         return newSkillGraph;
     }
 
+    public Set<RPGSkill> getUniqueSkills() {
+        return uniqueSkills;
+    }
+
     public void resetSkillGraph() throws RPGCommandException {
         SkillGraph resetSkillGraph = loadSkillGraph();
 

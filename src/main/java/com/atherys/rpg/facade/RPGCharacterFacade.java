@@ -171,6 +171,15 @@ public class RPGCharacterFacade {
             throw new RPGCommandException("You already have the skill ", skill.getName(), ".");
         }
 
+        Set<RPGSkill> uniqueSkills = skillGraphFacade.getUniqueSkills();
+        if (skillGraphFacade.getUniqueSkills().contains(skill)) {
+            for (RPGSkill rpgSkill : uniqueSkills) {
+                if (pc.getSkills().contains(rpgSkill.getId())) {
+                    throw new RPGCommandException("You do not have access to the skill ", skill.getName(), ".");
+                }
+            }
+        }
+
         double cost = skillGraphFacade.getCostForSkill(skill, pc.getSkills()).orElseThrow(() -> {
             return new RPGCommandException("You do not have access to the skill ", skill.getName(), ".");
         });
