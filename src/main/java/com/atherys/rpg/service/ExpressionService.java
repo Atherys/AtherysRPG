@@ -5,7 +5,9 @@ import com.atherys.rpg.expression.ClampFunction;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.util.Tuple;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -18,6 +20,19 @@ public class ExpressionService {
     private AttributeService attributeService;
 
     private Map<String, Expression> cachedExpressions = new HashMap<>();
+
+    private Map<AttributeType, Tuple<String, String>> attributeVariables;
+
+    public void init() {
+        this.attributeVariables = new HashMap<>();
+
+        Sponge.getRegistry().getAllOf(AttributeType.class).forEach(attributeType -> {
+            String source = "SOURCE_" + attributeType.getShortName().toUpperCase();
+            String target = "TARGET_" + attributeType.getShortName().toUpperCase();
+
+            attributeVariables.put(attributeType, Tuple.of(source, target));
+        });
+    }
 
     public Expression getExpression(String expression) {
         Expression result = cachedExpressions.get(expression);
@@ -41,6 +56,20 @@ public class ExpressionService {
         ));
     }
 
+    public void populateSourceAttributes(Expression expression, Map<AttributeType, Double> attributes) {
+        attributes.forEach((type, value) -> expression.setVariable(
+                attributeVariables.get(type).getFirst(),
+                BigDecimal.valueOf(value)
+        ));
+    }
+
+    public void populateTargetAttributes(Expression expression, Map<AttributeType, Double> attributes) {
+        attributes.forEach((type, value) -> expression.setVariable(
+                attributeVariables.get(type).getSecond(),
+                BigDecimal.valueOf(value)
+        ));
+    }
+
     public BigDecimal evalExpression(Living source, String stringExpression) {
         return evalExpression(source, getExpression(stringExpression));
     }
@@ -50,27 +79,14 @@ public class ExpressionService {
     }
 
     public BigDecimal evalExpression(Living source, Expression expression) {
-        populateAttributes(
-                expression,
-                attributeService.getAllAttributes(source),
-                "source"
-        );
+        populateSourceAttributes(expression, attributeService.getAllAttributes(source));
 
         return expression.eval(true);
     }
 
     public BigDecimal evalExpression(Living source, Living target, Expression expression) {
-        populateAttributes(
-                expression,
-                attributeService.getAllAttributes(source),
-                "source"
-        );
-
-        populateAttributes(
-                expression,
-                attributeService.getAllAttributes(target),
-                "target"
-        );
+        populateSourceAttributes(expression, attributeService.getAllAttributes(source));
+        populateTargetAttributes(expression, attributeService.getAllAttributes(target));
 
         return expression.eval(true);
     }

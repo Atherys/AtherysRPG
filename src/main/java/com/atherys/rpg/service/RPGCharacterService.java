@@ -8,8 +8,6 @@ import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.character.SimpleCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
-import com.atherys.rpg.facade.AttributeFacade;
-import com.atherys.rpg.facade.SkillGraphFacade;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.skills.AtherysSkills;
 import com.google.inject.Inject;
@@ -43,7 +41,7 @@ public class RPGCharacterService {
     private ExpressionService expressionService;
 
     @Inject
-    private SkillGraphFacade skillGraphFacade;
+    private SkillGraphService skillGraphService;
 
     private HashMap<UUID, RPGCharacter<? extends Living>> nonPlayerCharacters = new HashMap<>();
 
@@ -51,7 +49,7 @@ public class RPGCharacterService {
         return repository.findById(player.getUniqueId()).orElseGet(() -> {
             PlayerCharacter pc = new PlayerCharacter(player.getUniqueId());
             pc.setEntity(player);
-            pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
+            pc.addSkill(skillGraphService.getSkillGraphRoot().getId());
             pc.setExperience(config.EXPERIENCE_START);
             repository.saveOne(pc);
 
@@ -188,7 +186,7 @@ public class RPGCharacterService {
     public double calcResourceRegen(Map<AttributeType, Double> attributes) {
         Expression expression = expressionService.getExpression(config.RESOURCE_REGEN_CALCULATION);
 
-        expressionService.populateAttributes(expression, attributes, "source");
+        expressionService.populateSourceAttributes(expression, attributes);
 
         return expression.eval().doubleValue();
     }
@@ -201,8 +199,8 @@ public class RPGCharacterService {
         });
 
         pc.getSkills().clear();
-        pc.addSkill(skillGraphFacade.getSkillGraphRoot().getId());
-        setSkillPermission(pc, skillGraphFacade.getSkillGraphRoot().getPermission(), true);
+        pc.addSkill(skillGraphService.getSkillGraphRoot().getId());
+        setSkillPermission(pc, skillGraphService.getSkillGraphRoot().getPermission(), true);
 
         pc.setSpentSkillExperience(0);
         pc.setSpentExperience(pc.getSpentExperience() - spentOnSkills);

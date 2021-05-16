@@ -1,6 +1,7 @@
 package com.atherys.rpg.character;
 
 import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.repository.converter.AttributeTypeConverter;
 import org.spongepowered.api.entity.living.player.Player;
@@ -51,6 +52,9 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(schema = "atherysrpg", name = "PlayerCharacter_skills")
     private List<String> skills = new ArrayList<>();
+
+    @Transient
+    private List<RPGSkill> rpgSkills;
 
     public PlayerCharacter() {
     }
