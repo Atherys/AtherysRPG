@@ -6,6 +6,7 @@ import com.atherys.rpg.api.skill.TargetedRPGSkill;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.atherys.rpg.service.SkillGraphService;
 import com.atherys.rpg.util.TextUtils;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.SkillCastEvent;
@@ -41,7 +42,7 @@ public class RPGSkillFacade {
     private AttributeFacade attributeFacade;
 
     @Inject
-    private SkillGraphFacade graphFacade;
+    private SkillGraphService skillGraphService;
 
     @Inject
     private AtherysRPGConfig config;
@@ -70,7 +71,7 @@ public class RPGSkillFacade {
     public Text renderAvailableSkill(RPGSkill skill, Player source) {
         Text.Builder skillText = renderSkill(skill, source).toBuilder();
 
-        Set<RPGSkill> linkedSkills = graphFacade.getLinkedSkills(Sets.newHashSet(skill));
+        Set<RPGSkill> linkedSkills = skillGraphService.getLinkedSkills(Sets.newHashSet(skill));
 
         if (linkedSkills.isEmpty()) {
             return skillText.build();
@@ -81,7 +82,7 @@ public class RPGSkillFacade {
                 .toBuilder();
 
         List<String> skills = characterService.getOrCreateCharacter(source).getSkills();
-        hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "Unlock Cost: ", GOLD, graphFacade.getCostForSkill(skill, skills).get()));
+        hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "Unlock Cost: ", GOLD, skillGraphService.getCostForSkill(skill, skills).get()));
         hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Unlocks: "));
 
         int i = 0;

@@ -74,7 +74,7 @@ public class RPGCharacterFacade {
     private RPGSkillFacade skillFacade;
 
     @Inject
-    private SkillGraphFacade skillGraphFacade;
+    private SkillGraphService skillGraphService;
 
     @Inject
     private RPGMessagingFacade rpgMsg;
@@ -117,7 +117,7 @@ public class RPGCharacterFacade {
 
         messages.add(Text.of(DARK_GRAY, "[]==[ ", GOLD, "Available Skills", DARK_GRAY, " ]==[]"));
 
-        for (RPGSkill skill : skillGraphFacade.getLinkedSkills(pc.getSkills())) {
+        for (RPGSkill skill : skillGraphService.getLinkedSkills(pc.getSkills())) {
             Text skillText = Text.builder()
                     .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(skill, player), " "))
                     .onClick(TextActions.executeCallback(source -> chooseSkillWithoutThrowing(player, skill.getId())))
@@ -148,9 +148,9 @@ public class RPGCharacterFacade {
     public void checkTreeOnLogin(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (!skillGraphFacade.isPathValid(pc.getSkills())) {
+        if (!skillGraphService.isPathValid(pc.getSkills())) {
             characterService.resetCharacter(pc);
-            characterService.addSkill(pc, skillGraphFacade.getSkillGraphRoot());
+            characterService.addSkill(pc, skillGraphService.getSkillGraphRoot());
             rpgMsg.info(player, "The server's skill tree has changed. Your attributes and skill tree have been reset.");
         }
     }
@@ -171,8 +171,8 @@ public class RPGCharacterFacade {
             throw new RPGCommandException("You already have the skill ", skill.getName(), ".");
         }
 
-        Set<RPGSkill> uniqueSkills = skillGraphFacade.getUniqueSkills();
-        if (skillGraphFacade.getUniqueSkills().contains(skill)) {
+        Set<RPGSkill> uniqueSkills = skillGraphService.getUniqueSkills();
+        if (skillGraphService.getUniqueSkills().contains(skill)) {
             for (RPGSkill rpgSkill : uniqueSkills) {
                 if (pc.getSkills().contains(rpgSkill.getId())) {
                     throw new RPGCommandException("You do not have access to the skill ", skill.getName(), ".");
@@ -180,7 +180,7 @@ public class RPGCharacterFacade {
             }
         }
 
-        double cost = skillGraphFacade.getCostForSkill(skill, pc.getSkills()).orElseThrow(() -> {
+        double cost = skillGraphService.getCostForSkill(skill, pc.getSkills()).orElseThrow(() -> {
             return new RPGCommandException("You do not have access to the skill ", skill.getName(), ".");
         });
 
@@ -216,9 +216,9 @@ public class RPGCharacterFacade {
         List<String> skillsCopy = new ArrayList<>(pc.getSkills());
         skillsCopy.remove(skillId);
 
-        if (skillGraphFacade.isPathValid(skillsCopy)) {
+        if (skillGraphService.isPathValid(skillsCopy)) {
             characterService.removeSkill(pc, skill);
-            skillGraphFacade.getCostForSkill(skill, skillsCopy).ifPresent(cost -> {
+            skillGraphService.getCostForSkill(skill, skillsCopy).ifPresent(cost -> {
                 characterService.addExperience(pc, cost);
                 characterService.addSpentSkillExperience(pc, -cost);
             });

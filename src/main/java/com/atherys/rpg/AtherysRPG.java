@@ -145,7 +145,7 @@ public class AtherysRPG {
         }
 
         try {
-            getSkillGraphFacade().resetSkillGraph();
+            getSkillGraphService().resetSkillGraph();
         } catch (RPGCommandException e) {
             if (cause.root() instanceof MessageReceiver) {
                 ((MessageReceiver) cause.root()).sendMessage(e.getText());
@@ -310,8 +310,8 @@ public class AtherysRPG {
         return components.rpgSkillFacade;
     }
 
-    public SkillGraphFacade getSkillGraphFacade() {
-        return components.skillGraphFacade;
+    public SkillGraphService getSkillGraphService() {
+        return components.skillGraphService;
     }
 
     public ItemFacade getItemFacade() {
@@ -366,7 +366,7 @@ public class AtherysRPG {
         RPGCharacterFacade rpgCharacterFacade;
 
         @Inject
-        SkillGraphFacade skillGraphFacade;
+        SkillGraphService skillGraphService;
 
         @Inject
         RPGSkillFacade rpgSkillFacade;
