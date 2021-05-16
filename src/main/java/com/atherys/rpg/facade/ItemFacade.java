@@ -204,7 +204,7 @@ public class ItemFacade {
 
             if (template.contains(placeholder)) {
                 attributesUsed.add(type);
-                template = template.replace(placeholder, getAttributePlaceholder(type, itemConfig));
+                template = template.replace(placeholder, getAttributePlaceholder(type, itemConfig, false));
             }
         }
 
@@ -213,12 +213,14 @@ public class ItemFacade {
                 .replaceAll(RARITY_PLACEHOLDER, templatesConfig.RARITIES.getOrDefault(itemConfig.RARITY, ""))
                 .replaceAll(DESCRIPTION_PLACEHOLDER, itemConfig.DESCRIPTION);
 
+        boolean first = true;
         if (template.contains(ATTRIBUTES_PLACEHOLDER)) {
             StringBuilder builder = new StringBuilder();
 
             for (AttributeType type : itemConfig.ATTRIBUTES.keySet()) {
                 if (!attributesUsed.contains(type)) {
-                    builder.append(getAttributePlaceholder(type, itemConfig));
+                    builder.append(getAttributePlaceholder(type, itemConfig, !first));
+                    first = false;
                 }
             }
             String attributes = builder.toString();
@@ -231,9 +233,9 @@ public class ItemFacade {
                 .collect(Collectors.toList());
     }
 
-    private String getAttributePlaceholder(AttributeType type, ItemConfig itemConfig) {
+    private String getAttributePlaceholder(AttributeType type, ItemConfig itemConfig, boolean newLine) {
         double value = itemConfig.ATTRIBUTES.get(type);
-        String valueFinal = "" + (value % 1 == 0 ? (int) value : value);
-        return type.getDisplay().replace("%value%", valueFinal) + "\n";
+        String valueFinal = String.valueOf(value % 1 == 0 ? ((int) value) : value);
+        return (newLine ? "\n" : "") + type.getDisplay().replace("%value%", valueFinal);
     }
 }
