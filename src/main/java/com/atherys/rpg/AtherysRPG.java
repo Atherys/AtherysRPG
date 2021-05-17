@@ -101,6 +101,7 @@ public class AtherysRPG {
         getTemplatesConfig().init();
 
         getItemFacade().init();
+        getExpressionService().init();
 
         // Register listeners
         Sponge.getEventManager().registerListeners(this, components.entityListener);
