@@ -1,6 +1,7 @@
 package com.atherys.rpg.service;
 
 import com.atherys.rpg.api.stat.AttributeType;
+import com.atherys.rpg.config.stat.AttributesConfig;
 import com.atherys.rpg.expression.ClampFunction;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,8 +20,12 @@ public class ExpressionService {
     @Inject
     private AttributeService attributeService;
 
+    @Inject
+    private AttributesConfig config;
+
     private Map<String, Expression> cachedExpressions = new HashMap<>();
 
+    // Map for attribute variable strings: first is SOURCE, second is TARGET
     private Map<AttributeType, Tuple<String, String>> attributeVariables;
 
     public void init() {
@@ -41,6 +46,17 @@ public class ExpressionService {
             result = new Expression(expression);
 
             result.addFunction(new ClampFunction());
+
+            // Set default TARGET_{attribute} values for all expressions
+            for (Map.Entry<AttributeType, Tuple<String, String>> entry : attributeVariables.entrySet()) {
+                AttributeType attributeType = entry.getKey();
+                String variable = entry.getValue().getSecond();
+
+                result.setVariable(
+                        variable,
+                        BigDecimal.valueOf(attributeService.getDefaultAttributes().get(attributeType))
+                );
+            }
 
             cachedExpressions.put(expression, result);
         }
