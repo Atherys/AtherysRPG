@@ -14,7 +14,6 @@ import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Living;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
@@ -27,8 +26,6 @@ import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEv
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
-
-import java.util.Optional;
 
 @Singleton
 public class EntityListener {
@@ -90,7 +87,8 @@ public class EntityListener {
 
         if (newHasAttributes || oldHadAttributes) {
             characterFacade.assignEntityHealthLimit(event.getTargetEntity(), false);
-            characterFacade.setPlayerResourceLimit(event.getTargetEntity(), false);
+            characterFacade.assignEntityResourceLimit(event.getTargetEntity(), false);
+            characterFacade.assignEntityMovementSpeed(event.getTargetEntity());
         }
     }
 
@@ -107,7 +105,7 @@ public class EntityListener {
 
         if (living != null) {
             characterFacade.assignEntityHealthLimit(living, false);
-            characterFacade.setPlayerResourceLimit(living, false);
+            characterFacade.assignEntityResourceLimit(living, false);
             characterFacade.assignEntityMovementSpeed(living);
         }
     }

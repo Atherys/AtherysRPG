@@ -413,18 +413,18 @@ public class RPGCharacterFacade {
         }
 
         assignEntityHealthLimit(player, fill);
-        setPlayerResourceLimit(player, fill);
+        assignEntityResourceLimit(player, fill);
         assignEntityMovementSpeed(player);
         checkTreeOnLogin(player);
     }
 
     public void onPlayerRespawn(Player player) {
         assignEntityHealthLimit(player, true);
-        setPlayerResourceLimit(player, true);
+        assignEntityResourceLimit(player, true);
         assignEntityMovementSpeed(player);
     }
 
-    public void setPlayerResourceLimit(Living player, boolean fill) {
+    public void assignEntityResourceLimit(Living player, boolean fill) {
         double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
         ResourceUser user = AtherysSkills.getInstance().getResourceService().getOrCreateUser(player);
 
