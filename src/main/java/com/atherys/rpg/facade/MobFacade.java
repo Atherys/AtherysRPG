@@ -77,7 +77,7 @@ public class MobFacade {
         npcs.forEach(living -> {
             getMobConfigFromLiving(living).ifPresent(mobConfig -> {
                 assignEntityDamageExpression(living, new HashMap<>(mobConfig.DEFAULT_ATTRIBUTES), mobConfig.DAMAGE_EXPRESSION);
-                characterFacade.assignEntityHealthLimit(living, mobConfig.HEALTH_LIMIT_EXPRESSION, true);
+                characterFacade.assignEntityHealthLimit(living, true);
             });
         });
     }

@@ -2,9 +2,11 @@ package com.atherys.rpg.api.effect;
 
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.character.RPGCharacter;
+import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.skills.api.effect.ApplyableCarrier;
 import com.atherys.skills.api.effect.TemporaryEffect;
+import org.spongepowered.api.Sponge;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +27,9 @@ public class TemporaryAttributesEffect extends TemporaryEffect {
         character.getLiving().ifPresent(living -> {
             RPGCharacter<?> rpgCharacter = AtherysRPG.getInstance().getCharacterService().getOrCreateCharacter(living);
             AtherysRPG.getInstance().getAttributeFacade().mergeBuffAttributes(rpgCharacter, attributeIncreases);
+            Sponge.getEventManager().post(new ChangeAttributeEvent(rpgCharacter));
         });
+
         return true;
     }
 
@@ -34,6 +38,7 @@ public class TemporaryAttributesEffect extends TemporaryEffect {
         character.getLiving().ifPresent(living -> {
             RPGCharacter<?> rpgCharacter = AtherysRPG.getInstance().getCharacterService().getOrCreateCharacter(living);
             AtherysRPG.getInstance().getAttributeFacade().mergeBuffAttributes(rpgCharacter, attributeDecreases);
+            Sponge.getEventManager().post(new ChangeAttributeEvent(rpgCharacter));
         });
 
         return true;

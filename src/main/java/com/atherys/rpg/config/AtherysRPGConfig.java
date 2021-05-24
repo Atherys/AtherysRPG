@@ -61,8 +61,11 @@ public class AtherysRPGConfig extends PluginConfig {
     @Setting("health-limit-calculation")
     public String HEALTH_LIMIT_CALCULATION = "100.0 + SOURCE_CON * 1.5";
 
-    @Setting("HEALTH_SCALING")
+    @Setting("health-scaling")
     public double HEALTH_SCALING = 20d;
+
+    @Setting("movement-speed-calculation")
+    public String MOVEMENT_SPEED_CALCULATION = "0.1";
 
     @Setting("attribute-upgrade-cost")
     public double ATTRIBUTE_UPGRADE_COST = 100.0;

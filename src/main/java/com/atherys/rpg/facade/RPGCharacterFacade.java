@@ -412,21 +412,19 @@ public class RPGCharacterFacade {
             fill = true;
         }
 
-        setPlayerHealth(player, fill);
+        assignEntityHealthLimit(player, fill);
         setPlayerResourceLimit(player, fill);
+        assignEntityMovementSpeed(player);
         checkTreeOnLogin(player);
     }
 
     public void onPlayerRespawn(Player player) {
-        setPlayerHealth(player, true);
+        assignEntityHealthLimit(player, true);
         setPlayerResourceLimit(player, true);
+        assignEntityMovementSpeed(player);
     }
 
-    public void setPlayerHealth(Player player, boolean fill) {
-        assignEntityHealthLimit(player, config.HEALTH_LIMIT_CALCULATION, fill);
-    }
-
-    public void setPlayerResourceLimit(Player player, boolean fill) {
+    public void setPlayerResourceLimit(Living player, boolean fill) {
         double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
         ResourceUser user = AtherysSkills.getInstance().getResourceService().getOrCreateUser(player);
 
@@ -438,8 +436,8 @@ public class RPGCharacterFacade {
         }
     }
 
-    public void assignEntityHealthLimit(Living living, String healthLimitExpression, boolean fill) {
-        double maxHP = expressionService.evalExpression(living, healthLimitExpression).doubleValue();
+    public void assignEntityHealthLimit(Living living, boolean fill) {
+        double maxHP = expressionService.evalExpression(living, config.HEALTH_LIMIT_CALCULATION).doubleValue();
 
         DataTransactionResult maxHPResult = living.offer(Keys.MAX_HEALTH, maxHP);
         if (fill) {
@@ -457,6 +455,11 @@ public class RPGCharacterFacade {
         if (living.supports(Keys.HEALTH_SCALE)) {
             living.offer(Keys.HEALTH_SCALE, config.HEALTH_SCALING);
         }
+    }
+
+    public void assignEntityMovementSpeed(Living living) {
+        double movementSpeed = expressionService.evalExpression(living, config.MOVEMENT_SPEED_CALCULATION).doubleValue();
+        living.offer(Keys.WALKING_SPEED, movementSpeed);
     }
 
     public void setKeepInventoryOnPVP(DestructEntityEvent.Death event) {

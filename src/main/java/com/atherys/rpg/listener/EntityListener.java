@@ -1,6 +1,7 @@
 package com.atherys.rpg.listener;
 
 import com.atherys.core.utils.EntityUtils;
+import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
@@ -26,6 +27,8 @@ import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEv
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+
+import java.util.Optional;
 
 @Singleton
 public class EntityListener {
@@ -75,8 +78,7 @@ public class EntityListener {
 
     @Listener(order = Order.LAST)
     public void onPlayerRespawn(RespawnPlayerEvent event) {
-        characterFacade.setPlayerHealth(event.getTargetEntity(), true);
-        characterFacade.setPlayerResourceLimit(event.getTargetEntity(), true);
+        characterFacade.onPlayerRespawn(event.getTargetEntity());
     }
 
     @Listener
@@ -87,18 +89,26 @@ public class EntityListener {
         boolean oldHadAttributes = event.getTransaction().getOriginal().get(AttributeMapData.Immutable.class).isPresent();
 
         if (newHasAttributes || oldHadAttributes) {
-            characterFacade.setPlayerHealth(event.getTargetEntity(), false);
+            characterFacade.assignEntityHealthLimit(event.getTargetEntity(), false);
             characterFacade.setPlayerResourceLimit(event.getTargetEntity(), false);
         }
     }
 
     @Listener
-    public void onChangeAttribute(ChangeAttributeEvent event, @Root PlayerCharacter pc) {
-        Player player = pc.getEntity().orElse(Sponge.getServer().getPlayer(pc.getUniqueId()).orElse(null));
+    public void onChangeAttribute(ChangeAttributeEvent event, @Root RPGCharacter<?> character) {
+        Living living;
 
-        if (player != null) {
-            characterFacade.setPlayerHealth(player, false);
-            characterFacade.setPlayerResourceLimit(player, false);
+        if (character instanceof PlayerCharacter) {
+            PlayerCharacter pc = (PlayerCharacter) character;
+            living = pc.getEntity().orElse(Sponge.getServer().getPlayer(pc.getUniqueId()).orElse(null));
+        } else {
+            living = character.getEntity().orElse(null);
+        }
+
+        if (living != null) {
+            characterFacade.assignEntityHealthLimit(living, false);
+            characterFacade.setPlayerResourceLimit(living, false);
+            characterFacade.assignEntityMovementSpeed(living);
         }
     }
 }
