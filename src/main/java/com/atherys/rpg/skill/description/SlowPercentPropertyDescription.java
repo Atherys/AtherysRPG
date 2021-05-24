@@ -1,6 +1,5 @@
 package com.atherys.rpg.skill.description;
 
-import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.skill.RPGSkill;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.text.Text;
@@ -14,8 +13,7 @@ public class SlowPercentPropertyDescription extends PropertyDescriptionArgument 
 
     @Override
     public TextRepresentable apply(Living living) {
-        String expression = skill.getProperty(propertyName, String.class, defaultValue);
-        double value = AtherysRPG.getInstance().getExpressionService().evalExpression(living, expression).doubleValue();
+        double value = evalExpression(living).doubleValue();
         // 0 == Slowness 1, for each level of slowness, movement speed is decreased by 15%
         value = (value + 1) * 15;
         return Text.of(String.format("%.2f", value), "%");

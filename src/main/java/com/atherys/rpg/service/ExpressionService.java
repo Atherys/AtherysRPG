@@ -47,17 +47,6 @@ public class ExpressionService {
 
             result.addFunction(new ClampFunction());
 
-            // Set default TARGET_{attribute} values for all expressions
-            for (Map.Entry<AttributeType, Tuple<String, String>> entry : attributeVariables.entrySet()) {
-                AttributeType attributeType = entry.getKey();
-                String variable = entry.getValue().getSecond();
-
-                result.setVariable(
-                        variable,
-                        BigDecimal.valueOf(attributeService.getDefaultAttributes().get(attributeType))
-                );
-            }
-
             cachedExpressions.put(expression, result);
         }
 
