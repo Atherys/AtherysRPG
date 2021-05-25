@@ -21,6 +21,7 @@ import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.entity.MovementSpeedData;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
@@ -458,8 +459,13 @@ public class RPGCharacterFacade {
     }
 
     public void assignEntityMovementSpeed(Living living) {
+        if (!living.supports(Keys.WALKING_SPEED)) return;
+
         double movementSpeed = expressionService.evalExpression(living, config.MOVEMENT_SPEED_CALCULATION).doubleValue();
-        living.offer(Keys.WALKING_SPEED, movementSpeed);
+
+        if (movementSpeed == living.get(Keys.WALKING_SPEED).get()) {
+            living.offer(Keys.WALKING_SPEED, movementSpeed);
+        }
     }
 
     public void setKeepInventoryOnPVP(DestructEntityEvent.Death event) {
