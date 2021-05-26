@@ -463,7 +463,7 @@ public class RPGCharacterFacade {
 
         double movementSpeed = expressionService.evalExpression(living, config.MOVEMENT_SPEED_CALCULATION).doubleValue();
 
-        if (movementSpeed == living.get(Keys.WALKING_SPEED).get()) {
+        if (movementSpeed != living.get(Keys.WALKING_SPEED).get()) {
             living.offer(Keys.WALKING_SPEED, movementSpeed);
         }
     }
