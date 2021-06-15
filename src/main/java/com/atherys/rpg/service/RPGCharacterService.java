@@ -20,7 +20,6 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
@@ -109,16 +108,6 @@ public class RPGCharacterService {
         getUser(pc).ifPresent(user -> {
             user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillPermission, value ? Tristate.TRUE : Tristate.FALSE);
         });
-    }
-
-    public void addItemBinding(PlayerCharacter pc, ItemType itemType, String skill) {
-        pc.addItemBinding(itemType, skill);
-        repository.saveOne(pc);
-    }
-
-    public void removeItemBinding(PlayerCharacter pc, ItemType itemType) {
-        pc.removeItemBinding(itemType);
-        repository.saveOne(pc);
     }
 
     private Optional<User> getUser(PlayerCharacter pc) {

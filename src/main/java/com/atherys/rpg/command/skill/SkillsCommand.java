@@ -16,9 +16,7 @@ import javax.annotation.Nonnull;
         PickSkillCommand.class,
         RemoveSkillCommand.class,
         ResetSkillsCommand.class,
-        CastSkillCommand.class,
-        BindSkillCommand.class,
-        UnbindSkillCommand.class
+        CastSkillCommand.class
 })
 @HelpCommand(title = "Skills Help", command = "help")
 @Permission("atherysrpg.skills.base")

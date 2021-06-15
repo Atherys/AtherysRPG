@@ -24,7 +24,6 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 @Singleton
@@ -66,11 +65,6 @@ public class EntityListener {
     public void onPlayerRespawn(RespawnPlayerEvent event) {
         characterFacade.setPlayerHealth(event.getTargetEntity(), true);
         characterFacade.setPlayerResourceLimit(event.getTargetEntity(), true);
-    }
-
-    @Listener
-    public void onPlayerRightClick(InteractItemEvent.Secondary event, @Root Player player) {
-        characterFacade.onRightClick(player);
     }
 
     @Listener
