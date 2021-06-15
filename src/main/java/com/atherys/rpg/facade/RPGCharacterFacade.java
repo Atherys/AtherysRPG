@@ -30,6 +30,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.entity.damage.DamageModifierTypes;
 import org.spongepowered.api.event.cause.entity.damage.DamageType;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -265,13 +266,15 @@ public class RPGCharacterFacade {
         event.setRegenAmount(amount);
     }
 
-    public void onDamage(DamageEntityEvent event, EntityDamageSource rootSource) {
+    public void onDamage(DamageEntityEvent event, DamageSource rootSource, Living target) {
         // The average time taken for these, once the JVM has had time to do some runtime optimizations
         // is 0.2 - 0.3 milliseconds
-        if (rootSource instanceof IndirectEntityDamageSource) {
+        if (config.ENVIRONMENTAL_CALCULATIONS.containsKey(rootSource.getType())) {
+            onEnvironmentalDamage(event, rootSource.getType(), target);
+        } else if (rootSource instanceof IndirectEntityDamageSource) {
             onIndirectDamage(event, (IndirectEntityDamageSource) rootSource);
-        } else {
-            onDirectDamage(event, rootSource);
+        } else if (rootSource instanceof EntityDamageSource) {
+            onDirectDamage(event, (EntityDamageSource) rootSource);
         }
     }
 
