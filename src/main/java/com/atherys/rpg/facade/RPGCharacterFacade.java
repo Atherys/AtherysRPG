@@ -464,10 +464,11 @@ public class RPGCharacterFacade {
     public void assignEntityMovementSpeed(Living living) {
         if (!living.supports(Keys.WALKING_SPEED)) return;
 
-        double movementSpeed = expressionService.evalExpression(living, config.MOVEMENT_SPEED_CALCULATION).doubleValue();
+        double newMovementSpeed = expressionService.evalExpression(living, config.MOVEMENT_SPEED_CALCULATION).doubleValue();
+        double oldMovementSpeed = living.get(Keys.WALKING_SPEED).get();
 
-        if (movementSpeed != living.get(Keys.WALKING_SPEED).get()) {
-            living.offer(Keys.WALKING_SPEED, movementSpeed);
+        if (Math.abs(newMovementSpeed - oldMovementSpeed) >= 0.0001) {
+            living.offer(Keys.WALKING_SPEED, newMovementSpeed);
         }
     }
 
