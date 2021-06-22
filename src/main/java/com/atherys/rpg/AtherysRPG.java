@@ -4,8 +4,6 @@ import com.atherys.core.AtherysCore;
 import com.atherys.core.command.CommandService;
 import com.atherys.core.event.AtherysDatabaseMigrationEvent;
 import com.atherys.core.event.AtherysHibernateConfigurationEvent;
-import com.atherys.rpg.api.damage.AtherysDamageType;
-import com.atherys.rpg.api.damage.AtherysDamageTypeRegistry;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.character.PlayerCharacter;
@@ -43,10 +41,8 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.GameReloadEvent;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.event.game.state.*;
+import org.spongepowered.api.item.recipe.crafting.CraftingRecipe;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -86,78 +82,6 @@ public class AtherysRPG {
         return instance;
     }
 
-    private void init() {
-        instance = this;
-
-        components = new Components();
-        rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
-        rpgInjector.injectMembers(components);
-
-        // Initialize the config
-        getConfig().init();
-        getGraphConfig().init();
-        getMobsConfig().init();
-        getArchetypesConfig().init();
-        getTemplatesConfig().init();
-
-        getItemFacade().init();
-        getExpressionService().init();
-
-        // Register listeners
-        Sponge.getEventManager().registerListeners(this, components.entityListener);
-        Sponge.getEventManager().registerListeners(this, components.skillsListener);
-
-        // Register commands
-        try {
-            AtherysCore.getCommandService().register(new AttributesCommand(), this);
-            AtherysCore.getCommandService().register(new ExperienceCommand(), this);
-            AtherysCore.getCommandService().register(new SkillsCommand(), this);
-            AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
-        } catch (CommandService.AnnotatedCommandException e) {
-            e.printStackTrace();
-        }
-
-        init = true;
-    }
-
-    private void start() {
-        getPlayerCharacterRepository().initCache();
-        components.healingService.init();
-    }
-
-    private void reload(Cause cause) {
-        getConfig().load();
-        getGraphConfig().load();
-        getMobsConfig().load();
-        getArchetypesConfig().load();
-        getTemplatesConfig().load();
-
-        getItemFacade().init();
-
-        // Re-register command to update item choices
-        try {
-            Sponge.getCommandManager()
-                    .get("spawnitem")
-                    .ifPresent(Sponge.getCommandManager()::removeMapping);
-
-            AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
-        } catch (CommandService.AnnotatedCommandException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            getSkillGraphService().resetSkillGraph();
-        } catch (RPGCommandException e) {
-            if (cause.root() instanceof MessageReceiver) {
-                ((MessageReceiver) cause.root()).sendMessage(e.getText());
-            }
-        }
-    }
-
-    private void stop() {
-        getPlayerCharacterRepository().flushCache();
-    }
-
     @Listener
     public void onHibernateConfiguration(AtherysHibernateConfigurationEvent event) {
         event.registerEntity(PlayerCharacter.class);
@@ -168,41 +92,21 @@ public class AtherysRPG {
         event.registerForMigration("atherysrpg");
     }
 
-    @Listener(order = Order.LATE)
-    public void onInit(GameInitializationEvent event) {
-        init();
-    }
-
-    @Listener
-    public void onStart(GameStartingServerEvent event) {
-        if (init) {
-            start();
-        }
-    }
-
-    @Listener
-    public void onReload(GameReloadEvent event) throws RPGCommandException {
-        if (init) {
-            reload(event.getCause());
-        }
-    }
-
-    @Listener
-    public void onStop(GameStoppingServerEvent event) {
-        if (init) {
-            stop();
-        }
-    }
-
     @Listener
     public void onPreInit(GamePreInitializationEvent event) {
+        instance = this;
         // Register custom CatalogType registry modules
         Sponge.getRegistry().registerModule(AttributeType.class, new AttributeTypeRegistry());
-        Sponge.getRegistry().registerModule(AtherysDamageType.class, new AtherysDamageTypeRegistry());
+        registerData();
+
+        components = new Components();
+        rpgInjector = spongeInjector.createChildInjector(new AtherysRPGModule());
+        rpgInjector.injectMembers(components);
+
+        getTemplatesConfig().init();
     }
 
-    @Listener
-    public void onKeyRegistration(GameRegistryEvent.Register<Key<?>> event) {
+    private void registerData() {
         RPGKeys.DAMAGE_EXPRESSION = Key.builder()
                 .id("damage_expression")
                 .name("Damage Expression")
@@ -216,20 +120,7 @@ public class AtherysRPG {
                 .query(DataQuery.of("Attributes"))
                 .type(new TypeToken<MapValue<AttributeType, Double>>(){})
                 .build();
-    }
 
-    private static Key<Value<Double>> createKey(AttributeType attributeType, String dataQuery) {
-        return Key.builder()
-                .id(attributeType.getId())
-                .name(attributeType.getName())
-                .query(DataQuery.of(dataQuery))
-                .type(new TypeToken<Value<Double>>() {})
-                .build();
-    }
-
-    @Listener
-    public void onDataRegistration(GameRegistryEvent.Register<DataRegistration<?, ?>> event) {
-        // Register custom data
         DataRegistration.builder()
                 .dataClass(DamageExpressionData.class)
                 .immutableClass(DamageExpressionData.Immutable.class)
@@ -245,6 +136,90 @@ public class AtherysRPG {
                 .id("attributes")
                 .name("Attributes")
                 .build();
+    }
+
+    // We need the RPG items to be available when recipes are created
+    @Listener(order = Order.FIRST)
+    public void onRegister(GameRegistryEvent.Register<CraftingRecipe> event) {
+        getItemFacade().init();
+        try {
+            AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
+        } catch (CommandService.AnnotatedCommandException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Listener
+    public void onInit(GameInitializationEvent event) {
+        // Initialize the config
+        getConfig().init();
+        getGraphConfig().init();
+        getMobsConfig().init();
+        getArchetypesConfig().init();
+
+        getExpressionService().init();
+
+        // Register listeners
+        Sponge.getEventManager().registerListeners(this, components.entityListener);
+        Sponge.getEventManager().registerListeners(this, components.skillsListener);
+
+        // Register commands
+        try {
+            AtherysCore.getCommandService().register(new AttributesCommand(), this);
+            AtherysCore.getCommandService().register(new ExperienceCommand(), this);
+            AtherysCore.getCommandService().register(new SkillsCommand(), this);
+        } catch (CommandService.AnnotatedCommandException e) {
+            e.printStackTrace();
+        }
+
+        init = true;
+    }
+
+    @Listener
+    public void onStart(GameStartingServerEvent event) {
+        if (init) {
+            getPlayerCharacterRepository().initCache();
+            components.healingService.init();
+        }
+    }
+
+    @Listener
+    public void onReload(GameReloadEvent event) throws RPGCommandException {
+        if (init) {
+            getConfig().load();
+            getGraphConfig().load();
+            getMobsConfig().load();
+            getArchetypesConfig().load();
+            getTemplatesConfig().load();
+
+            getItemFacade().init();
+
+            // Re-register command to update item choices
+            try {
+                Sponge.getCommandManager()
+                        .get("spawnitem")
+                        .ifPresent(Sponge.getCommandManager()::removeMapping);
+
+                AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
+            } catch (CommandService.AnnotatedCommandException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                getSkillGraphService().resetSkillGraph();
+            } catch (RPGCommandException e) {
+                if (event.getCause().root() instanceof MessageReceiver) {
+                    ((MessageReceiver) event.getCause().root()).sendMessage(e.getText());
+                }
+            }
+        }
+    }
+
+    @Listener
+    public void onStop(GameStoppingServerEvent event) {
+        if (init) {
+            getPlayerCharacterRepository().flushCache();
+        }
     }
 
     public Logger getLogger() {

@@ -1,7 +1,6 @@
 package com.atherys.rpg.config;
 
 import com.atherys.core.utils.PluginConfig;
-import com.atherys.rpg.api.damage.AtherysDamageTypes;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.objectmapping.Setting;
 import org.spongepowered.api.entity.EntityType;
@@ -41,10 +40,10 @@ public class AtherysRPGConfig extends PluginConfig {
     public Map<DamageType, String> ENVIRONMENTAL_CALCULATIONS = new HashMap<>();
 
     @Setting("default-melee-damage-type")
-    public String DEFAULT_MELEE_TYPE = AtherysDamageTypes.UNARMED.getId();
+    public String DEFAULT_MELEE_TYPE = "unarmed";
 
     @Setting("default-ranged-damage-type")
-    public String DEFAULT_RANGED_TYPE = AtherysDamageTypes.PIERCE.getId();
+    public String DEFAULT_RANGED_TYPE = "ranged";
 
     @Setting("health-regen-calculation")
     public String HEALTH_REGEN_CALCULATION = "1.33 * SOURCE_CON";
@@ -108,56 +107,55 @@ public class AtherysRPGConfig extends PluginConfig {
 
     {
         // Wood
-        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_HOE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SHOVEL, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_PICKAXE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_AXE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SWORD, AtherysDamageTypes.BLUNT.getId());
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_HOE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SHOVEL, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_PICKAXE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_AXE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.WOODEN_SWORD, "blunt");
 
         // Stone
-        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_HOE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SHOVEL, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_PICKAXE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_AXE, AtherysDamageTypes.SLASH.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SWORD, AtherysDamageTypes.SLASH.getId());
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_HOE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SHOVEL, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_PICKAXE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_AXE, "slash");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.STONE_SWORD, "slash");
 
         // Iron
-        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_HOE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SHOVEL, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_PICKAXE, AtherysDamageTypes.STAB.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_AXE, AtherysDamageTypes.SLASH.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SWORD, AtherysDamageTypes.STAB.getId());
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_HOE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SHOVEL, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_PICKAXE, "stab");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_AXE, "slash");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.IRON_SWORD, "stab");
 
         // Gold
-        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_HOE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SHOVEL, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_PICKAXE, AtherysDamageTypes.STAB.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_AXE, AtherysDamageTypes.SLASH.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SWORD, AtherysDamageTypes.STAB.getId());
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_HOE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SHOVEL, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_PICKAXE, "stab");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_AXE, "slash");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.GOLDEN_SWORD, "stab");
 
         // Diamond
-        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_HOE, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SHOVEL, AtherysDamageTypes.BLUNT.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_PICKAXE, AtherysDamageTypes.STAB.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_AXE, AtherysDamageTypes.SLASH.getId());
-        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SWORD, AtherysDamageTypes.STAB.getId());
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_HOE, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SHOVEL, "blunt");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_PICKAXE, "stab");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_AXE, "slash");
+        ITEM_DAMAGE_TYPES.put(ItemTypes.DIAMOND_SWORD, "stab");
 
         // Hand
-        ITEM_DAMAGE_TYPES.put(ItemTypes.NONE, AtherysDamageTypes.UNARMED.getId());
+        ITEM_DAMAGE_TYPES.put(ItemTypes.NONE, "unarmed");
     }
 
     {
         // Bow
-        PROJECTILE_DAMAGE_TYPES.put(EntityTypes.TIPPED_ARROW, AtherysDamageTypes.PIERCE.getId());
+        PROJECTILE_DAMAGE_TYPES.put(EntityTypes.TIPPED_ARROW, "ranged");
     }
 
     {
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BLUNT.getId(), "CLAMP(SOURCE_CON, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.STAB.getId(), "CLAMP(SOURCE_STR, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.SLASH.getId(), "CLAMP(SOURCE_STR, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.UNARMED.getId(), "CLAMP(SOURCE_INT, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.PIERCE.getId(), "CLAMP(SOURCE_DEX, 1.0, 15.0)");
-        DAMAGE_CALCULATIONS.put(AtherysDamageTypes.BALLISTIC.getId(), "CLAMP(SOURCE_DEX, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put("blunt", "CLAMP(SOURCE_CON, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put("stab", "CLAMP(SOURCE_STR, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put("slash", "CLAMP(SOURCE_STR, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put("unarmed", "CLAMP(SOURCE_INT, 1.0, 15.0)");
+        DAMAGE_CALCULATIONS.put("ranged", "CLAMP(SOURCE_DEX, 1.0, 15.0)");
     }
 
     protected AtherysRPGConfig() throws IOException {
