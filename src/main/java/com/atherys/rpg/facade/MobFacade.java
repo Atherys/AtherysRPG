@@ -3,6 +3,7 @@ package com.atherys.rpg.facade;
 import com.atherys.core.AtherysCore;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.stat.AttributeType;
+import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.loot.CurrencyLootConfig;
 import com.atherys.rpg.config.loot.ExperienceLootConfig;
@@ -14,16 +15,23 @@ import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.integration.AtherysPartiesIntegration;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomUtils;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityArchetype;
+import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.economy.Currency;
@@ -67,6 +75,24 @@ public class MobFacade {
 
     private Random random = new Random();
 
+    private Map<String, EntityArchetype> mobsCache = new HashMap<>();
+
+    public void init() {
+        mobsConfig.MOBS.forEach((id, mobConfig) -> {
+            Entity entity = Sponge.getServer().getWorld("world").get().createEntity(mobConfig.ENTITY_TYPE, Vector3d.ZERO);
+            if (entity instanceof Living) {
+                Living living = (Living) entity;
+                Map<AttributeType, Double> attributes = new HashMap<>(mobConfig.DEFAULT_ATTRIBUTES);
+
+                assignEntityDamageExpression(living, attributes, mobConfig.DAMAGE_EXPRESSION);
+                characterFacade.assignEntityHealthLimit(living, true);
+                characterFacade.assignEntityMovementSpeed(living);
+
+                mobsCache.put(id, living.createArchetype());
+            }
+        });
+    }
+
     public void onMobSpawn(SpawnEntityEvent event) {
         Set<Living> npcs = event.getEntities().stream()
                 .filter(entity -> entity instanceof Living && !(entity instanceof Player))
@@ -80,6 +106,20 @@ public class MobFacade {
                 characterFacade.assignEntityHealthLimit(living, true);
             });
         });
+    }
+
+    public void spawnMob(String mobId, Player player) throws CommandException {
+        EntityArchetype snapshot = mobsCache.get(mobId);
+
+        try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+            frame.pushCause(player);
+            frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLACEMENT);
+            Entity entity = snapshot.apply(player.getLocation()).orElseThrow(() -> new RPGCommandException("Error."));
+            entity.offer(Keys.PERSISTS, false);
+
+            player.getWorld().spawnEntity(entity);
+        } catch (Exception ignored) { }
+
     }
 
     // To HeadHunter: DO NOT WRITE BUGS THEN
@@ -182,7 +222,7 @@ public class MobFacade {
         return Optional.ofNullable(mobsConfig.MOBS.get(name));
     }
 
-    private void assignEntityDamageExpression(Living entity, HashMap<AttributeType, Double> mobAttributes, String damageExpression) {
+    private void assignEntityDamageExpression(Living entity, Map<AttributeType, Double> mobAttributes, String damageExpression) {
         Map<AttributeType, Double> attributes = attributeService.fillInAttributes(mobAttributes);
 
         characterService.getOrCreateCharacter(entity, attributes);

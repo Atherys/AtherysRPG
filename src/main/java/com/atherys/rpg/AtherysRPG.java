@@ -9,6 +9,7 @@ import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.ExperienceCommand;
 import com.atherys.rpg.command.SpawnItemCommand;
+import com.atherys.rpg.command.SpawnMobCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.command.skill.SkillsCommand;
@@ -168,6 +169,7 @@ public class AtherysRPG {
             AtherysCore.getCommandService().register(new AttributesCommand(), this);
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
             AtherysCore.getCommandService().register(new SkillsCommand(), this);
+            AtherysCore.getCommandService().register(new SpawnMobCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }
@@ -180,6 +182,7 @@ public class AtherysRPG {
         if (init) {
             getPlayerCharacterRepository().initCache();
             components.healingService.init();
+            getMobFacade().init();
         }
     }
 
@@ -294,6 +297,10 @@ public class AtherysRPG {
         return components.itemFacade;
     }
 
+    public MobFacade getMobFacade() {
+        return components.mobFacade;
+    }
+
     public Injector getRpgInjector() {
         return rpgInjector;
     }
@@ -352,6 +359,9 @@ public class AtherysRPG {
 
         @Inject
         ItemFacade itemFacade;
+
+        @Inject
+        MobFacade mobFacade;
 
         @Inject
         EntityListener entityListener;

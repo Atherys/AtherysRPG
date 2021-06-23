@@ -89,7 +89,7 @@ public class SkillGraphService {
 
         // If no castable object registered under the provided id could be found, throw an exception
         if (!rpgSkillOptional.isPresent()) {
-            throw new NoSuchElementException("No registered skill with an id of '" + node.SKILL_ID + "' could be found.");
+            throw new NoSuchElementException("No registered skill with an id of '" + node.SKILL_ID + "' could not be found.");
         }
 
         RPGSkill rpgSkill = rpgSkillOptional.get();
