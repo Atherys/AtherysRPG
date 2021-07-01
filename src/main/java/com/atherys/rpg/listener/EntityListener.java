@@ -62,11 +62,6 @@ public class EntityListener {
     }
 
     @Listener(order = Order.LAST)
-    public void onEntitySpawn(SpawnEntityEvent event) {
-        mobFacade.onMobSpawn(event);
-    }
-
-    @Listener(order = Order.LAST)
     public void onPlayerRespawn(RespawnPlayerEvent event) {
         characterFacade.onPlayerRespawn(event.getTargetEntity());
     }
@@ -79,9 +74,7 @@ public class EntityListener {
         boolean oldHadAttributes = event.getTransaction().getOriginal().get(AttributeMapData.Immutable.class).isPresent();
 
         if (newHasAttributes || oldHadAttributes) {
-            characterFacade.assignEntityHealthLimit(event.getTargetEntity(), false);
-            characterFacade.assignEntityResourceLimit(event.getTargetEntity(), false);
-            characterFacade.assignEntityMovementSpeed(event.getTargetEntity());
+            characterFacade.updateCharacter(event.getTargetEntity(), false);
         }
     }
 
@@ -97,9 +90,7 @@ public class EntityListener {
         }
 
         if (living != null) {
-            characterFacade.assignEntityHealthLimit(living, false);
-            characterFacade.assignEntityResourceLimit(living, false);
-            characterFacade.assignEntityMovementSpeed(living);
+            characterFacade.updateCharacter(living, false);
         }
     }
 }

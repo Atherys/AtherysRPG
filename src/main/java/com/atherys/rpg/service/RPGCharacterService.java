@@ -1,5 +1,6 @@
 package com.atherys.rpg.service;
 
+import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.event.ChangeAttributeEvent;
 import com.atherys.rpg.api.skill.RPGSkill;
@@ -10,10 +11,13 @@ import com.atherys.rpg.character.SimpleCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.skills.AtherysSkills;
+import com.atherys.skills.api.resource.ResourceUser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataTransactionResult;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
@@ -228,5 +232,49 @@ public class RPGCharacterService {
     public void resetCharacter(PlayerCharacter pc) {
         resetCharacterSkills(pc);
         resetCharacterAttributes(pc);
+    }
+
+    public void assignEntityResourceLimit(Living player, boolean fill) {
+        double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
+        ResourceUser user = AtherysSkills.getInstance().getResourceService().getOrCreateUser(player);
+
+        user.setMax(max);
+        if (fill) {
+            user.fill();
+        } else if (user.getCurrent() > user.getMax()) {
+            user.fill();
+        }
+    }
+
+    public void assignEntityHealthLimit(Living living, boolean fill) {
+        double maxHP = expressionService.evalExpression(living, config.HEALTH_LIMIT_CALCULATION).doubleValue();
+
+        DataTransactionResult maxHPResult = living.offer(Keys.MAX_HEALTH, maxHP);
+        if (fill) {
+            living.offer(Keys.HEALTH, maxHP);
+        }
+
+        if (!maxHPResult.isSuccessful()) {
+            AtherysRPG.getInstance().getLogger().warn(
+                    "Failed to set max health for entity {}, Max HP Result: {}",
+                    living,
+                    maxHPResult
+            );
+        }
+
+        if (living.supports(Keys.HEALTH_SCALE)) {
+            living.offer(Keys.HEALTH_SCALE, config.HEALTH_SCALING);
+        }
+    }
+
+    public void assignEntityMovementSpeed(Living living) {
+        if (!living.supports(Keys.WALKING_SPEED)) return;
+
+        double newMovementSpeed = expressionService.evalExpression(living, config.MOVEMENT_SPEED_CALCULATION).doubleValue();
+        double oldMovementSpeed = living.get(Keys.WALKING_SPEED).get();
+
+        if (Math.abs(newMovementSpeed - oldMovementSpeed) >= 0.0001) {
+            living.offer(Keys.WALKING_SPEED, newMovementSpeed);
+        }
     }
 }

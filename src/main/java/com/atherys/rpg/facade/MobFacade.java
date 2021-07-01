@@ -11,9 +11,11 @@ import com.atherys.rpg.config.loot.ItemLootConfig;
 import com.atherys.rpg.config.loot.LootConfig;
 import com.atherys.rpg.config.mob.MobConfig;
 import com.atherys.rpg.config.mob.MobsConfig;
+import com.atherys.rpg.config.mob.SpawnersConfig;
 import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.integration.AtherysPartiesIntegration;
 import com.atherys.rpg.service.AttributeService;
+import com.atherys.rpg.service.MobService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
@@ -63,6 +65,9 @@ public class MobFacade {
     private RPGCharacterService characterService;
 
     @Inject
+    private MobService mobService;
+
+    @Inject
     private RPGCharacterFacade characterFacade;
 
     @Inject
@@ -73,53 +78,19 @@ public class MobFacade {
 
     private DecimalFormat decimalFormat = new DecimalFormat();
 
-    private Random random = new Random();
-
-    private Map<String, EntityArchetype> mobsCache = new HashMap<>();
-
-    public void init() {
-        mobsConfig.MOBS.forEach((id, mobConfig) -> {
-            Entity entity = Sponge.getServer().getWorld("world").get().createEntity(mobConfig.ENTITY_TYPE, Vector3d.ZERO);
-            if (entity instanceof Living) {
-                Living living = (Living) entity;
-                Map<AttributeType, Double> attributes = new HashMap<>(mobConfig.DEFAULT_ATTRIBUTES);
-
-                assignEntityDamageExpression(living, attributes, mobConfig.DAMAGE_EXPRESSION);
-                characterFacade.assignEntityHealthLimit(living, true);
-                characterFacade.assignEntityMovementSpeed(living);
-
-                mobsCache.put(id, living.createArchetype());
-            }
-        });
-    }
-
-    public void onMobSpawn(SpawnEntityEvent event) {
-        Set<Living> npcs = event.getEntities().stream()
-                .filter(entity -> entity instanceof Living && !(entity instanceof Player))
-                .map(entity -> (Living) entity)
-                .collect(Collectors.toSet());
-
-        // For all npcs, set their damage expression and max health
-        npcs.forEach(living -> {
-            getMobConfigFromLiving(living).ifPresent(mobConfig -> {
-                assignEntityDamageExpression(living, new HashMap<>(mobConfig.DEFAULT_ATTRIBUTES), mobConfig.DAMAGE_EXPRESSION);
-                characterFacade.assignEntityHealthLimit(living, true);
-            });
-        });
-    }
+    private static Random random = new Random();
 
     public void spawnMob(String mobId, Player player) throws CommandException {
-        EntityArchetype snapshot = mobsCache.get(mobId);
+        EntityArchetype archetype = mobService.getMob(mobId).get();
 
         try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
             frame.pushCause(player);
             frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLACEMENT);
-            Entity entity = snapshot.apply(player.getLocation()).orElseThrow(() -> new RPGCommandException("Error."));
+            Entity entity = archetype.apply(player.getLocation()).orElseThrow(() -> new RPGCommandException("Error."));
             entity.offer(Keys.PERSISTS, false);
 
             player.getWorld().spawnEntity(entity);
-        } catch (Exception ignored) { }
-
+        }
     }
 
     // To HeadHunter: DO NOT WRITE BUGS THEN
@@ -221,12 +192,4 @@ public class MobFacade {
         String name = entity.get(Keys.DISPLAY_NAME).orElse(Text.of(entity.getType().getId())).toPlain();
         return Optional.ofNullable(mobsConfig.MOBS.get(name));
     }
-
-    private void assignEntityDamageExpression(Living entity, Map<AttributeType, Double> mobAttributes, String damageExpression) {
-        Map<AttributeType, Double> attributes = attributeService.fillInAttributes(mobAttributes);
-
-        characterService.getOrCreateCharacter(entity, attributes);
-        entity.offer(new DamageExpressionData(damageExpression));
-    }
-
 }

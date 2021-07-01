@@ -416,60 +416,18 @@ public class RPGCharacterFacade {
             fill = true;
         }
 
-        assignEntityHealthLimit(player, fill);
-        assignEntityResourceLimit(player, fill);
-        assignEntityMovementSpeed(player);
+        updateCharacter(player, fill);
         checkTreeOnLogin(player);
     }
 
     public void onPlayerRespawn(Player player) {
-        assignEntityHealthLimit(player, true);
-        assignEntityResourceLimit(player, true);
-        assignEntityMovementSpeed(player);
+        updateCharacter(player, true);
     }
 
-    public void assignEntityResourceLimit(Living player, boolean fill) {
-        double max = expressionService.evalExpression(player, config.RESOURCE_LIMIT_CALCULATION).doubleValue();
-        ResourceUser user = AtherysSkills.getInstance().getResourceService().getOrCreateUser(player);
-
-        user.setMax(max);
-        if (fill) {
-            user.fill();
-        } else if (user.getCurrent() > user.getMax()) {
-            user.fill();
-        }
-    }
-
-    public void assignEntityHealthLimit(Living living, boolean fill) {
-        double maxHP = expressionService.evalExpression(living, config.HEALTH_LIMIT_CALCULATION).doubleValue();
-
-        DataTransactionResult maxHPResult = living.offer(Keys.MAX_HEALTH, maxHP);
-        if (fill) {
-            living.offer(Keys.HEALTH, maxHP);
-        }
-
-        if (!maxHPResult.isSuccessful()) {
-            AtherysRPG.getInstance().getLogger().warn(
-                    "Failed to set max health for entity {}, Max HP Result: {}",
-                    living,
-                    maxHPResult
-            );
-        }
-
-        if (living.supports(Keys.HEALTH_SCALE)) {
-            living.offer(Keys.HEALTH_SCALE, config.HEALTH_SCALING);
-        }
-    }
-
-    public void assignEntityMovementSpeed(Living living) {
-        if (!living.supports(Keys.WALKING_SPEED)) return;
-
-        double newMovementSpeed = expressionService.evalExpression(living, config.MOVEMENT_SPEED_CALCULATION).doubleValue();
-        double oldMovementSpeed = living.get(Keys.WALKING_SPEED).get();
-
-        if (Math.abs(newMovementSpeed - oldMovementSpeed) >= 0.0001) {
-            living.offer(Keys.WALKING_SPEED, newMovementSpeed);
-        }
+    public void updateCharacter(Living living, boolean fill) {
+        characterService.assignEntityHealthLimit(living, fill);
+        characterService.assignEntityResourceLimit(living, fill);
+        characterService.assignEntityMovementSpeed(living);
     }
 
     public void setKeepInventoryOnPVP(DestructEntityEvent.Death event) {
