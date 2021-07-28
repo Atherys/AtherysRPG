@@ -1,6 +1,7 @@
 package com.atherys.rpg.facade;
 
 import com.atherys.rpg.AtherysRPG;
+import com.atherys.rpg.api.event.RegisterItemEvent;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.api.stat.AttributeTypeRegistry;
 import com.atherys.rpg.command.exception.RPGCommandException;
@@ -95,6 +96,12 @@ public class ItemFacade {
         } else {
             itemGroup.add(itemConfig.ID);
         }
+
+        Sponge.getEventManager().post(new RegisterItemEvent(this));
+    }
+
+    public void registerItem(String id, ItemStackSnapshot item) {
+        items.put(id, item);
     }
 
     public Map<String, ItemStackSnapshot> getCachedItems() {
