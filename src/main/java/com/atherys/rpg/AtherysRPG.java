@@ -40,7 +40,6 @@ import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.*;
@@ -144,11 +143,6 @@ public class AtherysRPG {
     @Listener(order = Order.FIRST)
     public void onRegister(GameRegistryEvent.Register<CraftingRecipe> event) {
         getItemFacade().init();
-        try {
-            AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
-        } catch (CommandService.AnnotatedCommandException e) {
-            e.printStackTrace();
-        }
     }
 
     @Listener
@@ -186,6 +180,12 @@ public class AtherysRPG {
             components.healingService.init();
             getMobService().init();
             getSpawnerService().init();
+
+            try {
+                AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
+            } catch (CommandService.AnnotatedCommandException e) {
+                e.printStackTrace();
+            }
         }
     }
 
