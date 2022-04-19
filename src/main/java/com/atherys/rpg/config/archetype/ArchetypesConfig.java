@@ -17,6 +17,9 @@ public class ArchetypesConfig extends PluginConfig {
         ARCHETYPES.add(new ArchetypeConfig());
     }
 
+    @Setting("classes")
+    public Set<ClassConfig> CLASS_CONFIGS = new HashSet<>();
+
     @Setting("default-archetype")
     public String DEFAULT = "None";
 

@@ -14,6 +14,10 @@ public class SpawnersConfig extends PluginConfig {
     @Setting("spawners")
     public List<SpawnerConfig> SPAWNERS = new ArrayList<>();
 
+    {
+        SPAWNERS.add(new SpawnerConfig());
+    }
+
     public SpawnersConfig() throws IOException {
         super("config/atherysrpg", "spawners.conf");
     }

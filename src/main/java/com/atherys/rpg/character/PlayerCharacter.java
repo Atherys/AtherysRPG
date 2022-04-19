@@ -56,6 +56,8 @@ public class PlayerCharacter implements RPGCharacter<Player> {
     @Transient
     private List<RPGSkill> rpgSkills;
 
+    private String role;
+
     public PlayerCharacter() {
     }
 
@@ -161,5 +163,13 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     public void setSpentAttributeExperience(double spentAttributeExperience) {
         this.spentAttributeExperience = spentAttributeExperience;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
