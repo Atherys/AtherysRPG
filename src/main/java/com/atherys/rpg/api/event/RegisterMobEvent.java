@@ -2,7 +2,7 @@ package com.atherys.rpg.api.event;
 
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.service.MobService;
-import org.spongepowered.api.entity.EntityArchetype;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.impl.AbstractEvent;
@@ -14,7 +14,7 @@ public class RegisterMobEvent extends AbstractEvent {
         this.mobService = mobService;
     }
 
-    public void registerMob(String id, EntityArchetype mob) {
+    public void registerMob(String id, Living mob) {
         mobService.registerMob(id, mob);
     }
 
