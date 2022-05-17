@@ -52,7 +52,6 @@ public class MobService {
         assignEntityDamageExpression(living, attributes, mobConfig.DAMAGE_EXPRESSION);
         characterService.assignEntityHealthLimit(living, true);
         characterService.assignEntityMovementSpeed(living);
-        living.remove();
 
         mobsCache.put(id, living.createArchetype());
     }

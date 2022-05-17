@@ -2,7 +2,6 @@ package com.atherys.rpg.facade;
 
 import com.atherys.core.AtherysCore;
 import com.atherys.rpg.AtherysRPG;
-import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.loot.CurrencyLootConfig;
@@ -11,13 +10,11 @@ import com.atherys.rpg.config.loot.ItemLootConfig;
 import com.atherys.rpg.config.loot.LootConfig;
 import com.atherys.rpg.config.mob.MobConfig;
 import com.atherys.rpg.config.mob.MobsConfig;
-import com.atherys.rpg.config.mob.SpawnersConfig;
 import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.integration.AtherysPartiesIntegration;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.MobService;
 import com.atherys.rpg.service.RPGCharacterService;
-import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomUtils;
@@ -26,7 +23,6 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityArchetype;
-import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
@@ -88,8 +84,6 @@ public class MobFacade {
             frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLACEMENT);
             Entity entity = archetype.apply(player.getLocation()).orElseThrow(() -> new RPGCommandException("Error."));
             entity.offer(Keys.PERSISTS, false);
-
-            player.getWorld().spawnEntity(entity);
         }
     }
 
@@ -179,6 +173,24 @@ public class MobFacade {
             groundItem.offer(Keys.REPRESENTED_ITEM, itemStack.get().createSnapshot());
             dropLocation.getExtent().spawnEntity(groundItem);
         }
+    }
+
+
+    public void onMobSpawn(SpawnEntityEvent event) {
+        Set<Living> npcs = event.getEntities().stream()
+                .filter(entity -> entity instanceof Living && !(entity instanceof Player))
+                .map(entity -> (Living) entity)
+                .collect(Collectors.toSet());
+
+        // For all npcs, set their damage expression and max health
+        npcs.forEach(living -> {
+            getMobConfigFromLiving(living).ifPresent(mobConfig -> {
+                characterService.getOrCreateCharacter(living, attributeService.fillInAttributes(mobConfig.DEFAULT_ATTRIBUTES));
+                living.offer(new DamageExpressionData(mobConfig.DAMAGE_EXPRESSION));
+                characterService.assignEntityHealthLimit(living, true);
+                characterService.assignEntityMovementSpeed(living);
+            });
+        });
     }
 
     private void awardPlayerExperienceLoot(Player player, ExperienceLootConfig config, int split) {

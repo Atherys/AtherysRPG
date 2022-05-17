@@ -9,7 +9,6 @@ import com.atherys.rpg.data.AttributeMapData;
 import com.atherys.rpg.facade.MobFacade;
 import com.atherys.rpg.facade.RPGCharacterFacade;
 import com.atherys.rpg.service.RPGCharacterService;
-import com.atherys.rpg.service.SpawnerService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
@@ -27,7 +26,6 @@ import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEv
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.world.chunk.UnloadChunkEvent;
 
 @Singleton
 public class EntityListener {
@@ -44,9 +42,6 @@ public class EntityListener {
     @Inject
     private AtherysRPGConfig config;
 
-    @Inject
-    private SpawnerService spawnerService;
-
     @Listener
     public void onJoin(ClientConnectionEvent.Join event) {
         characterFacade.onPlayerJoin(event.getTargetEntity());
@@ -57,6 +52,11 @@ public class EntityListener {
         characterFacade.onDamage(event, source, target);
     }
 
+    @Listener(order = Order.LAST)
+    public void onEntitySpawn(SpawnEntityEvent event) {
+        mobFacade.onMobSpawn(event);
+    }
+
     @Listener
     public void onEntityDeath(DestructEntityEvent.Death event, @Getter("getTargetEntity") Living target, @Root EntityDamageSource source) {
         EntityUtils.playerAttackedEntity(source).ifPresent(player -> mobFacade.dropMobLoot(target, player));
@@ -64,20 +64,8 @@ public class EntityListener {
         if (EntityUtils.getRootEntity(source).getType().equals(EntityTypes.PLAYER) && target.getType().equals(EntityTypes.PLAYER)) {
             characterFacade.setKeepInventoryOnPVP(event);
         }
-
     }
 
-    @Listener
-    public void onEntityDestruction(DestructEntityEvent event, @Getter("getTargetEntity") Living target) {
-        spawnerService.removeMob(target);
-    }
-
-    @Listener
-    public void onChunkUnload(UnloadChunkEvent event) {
-        event.getTargetChunk().getEntities().forEach(entity -> {
-
-        });
-    }
 
     @Listener(order = Order.LAST)
     public void onPlayerRespawn(RespawnPlayerEvent event) {

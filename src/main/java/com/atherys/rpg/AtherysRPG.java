@@ -17,7 +17,6 @@ import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.archetype.ArchetypesConfig;
 import com.atherys.rpg.config.loot.ItemTemplatesConfig;
 import com.atherys.rpg.config.mob.MobsConfig;
-import com.atherys.rpg.config.mob.SpawnersConfig;
 import com.atherys.rpg.config.skill.SkillGraphConfig;
 import com.atherys.rpg.config.stat.AttributesConfig;
 import com.atherys.rpg.data.AttributeMapData;
@@ -151,7 +150,6 @@ public class AtherysRPG {
         getConfig().init();
         getGraphConfig().init();
         getMobsConfig().init();
-        getSpawnersConfig().init();
         getArchetypesConfig().init();
 
         getExpressionService().init();
@@ -179,7 +177,6 @@ public class AtherysRPG {
             getPlayerCharacterRepository().initCache();
             components.healingService.init();
             getMobService().init();
-            getSpawnerService().init();
 
             try {
                 AtherysCore.getCommandService().register(new SpawnItemCommand(), this);
@@ -248,10 +245,6 @@ public class AtherysRPG {
         return components.mobsConfig;
     }
 
-    public SpawnersConfig getSpawnersConfig() {
-        return components.spawnersConfig;
-    }
-
     public ArchetypesConfig getArchetypesConfig() {
         return components.archetypesConfig;
     }
@@ -282,10 +275,6 @@ public class AtherysRPG {
 
     public MobService getMobService() {
         return components.mobService;
-    }
-
-    public SpawnerService getSpawnerService() {
-        return components.spawnerService;
     }
 
     public RPGMessagingFacade getRPGMessagingFacade() {
@@ -334,9 +323,6 @@ public class AtherysRPG {
         MobsConfig mobsConfig;
 
         @Inject
-        SpawnersConfig spawnersConfig;
-
-        @Inject
         ArchetypesConfig archetypesConfig;
 
         @Inject
@@ -371,9 +357,6 @@ public class AtherysRPG {
 
         @Inject
         MobService mobService;
-
-        @Inject
-        SpawnerService spawnerService;
 
         @Inject
         RPGSkillFacade rpgSkillFacade;
