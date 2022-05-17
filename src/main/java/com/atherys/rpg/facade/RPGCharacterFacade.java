@@ -182,7 +182,7 @@ public class RPGCharacterFacade {
             }
         }
 
-        double cost = skillGraphService.getCostForSkill(skill, pc.getSkills()).orElseThrow(() -> {
+        double cost = skillGraphService.getCostForSkill(pc, skill, pc.getSkills()).orElseThrow(() -> {
             return new RPGCommandException("You do not have access to the skill ", skill.getName(), ".");
         });
 
@@ -220,7 +220,7 @@ public class RPGCharacterFacade {
 
         if (skillGraphService.isPathValid(skillsCopy)) {
             characterService.removeSkill(pc, skill);
-            skillGraphService.getCostForSkill(skill, skillsCopy).ifPresent(cost -> {
+            skillGraphService.getCostForSkill(pc, skill, skillsCopy).ifPresent(cost -> {
                 characterService.addExperience(pc, cost);
                 characterService.addSpentSkillExperience(pc, -cost);
             });

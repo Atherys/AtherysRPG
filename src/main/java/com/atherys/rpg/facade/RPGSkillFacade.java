@@ -3,6 +3,7 @@ package com.atherys.rpg.facade;
 import com.atherys.rpg.api.skill.DescriptionArgument;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.TargetedRPGSkill;
+import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
@@ -89,7 +90,8 @@ public class RPGSkillFacade {
                 .toBuilder();
 
         List<String> skills = characterService.getOrCreateCharacter(source).getSkills();
-        hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "EXP to Unlock: ", GOLD, skillGraphService.getCostForSkill(skill, skills).get()));
+        PlayerCharacter pc = characterService.getOrCreateCharacter(source);
+        hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "EXP to Unlock: ", GOLD, skillGraphService.getCostForSkill(pc, skill, skills).get()));
         hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Next Skills: "));
 
         int i = 0;

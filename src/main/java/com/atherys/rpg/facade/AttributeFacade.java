@@ -169,16 +169,13 @@ public class AttributeFacade {
     private double getCostForAttributes(Player player, double amount) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        double totalPurchased = Sponge.getRegistry().getAllOf(AttributeType.class).stream()
-                .filter(AttributeType::isUpgradable)
-                .map(attributeType -> pc.getCharacterAttributes().getOrDefault(attributeType, 0.0))
-                .reduce(Double::sum)
-                .orElse(0.0);
+        double totalPurchased = attributeService.getUpgradeableAttributeCount(pc);
 
         double expCost = 0;
         Expression cost = expressionService.getExpression(config.ATTRIBUTE_UPGRADE_COST);
         for (int i = 0; i < amount; i++) {
             cost.setVariable("ATTRIBUTES", BigDecimal.valueOf(totalPurchased));
+            cost.setVariable("SKILLS", BigDecimal.valueOf(pc.getSkills().size()));
             expCost += cost.eval().doubleValue();
             totalPurchased++;
         }

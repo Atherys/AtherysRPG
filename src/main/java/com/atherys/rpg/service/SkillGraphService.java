@@ -3,13 +3,16 @@ package com.atherys.rpg.service;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.skill.SkillGraph;
 import com.atherys.rpg.api.util.Graph;
+import com.atherys.rpg.character.PlayerCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.skill.SkillGraphConfig;
 import com.atherys.rpg.config.skill.SkillNodeConfig;
 import com.atherys.rpg.facade.RPGSkillFacade;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.udojava.evalex.Expression;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,12 @@ public class SkillGraphService {
 
     @Inject
     private RPGSkillFacade skillFacade;
+
+    @Inject
+    private ExpressionService expressionService;
+
+    @Inject
+    private AttributeService attributeService;
 
     private SkillGraph skillGraph;
 
@@ -55,7 +64,7 @@ public class SkillGraphService {
         config.LINKS.forEach((linkConfig) -> {
             RPGSkill parent = namedSkillNodes.get(linkConfig.PARENT_SKILL_NODE_ID);
             RPGSkill child = namedSkillNodes.get(linkConfig.CHILD_SKILL_NODE_ID);
-            double cost = linkConfig.COST;
+            String cost = linkConfig.COST;
             Graph.LinkType type = Graph.LinkType.valueOf(linkConfig.TYPE.toString());
 
             newSkillGraph.add(parent, child, cost, type);
@@ -199,7 +208,12 @@ public class SkillGraphService {
         return Optional.empty();
     }
 
-    public Optional<Double> getCostForSkill(RPGSkill skill, List<String> skillIds) {
-        return getLinkBetween(skill, skillIds).map(Graph.Link::getWeight);
+    public Optional<Double> getCostForSkill(PlayerCharacter pc, RPGSkill skill, List<String> skillIds) {
+        return getLinkBetween(skill, skillIds).map(link -> {
+            Expression expression = expressionService.getExpression(link.getWeight());
+            expression.setVariable("SKILLS", BigDecimal.valueOf(skillIds.size()));
+            expression.setVariable("ATTRIBUTES", BigDecimal.valueOf(attributeService.getUpgradeableAttributeCount(pc)));
+            return expression.eval().doubleValue();
+        });
     }
 }

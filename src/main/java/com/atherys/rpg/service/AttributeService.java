@@ -11,6 +11,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Equipable;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 
@@ -162,5 +163,13 @@ public class AttributeService {
         }
 
         return result;
+    }
+
+    public double getUpgradeableAttributeCount(RPGCharacter<?> character) {
+        return Sponge.getRegistry().getAllOf(AttributeType.class).stream()
+                .filter(AttributeType::isUpgradable)
+                .map(attributeType -> character.getCharacterAttributes().getOrDefault(attributeType, 0.0))
+                .reduce(Double::sum)
+                .orElse(0.0);
     }
 }

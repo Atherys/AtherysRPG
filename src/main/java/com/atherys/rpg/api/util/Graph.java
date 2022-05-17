@@ -63,11 +63,11 @@ public class Graph<T> {
 
         private Node<T> child;
 
-        private double weight;
+        private String weight;
 
         private LinkType type;
 
-        Link(Node<T> parent, Node<T> child, double weight, LinkType type) {
+        Link(Node<T> parent, Node<T> child, String weight, LinkType type) {
             this.parent = parent;
             this.child = child;
             this.weight = weight;
@@ -98,11 +98,11 @@ public class Graph<T> {
             this.type = type;
         }
 
-        public double getWeight() {
+        public String getWeight() {
             return weight;
         }
 
-        public void setWeight(double weight) {
+        public void setWeight(String weight) {
             this.weight = weight;
         }
 
@@ -142,7 +142,7 @@ public class Graph<T> {
     public Graph(T root) {
         firstAdded = new Node<>(root);
         nodes.add(firstAdded);
-        links.add(new Link<>(firstAdded, firstAdded, -1.0, LinkType.UNIDIRECTIONAL));
+        links.add(new Link<>(firstAdded, firstAdded, "-1.0", LinkType.UNIDIRECTIONAL));
         lastAdded = firstAdded;
     }
 
@@ -186,7 +186,7 @@ public class Graph<T> {
      * @param linkType The type of link to be created between the objects
      *                 ( if a relationship already exists, it will be modified )
      */
-    public void add(T parent, T object, double weight, LinkType linkType) {
+    public void add(T parent, T object, String weight, LinkType linkType) {
         Preconditions.checkNotNull(parent, "Parent cannot be null.");
         Preconditions.checkNotNull(object, "Object cannot be null.");
         Preconditions.checkNotNull(linkType, "Link type cannot be null.");
@@ -197,7 +197,7 @@ public class Graph<T> {
         // If the parent node does not exist, create it and link it bidirectionally with the last node added to the graph
         if (!nodes.contains(parentNode)) {
             nodes.add(parentNode);
-            links.add(new Link<>(lastAdded, parentNode, 0.0, LinkType.BIDIRECTIONAL));
+            links.add(new Link<>(lastAdded, parentNode, "0.0", LinkType.BIDIRECTIONAL));
         }
 
         // If a link already exists between the objects, modify it
@@ -215,19 +215,19 @@ public class Graph<T> {
 
     /**
      * Add a new parent-object pair, with a default weight of 0.0.
-     * This method follows the same rules as {@link #add(Object, Object, double, LinkType)}.
+     * This method follows the same rules as {@link #add(Object, Object, String, LinkType)}.
      *
      * @param parent   The parent object
      * @param object   The child object
      * @param linkType The type of link between them
      */
     public void add(T parent, T object, LinkType linkType) {
-        add(parent, object, 0.0, linkType);
+        add(parent, object, "0.0", linkType);
     }
 
     /**
      * Add a new bidirectional parent-object pair, with a default weight of 0.0
-     * This method follows the same rules as {@link #add(Object, Object, double, LinkType)}.
+     * This method follows the same rules as {@link #add(Object, Object, String, LinkType)}.
      *
      * @param parent the parent
      * @param object the child
@@ -238,30 +238,30 @@ public class Graph<T> {
 
     /**
      * Add a new link between the last added object and the one provided.
-     * This method follows the same rules as {@link #add(Object, Object, double, LinkType)}.
+     * This method follows the same rules as {@link #add(Object, Object, String, LinkType)}.
      *
      * @param object The child object to attach to the last one added
      * @param weight the weight of the new link
      * @param linkType the type of the link
      */
-    public void add(T object, double weight, LinkType linkType) {
+    public void add(T object, String weight, LinkType linkType) {
         add(lastAdded.getData(), object, weight, linkType);
     }
 
     /**
      * Add a new link between the last added object and the one provided, with a default weight of 0.0.
-     * This method follows the same rules as {@link #add(Object, Object, double, LinkType)}.
+     * This method follows the same rules as {@link #add(Object, Object, String, LinkType)}.
      *
      * @param object the child object to link to the last one added
      * @param linkType The type of link to create
      */
     public void add(T object, LinkType linkType) {
-        add(object, 0.0, linkType);
+        add(object, "0.0", linkType);
     }
 
     /**
      * Add a new bidirectional link between the last added object and the one provided, with a default weight of 0.0.
-     * This method follows the same rules as {@link #add(Object, Object, double, LinkType)}.
+     * This method follows the same rules as {@link #add(Object, Object, String, LinkType)}.
      *
      * @param object the child object to be added
      */

@@ -18,7 +18,7 @@ public class SkillNodeLinkConfig {
     public String CHILD_SKILL_NODE_ID = "some-skill-node-child-id";
 
     @Setting("cost")
-    public double COST = 0.0;
+    public String COST = "0.0";
 
     @Setting("type")
     public SkillNodeLinkConfigType TYPE = SkillNodeLinkConfigType.UNIDIRECTIONAL;
