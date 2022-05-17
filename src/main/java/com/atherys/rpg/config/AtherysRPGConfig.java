@@ -67,7 +67,7 @@ public class AtherysRPGConfig extends PluginConfig {
     public String MOVEMENT_SPEED_CALCULATION = "0.1";
 
     @Setting("attribute-upgrade-cost")
-    public double ATTRIBUTE_UPGRADE_COST = 100.0;
+    public String ATTRIBUTE_UPGRADE_COST = "100.0";
 
     @Setting("experience-max")
     public double EXPERIENCE_MAX = 100_000.0;

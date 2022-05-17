@@ -12,6 +12,7 @@ import com.atherys.rpg.service.ExpressionService;
 import com.atherys.rpg.service.RPGCharacterService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
@@ -26,6 +27,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -128,7 +130,7 @@ public class AttributeFacade {
             throw new RPGCommandException("You may not purchase a Non-Upgradable attribute.");
         }
 
-        double expCost = amount * config.ATTRIBUTE_UPGRADE_COST;
+        double expCost = getCostForAttributes(player, amount);
 
         // If the player has already reached their experience spending limit, cancel
         if (pc.getSpentExperience() + expCost > config.EXPERIENCE_SPENDING_LIMIT) {
@@ -162,6 +164,27 @@ public class AttributeFacade {
                     " experience."
             );
         }
+    }
+
+    private double getCostForAttributes(Player player, double amount) {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+
+        double totalPurchased = Sponge.getRegistry().getAllOf(AttributeType.class).stream()
+                .filter(AttributeType::isUpgradable)
+                .map(attributeType -> pc.getCharacterAttributes().getOrDefault(attributeType, 0.0))
+                .reduce(Double::sum)
+                .orElse(0.0);
+
+        double expCost = 0;
+        Expression cost = expressionService.getExpression(config.ATTRIBUTE_UPGRADE_COST);
+        for (int i = 0; i < amount; i++) {
+            cost.setVariable("ATTRIBUTES", BigDecimal.valueOf(totalPurchased));
+            expCost += cost.eval().doubleValue();
+            totalPurchased++;
+        }
+        System.out.println("Total cost for " + amount + " starting with " + (totalPurchased - amount) + ": " + expCost);
+
+        return expCost;
     }
 
     public void resetPlayerAttributes(Player source) {
@@ -207,6 +230,9 @@ public class AttributeFacade {
         Map<AttributeType, Double> buffAttributes = pc.getBuffAttributes();
         Map<AttributeType, Double> equipmentAttributes = getEquipmentAttributes(player);
 
+        double costFor1 = getCostForAttributes(player, 1.0);
+        double costFor5 = getCostForAttributes(player, 5.0);
+
         Sponge.getRegistry().getAllOf(AttributeType.class).forEach( type -> {
 
             // if the attribute is hidden, there's no need to proceed.
@@ -235,8 +261,8 @@ public class AttributeFacade {
             Text upgradeButton5 = Text.EMPTY;
 
             if (type.isUpgradable()) {
-                upgradeButton1 = getAddAttributeButton(pc, type, 1.0);
-                upgradeButton5 = getAddAttributeButton(pc, type, 5.0);
+                upgradeButton1 = getAddAttributeButton(pc, type, 1.0, costFor1);
+                upgradeButton5 = getAddAttributeButton(pc, type, 5.0, costFor5);
             }
 
             Text attribute = Text.builder()
@@ -252,7 +278,7 @@ public class AttributeFacade {
         attributeTexts.forEach(player::sendMessage);
     }
 
-    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double amountToAdd) {
+    private Text getAddAttributeButton(PlayerCharacter pc, AttributeType type, double amountToAdd, double cost) {
 
         Consumer<CommandSource> onClick = source -> {
             if (source instanceof Player) {
@@ -265,7 +291,7 @@ public class AttributeFacade {
         };
 
         Text hoverText = Text.builder()
-                .append(Text.of(DARK_GREEN, "Click to add ", (int) amountToAdd, type.getColor(), type.getName(), DARK_GREEN, " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN, " experience"))
+                .append(Text.of(DARK_GREEN, "Click to add ", (int) amountToAdd, type.getColor(), type.getName(), DARK_GREEN, " for ", GOLD, cost, DARK_GREEN, " experience"))
                 .build();
 
         return Text.builder()
