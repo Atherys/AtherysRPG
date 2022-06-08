@@ -7,11 +7,16 @@ import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.ArmorEquipableCharacter;
 import com.atherys.rpg.character.PlayerCharacter;
+import com.atherys.rpg.character.Role;
 import com.atherys.rpg.character.SimpleCharacter;
 import com.atherys.rpg.config.AtherysRPGConfig;
+import com.atherys.rpg.config.archetype.ArchetypesConfig;
+import com.atherys.rpg.config.archetype.ClassConfig;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.resource.ResourceUser;
+import com.atherys.skills.api.skill.Castable;
+import com.atherys.skills.service.SkillService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
@@ -28,12 +33,16 @@ import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class RPGCharacterService {
 
     @Inject
     private AtherysRPGConfig config;
+
+    @Inject
+    private ArchetypesConfig archetypesConfig;
 
     @Inject
     private PlayerCharacterRepository repository;
@@ -47,13 +56,28 @@ public class RPGCharacterService {
     @Inject
     private SkillGraphService skillGraphService;
 
-    private HashMap<UUID, RPGCharacter<? extends Living>> nonPlayerCharacters = new HashMap<>();
+    private final Map<UUID, RPGCharacter<? extends Living>> nonPlayerCharacters = new HashMap<>();
+
+    private final Map<String, Role> classes = new HashMap<>();
+
+    public void init() {
+        for (ClassConfig classConfig : archetypesConfig.CLASS_CONFIGS) {
+            Role role = new Role(
+                    classConfig.NAME,
+                    classConfig.SKILLS.stream()
+                            .map(skillId -> (RPGSkill) AtherysSkills.getInstance().getSkillService().getSkillById(skillId).get())
+                            .collect(Collectors.toSet()),
+                    classConfig.DESCRIPTION
+            );
+            classes.put(classConfig.NAME, role);
+        }
+    }
 
     public PlayerCharacter getOrCreateCharacter(Player player) {
         return repository.findById(player.getUniqueId()).orElseGet(() -> {
             PlayerCharacter pc = new PlayerCharacter(player.getUniqueId());
             pc.setEntity(player);
-            pc.addSkill(skillGraphService.getSkillGraphRoot().getId());
+            pc.addSkill(skillGraphService.getSkillGraphRoot());
             pc.setExperience(config.EXPERIENCE_START);
             repository.saveOne(pc);
 
@@ -89,27 +113,39 @@ public class RPGCharacterService {
         }
     }
 
-    public void setSkills(PlayerCharacter pc, List<String> skills) {
-        pc.setSkills(skills);
-        skills.forEach(s -> setSkillPermission(pc, s, true));
+    public void setSkills(PlayerCharacter pc, List<RPGSkill> skills) {
+        setSkillPermissions(pc, pc.getSkills(), false);
+        pc.getSkills().clear();
+        pc.addSkill(skillGraphService.getSkillGraphRoot());
+        setSkillPermission(pc, skillGraphService.getSkillGraphRoot(), true);
+        pc.getSkills().addAll(skills);
+        setSkillPermissions(pc, skills, true);
         repository.saveOne(pc);
     }
 
     public void addSkill(PlayerCharacter pc, RPGSkill skill) {
-        pc.addSkill(skill.getId());
-        setSkillPermission(pc, skill.getPermission(), true);
+        pc.addSkill(skill);
+        setSkillPermission(pc, skill, true);
         repository.saveOne(pc);
     }
 
     public void removeSkill(PlayerCharacter pc, RPGSkill skill) {
         pc.removeSkill(skill.getId());
-        setSkillPermission(pc, skill.getPermission(), false);
+        setSkillPermission(pc, skill, false);
         repository.saveOne(pc);
     }
 
-    private void setSkillPermission(PlayerCharacter pc, String skillPermission, boolean value) {
+    private void setSkillPermission(PlayerCharacter pc, Castable skill, boolean value) {
         getUser(pc).ifPresent(user -> {
-            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skillPermission, value ? Tristate.TRUE : Tristate.FALSE);
+            user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skill.getPermission(), value ? Tristate.TRUE : Tristate.FALSE);
+        });
+    }
+
+    private void setSkillPermissions(PlayerCharacter pc, Collection<? extends Castable> skills, boolean value) {
+        getUser(pc).ifPresent(user -> {
+            skills.forEach(skill -> {
+                user.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, skill.getPermission(), value ? Tristate.TRUE : Tristate.FALSE);
+            });
         });
     }
 
@@ -198,13 +234,7 @@ public class RPGCharacterService {
     public void resetCharacterSkills(PlayerCharacter pc) {
         double spentOnSkills = pc.getSpentSkillExperience();
 
-        AtherysSkills.getInstance().getSkillService().getAllSkills().values().forEach(castable -> {
-            setSkillPermission(pc, castable.getPermission(), false);
-        });
-
-        pc.getSkills().clear();
-        pc.addSkill(skillGraphService.getSkillGraphRoot().getId());
-        setSkillPermission(pc, skillGraphService.getSkillGraphRoot().getPermission(), true);
+        updateRole(pc, pc.getRole());
 
         pc.setSpentSkillExperience(0);
         pc.setSpentExperience(pc.getSpentExperience() - spentOnSkills);
@@ -224,6 +254,21 @@ public class RPGCharacterService {
         repository.saveOne(pc);
 
         Sponge.getEventManager().post(new ChangeAttributeEvent(pc));
+    }
+
+    public void updateRole(PlayerCharacter pc, Role role) {
+        pc.setRole(role);
+        setSkills(pc, new ArrayList<>(role.getSkills()));
+
+        repository.saveOne(pc);
+    }
+
+    public Optional<Role> getRole(String classId) {
+        return Optional.ofNullable(classes.get(classId));
+    }
+
+    public Collection<Role> getAllRoles() {
+        return classes.values();
     }
 
     /**

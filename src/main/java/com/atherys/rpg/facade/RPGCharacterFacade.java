@@ -1,27 +1,35 @@
 package com.atherys.rpg.facade;
 
+import com.atherys.core.utils.Question;
+import com.atherys.core.utils.Question.Answer;
+import com.atherys.core.utils.Sound;
 import com.atherys.rpg.AtherysRPG;
 import com.atherys.rpg.api.event.GainSkillEvent;
 import com.atherys.rpg.api.event.LoseSkillEvent;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.character.PlayerCharacter;
+import com.atherys.rpg.character.Role;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.archetype.ArchetypeConfig;
 import com.atherys.rpg.config.archetype.ArchetypesConfig;
+import com.atherys.rpg.config.archetype.ClassConfig;
 import com.atherys.rpg.data.DamageExpressionData;
 import com.atherys.rpg.service.*;
 import com.atherys.skills.AtherysSkills;
 import com.atherys.skills.api.event.ResourceEvent;
 import com.atherys.skills.api.resource.ResourceUser;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.udojava.evalex.Expression;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.entity.MovementSpeedData;
+import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Equipable;
@@ -44,6 +52,7 @@ import org.spongepowered.api.text.action.TextActions;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.spongepowered.api.text.format.TextColors.*;
 import static org.spongepowered.api.text.format.TextStyles.BOLD;
@@ -81,6 +90,9 @@ public class RPGCharacterFacade {
     @Inject
     private RPGMessagingFacade rpgMsg;
 
+
+    private static final Sound roleSound = Sound.builder(SoundTypes.ENTITY_FIREWORK_TWINKLE, 1).build();
+
     public void showPlayerExperience(Player player) {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
         rpgMsg.info(player, Text.of(DARK_GREEN, "Your current experience: ", GOLD, (int) pc.getExperience()));
@@ -103,17 +115,17 @@ public class RPGCharacterFacade {
         }
     }
 
-    public void displayAllSkills(Player player) {
+    public void displayAllSkills(Player player) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        checkClass(pc);
 
-        List<String> ownedSkills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
+        List<RPGSkill> ownedSkills = config.DISPLAY_ROOT_SKILL ? pc.getSkills() : pc.getSkills().subList(1, pc.getSkills().size());
 
         List<Text> messages = new ArrayList<>();
         messages.add(Text.of(GOLD, BOLD, getArchetype(ownedSkills)));
         messages.add(Text.of(DARK_GRAY, "[]====[ ", GOLD, "Your Skills", DARK_GRAY, " ]====[]"));
 
-        for (String skillId : ownedSkills) {
-            RPGSkill skill = skillFacade.getSkillById(skillId).get();
+        for (RPGSkill skill : ownedSkills) {
             messages.add(Text.of(DARK_GREEN, "- ", skillFacade.renderSkill(skill, player), " "));
         }
 
@@ -121,7 +133,7 @@ public class RPGCharacterFacade {
 
         for (RPGSkill skill : skillGraphService.getLinkedSkills(pc.getSkills())) {
             Text skillText = Text.builder()
-                    .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(skill, player), " "))
+                    .append(Text.of(DARK_GREEN, "- ", skillFacade.renderAvailableSkill(skill, player, true), " "))
                     .onClick(TextActions.executeCallback(source -> chooseSkillWithoutThrowing(player, skill.getId())))
                     .build();
             messages.add(skillText);
@@ -130,13 +142,59 @@ public class RPGCharacterFacade {
         messages.forEach(player::sendMessage);
     }
 
-    private String getArchetype(List<String> skills) {
+    private void checkClass(PlayerCharacter pc) throws RPGCommandException {
+        if (archetypesConfig.CLASS_CONFIGS.size() > 0 && pc.getRole() == Role.citizen) {
+            throw new RPGCommandException("You must choose a class before unlocking skills!");
+        }
+    }
+
+    public void showClasses(Player player) throws RPGCommandException {
+        PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        List<Text> messages = new ArrayList<>();
+        messages.add(Text.of(DARK_GRAY, "[]======[ ", GOLD, "CLASSES", DARK_GRAY, " ]======[]"));
+
+        for (Role role: characterService.getAllRoles()) {
+            Text.Builder name = Text.builder()
+                    .append(Text.of(BOLD, GOLD, role.getName()))
+                    .onClick(TextActions.executeCallback(src -> {
+                        if (pc.getRole() == Role.citizen) {
+                            Question.of(Text.of(DARK_GREEN, "Are you sure? Switching will require visiting a trainer."))
+                                    .addAnswer(Answer.of(Text.of(GREEN, "Yes"), p -> {
+                                        characterService.updateRole(pc, role);
+                                        rpgMsg.info(player, "You are now a ", GOLD, BOLD, role.getName(), NONE, DARK_GREEN, ".");
+                                        Sound.playSound(roleSound, player, Vector3d.ZERO);
+                                    }))
+                                    .addAnswer(Answer.of(Text.of(RED, "No"), p -> {}))
+                                    .build()
+                                    .pollChat(player);
+                        }
+                    }))
+                    .onHover(TextActions.showText(Text.of(DARK_GREEN, "Choose ", BOLD, GOLD, role.getName(), Text.NEW_LINE, DARK_GREEN, role.getDescription())));
+
+            messages.add(name.build());
+            Text.Builder skills = Text.builder();
+            role.getSkills().stream()
+                    .map(skill -> skillFacade.renderAvailableSkill(skill, player, false))
+                    .forEach(skills::append);
+            messages.add(Text.of(DARK_GREEN, "Starting Skills: ", skills.build()));
+        }
+
+        messages.forEach(player::sendMessage);
+    }
+
+    public void setClass(CommandSource source, Player player, String roleId) throws RPGCommandException {
+        Role role = characterService.getRole(roleId).orElseThrow(() -> new RPGCommandException("No class with that name exists!"));
+        characterService.updateRole(characterService.getOrCreateCharacter(player), role);
+        rpgMsg.info(source, "Set ", GOLD, player.getName(), "'s", DARK_GREEN, " class to ", GOLD, role.getName(), DARK_GREEN, ".");
+    }
+
+    private String getArchetype(List<RPGSkill> skills) {
         int skillCount = 0;
         String finalArchetype = archetypesConfig.DEFAULT;
 
         for (ArchetypeConfig archetype : archetypesConfig.ARCHETYPES) {
             Set<String> archetypeSkills = new HashSet<>(archetype.SKILLS);
-            archetypeSkills.retainAll(skills);
+            archetypeSkills.retainAll(skills.stream().map(RPGSkill::getId).collect(Collectors.toList()));
 
             if (archetypeSkills.size() > skillCount) {
                 skillCount = archetypeSkills.size();
@@ -167,9 +225,11 @@ public class RPGCharacterFacade {
 
     public void chooseSkill(Player player, String skillId) throws RPGCommandException {
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
+        checkClass(pc);
+
         RPGSkill skill = getSkillById(skillId);
 
-        if (pc.getSkills().contains(skillId)) {
+        if (pc.getSkills().contains(skill)) {
             throw new RPGCommandException("You already have the skill ", skill.getName(), ".");
         }
 
@@ -211,12 +271,12 @@ public class RPGCharacterFacade {
         RPGSkill skill = getSkillById(skillId);
         PlayerCharacter pc = characterService.getOrCreateCharacter(player);
 
-        if (!pc.getSkills().contains(skillId)) {
+        if (!pc.getSkills().contains(skill)) {
             throw new RPGCommandException("You do not have the skill ", skillId, ".");
         }
 
-        List<String> skillsCopy = new ArrayList<>(pc.getSkills());
-        skillsCopy.remove(skillId);
+        List<RPGSkill> skillsCopy = new ArrayList<>(pc.getSkills());
+        skillsCopy.remove(skill);
 
         if (skillGraphService.isPathValid(skillsCopy)) {
             characterService.removeSkill(pc, skill);

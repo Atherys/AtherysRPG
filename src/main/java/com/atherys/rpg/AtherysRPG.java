@@ -12,6 +12,7 @@ import com.atherys.rpg.command.SpawnItemCommand;
 import com.atherys.rpg.command.SpawnMobCommand;
 import com.atherys.rpg.command.attribute.AttributesCommand;
 import com.atherys.rpg.command.exception.RPGCommandException;
+import com.atherys.rpg.command.role.RoleCommand;
 import com.atherys.rpg.command.skill.SkillsCommand;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.archetype.ArchetypesConfig;
@@ -27,6 +28,7 @@ import com.atherys.rpg.listener.EntityListener;
 import com.atherys.rpg.listener.SkillsListener;
 import com.atherys.rpg.repository.PlayerCharacterRepository;
 import com.atherys.rpg.service.*;
+import com.atherys.skills.event.SkillRegistrationEvent;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -152,6 +154,7 @@ public class AtherysRPG {
         getMobsConfig().init();
         getArchetypesConfig().init();
 
+        getCharacterService().init();
         getExpressionService().init();
 
         // Register listeners
@@ -164,6 +167,7 @@ public class AtherysRPG {
             AtherysCore.getCommandService().register(new ExperienceCommand(), this);
             AtherysCore.getCommandService().register(new SkillsCommand(), this);
             AtherysCore.getCommandService().register(new SpawnMobCommand(), this);
+            AtherysCore.getCommandService().register(new RoleCommand(), this);
         } catch (CommandService.AnnotatedCommandException e) {
             e.printStackTrace();
         }

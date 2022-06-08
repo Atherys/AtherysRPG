@@ -4,6 +4,8 @@ import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.api.skill.RPGSkill;
 import com.atherys.rpg.api.stat.AttributeType;
 import com.atherys.rpg.repository.converter.AttributeTypeConverter;
+import com.atherys.rpg.repository.converter.RoleConverter;
+import com.atherys.rpg.repository.converter.SkillConverter;
 import org.spongepowered.api.entity.living.player.Player;
 
 import javax.annotation.Nonnull;
@@ -51,12 +53,14 @@ public class PlayerCharacter implements RPGCharacter<Player> {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(schema = "atherysrpg", name = "PlayerCharacter_skills")
-    private List<String> skills = new ArrayList<>();
+    @Convert(converter = SkillConverter.class)
+    private List<RPGSkill> skills = new ArrayList<>();
 
     @Transient
     private List<RPGSkill> rpgSkills;
 
-    private String role;
+    @Convert(converter = RoleConverter.class)
+    private Role role = Role.citizen;
 
     public PlayerCharacter() {
     }
@@ -133,15 +137,15 @@ public class PlayerCharacter implements RPGCharacter<Player> {
         this.spentExperience = spentExperience;
     }
 
-    public void setSkills(List<String> skills) {
+    public void setSkills(List<RPGSkill> skills) {
         this.skills = skills;
     }
 
-    public List<String> getSkills() {
+    public List<RPGSkill> getSkills() {
         return skills;
     }
 
-    public void addSkill(String skill) {
+    public void addSkill(RPGSkill skill) {
         skills.add(skill);
     }
 
@@ -165,11 +169,11 @@ public class PlayerCharacter implements RPGCharacter<Player> {
         this.spentAttributeExperience = spentAttributeExperience;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

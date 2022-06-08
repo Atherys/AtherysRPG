@@ -128,24 +128,18 @@ public class SkillGraphService {
      * Tests whether a list of skill ID's has a path through the server's skill graph.
      * @return Whether the list passes.
      */
-    public boolean isPathValid(List<String> skills) {
+    public boolean isPathValid(List<RPGSkill> skills) {
         if (skills.isEmpty()) {
             return false;
         }
 
-        Optional<RPGSkill> root = skillFacade.getSkillById(skills.get(0));
-        if (!root.isPresent() || !getSkillGraph().getRoot().equals(root.get())) {
+        if (!getSkillGraph().getRoot().equals(skills.get(0))) {
             return false;
         }
 
         int i = 1;
-        for (String skillId : skills.subList(1, skills.size())) {
-            Optional<RPGSkill> skill = skillFacade.getSkillById(skillId);
-            if (skill.isPresent()) {
-                if (!checkLink(skill.get(), skills.subList(0, i))) {
-                    return false;
-                }
-            } else {
+        for (RPGSkill skill : skills.subList(1, skills.size())) {
+            if (!checkLink(skill, skills.subList(0, i))) {
                 return false;
             }
             i++;
@@ -154,25 +148,16 @@ public class SkillGraphService {
         return true;
     }
 
-    private boolean checkLink(RPGSkill skill, List<String> previousIds) {
-        for (String id : previousIds) {
-            RPGSkill s = skillFacade.getSkillById(id).get();
-            if (getSkillGraph().getLink(skill, s) != null) {
+    private boolean checkLink(RPGSkill skill, List<RPGSkill> previousSkills) {
+        for (RPGSkill otherSkill : previousSkills) {
+            if (getSkillGraph().getLink(skill, otherSkill) != null) {
                 return true;
             }
         }
         return false;
     }
 
-    public Set<RPGSkill> getLinkedSkills(List<String> skillIds) {
-        Set<RPGSkill> skills = skillIds.stream()
-                .map(skillId -> skillFacade.getSkillById(skillId).get())
-                .collect(Collectors.toSet());
-
-        return getLinkedSkills(skills);
-    }
-
-    public Set<RPGSkill> getLinkedSkills(Set<RPGSkill> skills) {
+    public Set<RPGSkill> getLinkedSkills(List<RPGSkill> skills) {
         Set<RPGSkill> linked = new HashSet<>();
 
         boolean hasUnique = skills.stream()
@@ -198,9 +183,9 @@ public class SkillGraphService {
         return linked;
     }
 
-    public Optional<Graph.Link<RPGSkill>> getLinkBetween(RPGSkill skill, List<String> skillIds) {
-        for (String skillId : skillIds) {
-            Graph.Link<RPGSkill> link = getSkillGraph().getLink(skill, skillFacade.getSkillById(skillId).get());
+    public Optional<Graph.Link<RPGSkill>> getLinkBetween(RPGSkill skill, List<RPGSkill> skillIds) {
+        for (RPGSkill other : skillIds) {
+            Graph.Link<RPGSkill> link = getSkillGraph().getLink(skill, other);
             if (link != null) {
                 return Optional.of(link);
             }
@@ -208,10 +193,10 @@ public class SkillGraphService {
         return Optional.empty();
     }
 
-    public Optional<Double> getCostForSkill(PlayerCharacter pc, RPGSkill skill, List<String> skillIds) {
-        return getLinkBetween(skill, skillIds).map(link -> {
+    public Optional<Double> getCostForSkill(PlayerCharacter pc, RPGSkill skill, List<RPGSkill> skills) {
+        return getLinkBetween(skill, skills).map(link -> {
             Expression expression = expressionService.getExpression(link.getWeight());
-            expression.setVariable("SKILLS", BigDecimal.valueOf(skillIds.size()));
+            expression.setVariable("SKILLS", BigDecimal.valueOf(skills.size()));
             expression.setVariable("ATTRIBUTES", BigDecimal.valueOf(attributeService.getUpgradeableAttributeCount(pc)));
             return expression.eval().doubleValue();
         });

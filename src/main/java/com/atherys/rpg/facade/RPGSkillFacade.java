@@ -76,10 +76,10 @@ public class RPGSkillFacade {
         });
     }
 
-    public Text renderAvailableSkill(RPGSkill skill, Player source) {
+    public Text renderAvailableSkill(RPGSkill skill, Player source, boolean showCost) {
         Text.Builder skillText = renderSkill(skill, source).toBuilder();
 
-        Set<RPGSkill> linkedSkills = skillGraphService.getLinkedSkills(Sets.newHashSet(skill));
+        Set<RPGSkill> linkedSkills = skillGraphService.getLinkedSkills(Collections.singletonList(skill));
 
         if (linkedSkills.isEmpty()) {
             return skillText.build();
@@ -89,9 +89,11 @@ public class RPGSkillFacade {
                 .map(hoverAction -> (Text) hoverAction.getResult()).get()
                 .toBuilder();
 
-        List<String> skills = characterService.getOrCreateCharacter(source).getSkills();
-        PlayerCharacter pc = characterService.getOrCreateCharacter(source);
-        hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "EXP to Unlock: ", GOLD, skillGraphService.getCostForSkill(pc, skill, skills).get()));
+        List<RPGSkill> skills = characterService.getOrCreateCharacter(source).getSkills();
+        if (showCost) {
+            PlayerCharacter pc = characterService.getOrCreateCharacter(source);
+            hoverText.append(Text.of(NEW_LINE, NEW_LINE, DARK_GREEN, "EXP to Unlock: ", GOLD, skillGraphService.getCostForSkill(pc, skill, skills).get()));
+        }
         hoverText.append(Text.of(NEW_LINE, DARK_GREEN, "Next Skills: "));
 
         int i = 0;

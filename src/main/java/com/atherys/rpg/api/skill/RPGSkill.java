@@ -148,9 +148,9 @@ public abstract class RPGSkill implements Castable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RPGSkill)) return false;
-        RPGSkill skill = (RPGSkill) o;
-        return id.equals(skill.id);
+        if (!(o instanceof Castable)) return false;
+        Castable skill = (Castable) o;
+        return id.equals(skill.getId());
     }
 
     @Override
