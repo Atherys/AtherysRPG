@@ -234,7 +234,7 @@ public class RPGCharacterService {
     public void resetCharacterSkills(PlayerCharacter pc) {
         double spentOnSkills = pc.getSpentSkillExperience();
 
-        updateRole(pc, pc.getRole());
+        setSkills(pc, new ArrayList<>(pc.getRole().getSkills()));
 
         pc.setSpentSkillExperience(0);
         pc.setSpentExperience(pc.getSpentExperience() - spentOnSkills);
@@ -258,9 +258,7 @@ public class RPGCharacterService {
 
     public void updateRole(PlayerCharacter pc, Role role) {
         pc.setRole(role);
-        setSkills(pc, new ArrayList<>(role.getSkills()));
-
-        repository.saveOne(pc);
+        resetCharacterSkills(pc);
     }
 
     public Optional<Role> getRole(String classId) {
