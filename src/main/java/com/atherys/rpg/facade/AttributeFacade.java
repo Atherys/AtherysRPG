@@ -160,7 +160,7 @@ public class AttributeFacade {
             rpgMsg.info(player,
                     "You have added ", type.getColor(), (int) amount, " ",
                     type.getName(), DARK_GREEN,
-                    " for ", GOLD, config.ATTRIBUTE_UPGRADE_COST, DARK_GREEN,
+                    " for ", GOLD, expCost, DARK_GREEN,
                     " experience."
             );
         }
@@ -179,7 +179,6 @@ public class AttributeFacade {
             expCost += cost.eval().doubleValue();
             totalPurchased++;
         }
-        System.out.println("Total cost for " + amount + " starting with " + (totalPurchased - amount) + ": " + expCost);
 
         return expCost;
     }

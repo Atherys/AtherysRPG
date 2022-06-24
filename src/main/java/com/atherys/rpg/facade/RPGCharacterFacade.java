@@ -236,7 +236,7 @@ public class RPGCharacterFacade {
         Set<RPGSkill> uniqueSkills = skillGraphService.getUniqueSkills();
         if (skillGraphService.getUniqueSkills().contains(skill)) {
             for (RPGSkill rpgSkill : uniqueSkills) {
-                if (pc.getSkills().contains(rpgSkill.getId())) {
+                if (pc.getSkills().contains(rpgSkill)) {
                     throw new RPGCommandException("You do not have access to the skill ", skill.getName(), ".");
                 }
             }
@@ -487,7 +487,9 @@ public class RPGCharacterFacade {
     public void updateCharacter(Living living, boolean fill) {
         characterService.assignEntityHealthLimit(living, fill);
         characterService.assignEntityResourceLimit(living, fill);
-        characterService.assignEntityMovementSpeed(living);
+        if (living instanceof Player) {
+            characterService.assignEntityMovementSpeed(living);
+        }
     }
 
     public void setKeepInventoryOnPVP(DestructEntityEvent.Death event) {

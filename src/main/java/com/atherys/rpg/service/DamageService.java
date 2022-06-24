@@ -58,6 +58,7 @@ public class DamageService {
 
         producedDamageExpression.setVariable("SPEED", BigDecimal.valueOf(speed));
         expressionService.populateSourceAttributes(producedDamageExpression, attackerAttributes);
+        expressionService.populateTargetAttributes(producedDamageExpression, targetAttributes);
         double producedDamage = producedDamageExpression.eval().doubleValue();
 
         return getPhysicalDamageMitigation(targetAttributes, producedDamage);

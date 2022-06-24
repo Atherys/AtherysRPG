@@ -2,6 +2,7 @@ package com.atherys.rpg.facade;
 
 import com.atherys.core.AtherysCore;
 import com.atherys.rpg.AtherysRPG;
+import com.atherys.rpg.api.character.RPGCharacter;
 import com.atherys.rpg.command.exception.RPGCommandException;
 import com.atherys.rpg.config.AtherysRPGConfig;
 import com.atherys.rpg.config.loot.CurrencyLootConfig;
@@ -15,6 +16,7 @@ import com.atherys.rpg.integration.AtherysPartiesIntegration;
 import com.atherys.rpg.service.AttributeService;
 import com.atherys.rpg.service.MobService;
 import com.atherys.rpg.service.RPGCharacterService;
+import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang3.RandomUtils;
@@ -188,7 +190,6 @@ public class MobFacade {
                 characterService.getOrCreateCharacter(living, attributeService.fillInAttributes(mobConfig.DEFAULT_ATTRIBUTES));
                 living.offer(new DamageExpressionData(mobConfig.DAMAGE_EXPRESSION));
                 characterService.assignEntityHealthLimit(living, true);
-                characterService.assignEntityMovementSpeed(living);
             });
         });
     }

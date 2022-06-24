@@ -12,6 +12,7 @@ import org.spongepowered.api.entity.ArmorEquipable;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Equipable;
 import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 
@@ -142,7 +143,10 @@ public class AttributeService {
 
         HashMap<AttributeType, Double> results = new HashMap<>();
 
-        mergeAttributes(results, getDefaultAttributes());
+        if (entity instanceof Player) {
+            mergeAttributes(results, getDefaultAttributes());
+        }
+
         mergeAttributes(results, character.getCharacterAttributes());
         mergeAttributes(results, getEquipmentAttributes(entity));
         mergeAttributes(results, character.getBuffAttributes());
