@@ -158,13 +158,13 @@ public class MobFacade {
         if (config.ITEM_GROUP != null) {
             itemStack = itemFacade.fetchRandomItemStackFromGroup(
                     config.ITEM_GROUP,
-                    config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY)
+                    config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
             );
         // If no item group was configured, fetch a random item from the list of item ids
         } else {
             itemStack = itemFacade.createItemStack(
                     config.ITEM_IDS.get(RandomUtils.nextInt(0, config.ITEM_IDS.size())),
-                    config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY)
+                    config.QUANTITY >= 1 ? config.QUANTITY : RandomUtils.nextInt(config.MINIMUM_QUANTITY, config.MAXIMUM_QUANTITY + 1)
             );
         }
 
